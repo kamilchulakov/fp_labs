@@ -1,0 +1,4 @@
+# FunctionalProgrammingLabs
+
+**TODO: Add description**
+
