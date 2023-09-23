@@ -1,5 +1,7 @@
 # Functional Programming Labs
 
+![Mix Test](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg)
+
 **TODO: Add description**
 
 ## Project structure
