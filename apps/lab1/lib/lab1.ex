@@ -3,16 +3,19 @@ defmodule Lab1 do
   Documentation for `Lab1`.
   """
 
-  @doc """
-  Hello world.
+  defp is_palindrome(num) do
+    num
+    |> Integer.to_string()
+    |> String.reverse()
+    |> String.to_integer() == num
+  end
 
-  ## Examples
-
-      iex> Lab1.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  defp is_palindrome_product(x, y), do: x * y |> is_palindrome
+  
+  def largest_palindrome_product_of_3digit_numbers do
+    for x <- 999..100, y <- 999..100,
+      is_palindrome_product(x, y) do x * y
+    end
+      |> Enum.max()
   end
 end
