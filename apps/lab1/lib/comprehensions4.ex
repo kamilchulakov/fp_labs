@@ -1,6 +1,6 @@
-defmodule Lab1 do
+defmodule Comprehensions4 do
   @moduledoc """
-  Documentation for `Lab1`.
+  Documentation for `Comprehensions4`.
   """
 
   defp is_palindrome(num) do
