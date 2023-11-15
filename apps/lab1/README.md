@@ -12,6 +12,17 @@
 <p>A palindromic number reads the same both ways. The largest palindrome made from the product of two $2$-digit numbers is $9009 = 91 \times 99$.</p>
 <p>Find the largest palindrome made from the product of two $3$-digit numbers.</p>
 
+### Решение
+Генерация пар трёхзначных чисел, которые являются палиндромом.
+```elixir
+def largest_palindrome_product_of_3digit_numbers do
+    for x <- 999..100, y <- x..100, is_palindrome_product(x, y) do
+      x * y
+    end
+    |> Enum.max()
+  end
+```
+
 ## 27. Quadratic Primes
 
 ### Описание проблемы
@@ -25,3 +36,17 @@
 $n^2 + an + b$, where $|a| &lt; 1000$ and $|b| \le 1000$<br><br><div>where $|n|$ is the modulus/absolute value of $n$<br>e.g. $|11| = 11$ and $|-4| = 4$</div>
 
 <p>Find the product of the coefficients, $a$ and $b$, for the quadratic expression that produces the maximum number of primes for consecutive values of $n$, starting with $n = 0$.</p>
+
+### Решение
+Поиск лучших `a` и `b` через генераторы и max_by по `n`.
+
+```elixir
+defp find_best do
+    limit_a = -1000..999
+    limit_b = -1000..1000
+    for a <- limit_a, b <- limit_b do
+      max_continuous_prime(0, a, b)
+    end
+    |> Enum.max_by(&comparator(&1), fn -> nil end)
+  end
+```
