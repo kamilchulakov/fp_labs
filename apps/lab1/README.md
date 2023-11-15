@@ -3,31 +3,25 @@
 - 4: https://projecteuler.net/problem=4
 - 27: https://projecteuler.net/problem=27
 
-## Описание
-Цель: освоить базовые приёмы и абстракции функционального программирования: функции, поток управления и поток данных, сопоставление с образцом, рекурсия, свёртка, отображение, работа с функциями как с данными, списки.
+## Цель работы
+Освоить базовые приёмы и абстракции функционального программирования: функции, поток управления и поток данных, сопоставление с образцом, рекурсия, свёртка, отображение, работа с функциями как с данными, списки.
 
-В рамках лабораторной работы вам предлагается решить несколько задач [проекта Эйлер](https://projecteuler.net/archives). Список задач -- ваш вариант.
+## 4. Largest Palindrome Product
 
-Для каждой проблемы должно быть представлено несколько решений:
+### Описание проблемы
+<p>A palindromic number reads the same both ways. The largest palindrome made from the product of two $2$-digit numbers is $9009 = 91 \times 99$.</p>
+<p>Find the largest palindrome made from the product of two $3$-digit numbers.</p>
 
-1. монолитные реализации с использованием:
-    - хвостовой рекурсии;
-    - рекурсии (вариант с хвостовой рекурсией не является примером рекурсии);
-2. модульной реализации, где явно разделена генерация последовательности, фильтрация и свёртка (должны использоваться функции reduce/fold, filter и аналогичные);
-3. генерация последовательности при помощи отображения (map);
-4. работа со спец. синтаксисом для циклов (где применимо);
-5. работа с бесконечными списками для языков, поддерживающих ленивые коллекции или итераторы как часть языка (к примеру Haskell, Clojure);
-6. реализация на любом удобном для вас традиционном языке программирования для сравнения.
+## 27. Quadratic Primes
 
-Требуется использовать идиоматичный для технологии стиль программирования.
+### Описание проблемы
 
-Содержание отчёта:
-- титульный лист;
-- описание проблемы;
-- ключевые элементы реализации с минимальными комментариями;
-- выводы (отзыв об использованных приёмах программирования).
-
-Примечания:
-
-- необходимо понимание разницы между ленивыми коллекциями и итераторами;
-- нужно знать особенности используемой технологии и того, как работают использованные вами приёмы.
+<p>Euler discovered the remarkable quadratic formula:</p>
+<p class="center">$n^2 + n + 41$</p>
+<p>It turns out that the formula will produce $40$ primes for the consecutive integer values $0 \le n \le 39$. However, when $n = 40, 40^2 + 40 + 41 = 40(40 + 1) + 41$ is divisible by $41$, and certainly when $n = 41, 41^2 + 41 + 41$ is clearly divisible by $41$.</p>
+<p>The incredible formula $n^2 - 79n + 1601$ was discovered, which produces $80$ primes for the consecutive values $0 \le n \le 79$. The product of the coefficients, $-79$ and $1601$, is $-126479$.</p>
+<p>Considering quadratics of the form:</p>
+<blockquote>
+$n^2 + an + b$, where $|a| &lt; 1000$ and $|b| \le 1000$<br><br><div>where $|n|$ is the modulus/absolute value of $n$<br>e.g. $|11| = 11$ and $|-4| = 4$</div>
+</blockquote>
+<p>Find the product of the coefficients, $a$ and $b$, for the quadratic expression that produces the maximum number of primes for consecutive values of $n$, starting with $n = 0$.</p>
