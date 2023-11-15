@@ -2,7 +2,7 @@
 
 ![Mix Test](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg)
 
-**TODO: Add description**
+**Выполнил:** Чулаков Камиль 
 
 ## Tools
 - Mix - build tool
