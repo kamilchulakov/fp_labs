@@ -54,3 +54,6 @@ defp find_best do
     |> Enum.max_by(&comparator(&1), fn -> nil end)
   end
 ```
+
+## Вывод
+Elixir community не придумал очень строгий линтер.
