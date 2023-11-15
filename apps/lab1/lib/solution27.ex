@@ -23,7 +23,7 @@ defmodule Solution27 do
     end
     |> Enum.max_by(&comparator(&1), fn -> nil end)
   end
-  
+
   def solve do
     find_best()
     |> Enum.drop(1)
