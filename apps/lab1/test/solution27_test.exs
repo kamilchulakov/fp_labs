@@ -3,6 +3,6 @@ defmodule Solution27Test do
   doctest Solution27
 
   test "solution27" do
-    assert Solution27.solve() == -59231
+    assert Solution27.solve() == -59_231
   end
 end

@@ -7,7 +7,7 @@ defmodule Solution27 do
 
   defp max_continuous_prime(n, a, b) do
     if ElixirMath.PrimeGenerator.is_prime(calc_by_formula(n, a, b)) do
-      max_continuous_prime(n+1, a, b)
+      max_continuous_prime(n + 1, a, b)
     else
       [n, a, b]
     end
@@ -27,6 +27,6 @@ defmodule Solution27 do
   def solve do
     find_best()
     |> Enum.drop(1)
-    |> Enum.reduce(1, fn (x, acc) -> x*acc end)
+    |> Enum.reduce(1, fn (x, acc) -> x * acc end)
   end
 end
