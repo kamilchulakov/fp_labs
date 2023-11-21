@@ -1,11 +1,32 @@
 defmodule Stream4 do
   @moduledoc false
-  import Comprehensions4, only: [is_palindrome: 1]
 
   @min_num 100
   @max_num 999
   @min_max_range @min_num..@max_num
   @nums_count @min_max_range |> Enum.count()
+
+  defmacro is_even(integer) do
+    quote do
+      rem(unquote(integer), 2) == 0
+    end
+  end
+
+  defp is_mirrored({head, tail}), do: head == Enum.reverse(tail)
+
+  defp split_by_count(enumerable), do: split_by_count(enumerable, Enum.count(enumerable))
+  defp split_by_count(enumerable, count) when is_even(count), do: Enum.split(enumerable, div(count, 2))
+  defp split_by_count(enumerable, count) when not is_even(count) do
+    head = Enum.take(enumerable, count)
+    tail = Enum.take(enumerable, -count)
+    {head, tail}
+  end
+
+  defp is_palindrome(integer) do
+    Integer.digits(integer)
+    |> split_by_count
+    |> is_mirrored
+  end
 
   defp reduce([], acc, _fun), do: acc
   defp reduce([head | tail], acc, fun), do: reduce(tail, fun.(head, acc), fun)
@@ -25,9 +46,8 @@ defmodule Stream4 do
   @spec largest_palindrome_product_of_3digit_numbers :: integer
   def largest_palindrome_product_of_3digit_numbers do
     range_cycle = Stream.cycle(@min_max_range)
-    range_to_x = fn x -> Stream.take(range_cycle, x - @min_num) end
-
-    map_to_product = fn stream, x -> Stream.map(stream, fn y -> x * y end) end
+    range_to_x = &(Stream.take(range_cycle, &1 - @min_num))
+    map_to_product = &(Stream.map(&1, fn y -> &2 * y end))
 
     range_cycle
     |> Stream.take(@nums_count)
