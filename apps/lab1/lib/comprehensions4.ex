@@ -3,7 +3,7 @@ defmodule Comprehensions4 do
   Documentation for `Comprehensions4`.
   """
 
-  defp is_palindrome(num) do
+  def is_palindrome(num) do
     num
     |> Integer.to_string()
     |> String.reverse()
