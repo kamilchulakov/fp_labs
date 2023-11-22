@@ -12,14 +12,32 @@
 <p>A palindromic number reads the same both ways. The largest palindrome made from the product of two $2$-digit numbers is $9009 = 91 \times 99$.</p>
 <p>Find the largest palindrome made from the product of two $3$-digit numbers.</p>
 
-### Решение
+### Решение через генератор
 Генерация пар трёхзначных чисел, которые являются палиндромом.
 ```elixir
-def largest_palindrome_product_of_3digit_numbers do
+  def largest_palindrome_product_of_3digit_numbers do
     for x <- 999..100, y <- x..100, is_palindrome_product(x, y) do
       x * y
     end
     |> Enum.max()
+  end
+```
+
+### Решение через бесконечную последовательность
+```elixir
+  def largest_palindrome_product_of_3digit_numbers do
+    range_cycle = Stream.cycle(@min_max_range)
+    range_to_x = &(Stream.take(range_cycle, &1 - @min_num))
+    map_to_product = &(Stream.map(&1, fn y -> &2 * y end))
+
+    range_cycle
+    |> Stream.take(@nums_count)
+    |> Stream.flat_map(fn x ->
+      range_to_x.(x)
+      |> map_to_product.(x)
+    end)
+    |> Stream.filter(&is_palindrome(&1))
+    |> max_product()
   end
 ```
 
@@ -56,4 +74,4 @@ defp find_best do
 ```
 
 ## Вывод
-Elixir community не придумал очень строгий линтер.
+В ходе работы познакомился с базовыми концепциями функционального программирования на примере Elixir.

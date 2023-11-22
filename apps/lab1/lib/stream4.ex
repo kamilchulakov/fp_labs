@@ -21,7 +21,6 @@ defmodule Stream4 do
     end
   end
 
-
   defp split_by_count(enumerable), do: split_by_count(enumerable, Enum.count(enumerable))
   defp split_by_count(enumerable, count) when is_even(count), do: Enum.split(enumerable, div(count, 2))
   defp split_by_count(enumerable, count) when not is_even(count) do
