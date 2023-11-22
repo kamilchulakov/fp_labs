@@ -12,7 +12,15 @@ defmodule Stream4 do
     end
   end
 
-  defp is_mirrored({head, tail}), do: head == Enum.reverse(tail)
+  defp is_mirrored({[], []}), do: :true
+  defp is_mirrored({[head | tail1], tail2}) do
+    if head != Enum.at(tail2, -1) do
+      :false
+    else
+      is_mirrored({tail1, Enum.take(tail2, length(tail2) - 1)})
+    end
+  end
+
 
   defp split_by_count(enumerable), do: split_by_count(enumerable, Enum.count(enumerable))
   defp split_by_count(enumerable, count) when is_even(count), do: Enum.split(enumerable, div(count, 2))

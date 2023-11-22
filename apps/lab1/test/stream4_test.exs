@@ -1,4 +1,4 @@
-defmodule Solution27Test do
+defmodule Stream4Test do
   use ExUnit.Case
 
   test "largest palindrome product of 3-digit numbers" do
