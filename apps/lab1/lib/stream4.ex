@@ -38,13 +38,13 @@ defmodule Stream4 do
     |> is_mirrored
   end
 
-  defp reduce([], acc, _fun), do: acc
-  defp reduce([head | tail], acc, fun), do: reduce(tail, fun.(head, acc), fun)
-  defp reduce(stream, acc, fun), do: reduce(Enum.to_list(stream), acc, fun)
+  defp foldl([], acc, _fun), do: acc
+  defp foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
+  defp foldl(stream, acc, fun), do: foldl(Enum.to_list(stream), acc, fun)
 
   defp max_product(stream) do
     stream
-    |> reduce(nil, fn product, acc ->
+    |> foldl(nil, fn product, acc ->
       cond do
         acc == nil -> product
         product > acc -> product
