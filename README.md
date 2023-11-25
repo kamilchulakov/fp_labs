@@ -7,6 +7,11 @@
 ## Tools
 - Mix - build tool
 - [Credo](https://github.com/rrrene/credo/) - static analyzer
+- [Gradient](https://github.com/esl/gradient) - static type checker
+
+## Code-Style
+
+- https://github.com/christopheradams/elixir_style_guide
 
 ## Project structure
 - Umbrella project is created by `mix --umbrella`
