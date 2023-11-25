@@ -17,7 +17,7 @@ defmodule FunctionalProgrammingLabs.MixProject do
   # Run "mix help deps" for examples and options.
   defp deps do
     [
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.1", only: [:dev, :test], runtime: false},
       {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
     ]
   end
