@@ -12,18 +12,22 @@ defmodule Stream4 do
 
   defp drop_last(enumerable), do: Enum.take(enumerable, length(enumerable) - 1)
 
-  defp is_mirrored({[], []}), do: :true
-  defp is_mirrored({[x], [x]}), do: :true
+  defp is_mirrored({[], []}), do: true
+  defp is_mirrored({[x], [x]}), do: true
+
   defp is_mirrored({[head1 | tail1], [head2 | tail2]}) do
     if head1 != Enum.at(tail2, -1) || head2 != Enum.at(tail1, -1) do
-      :false
+      false
     else
       is_mirrored({drop_last(tail1), drop_last(tail2)})
     end
   end
 
   defp split_by_count(enumerable), do: split_by_count(enumerable, Enum.count(enumerable))
-  defp split_by_count(enumerable, count) when is_even(count), do: Enum.split(enumerable, div(count, 2))
+
+  defp split_by_count(enumerable, count) when is_even(count),
+    do: Enum.split(enumerable, div(count, 2))
+
   defp split_by_count(enumerable, count) when not is_even(count) do
     head = Enum.take(enumerable, count)
     tail = Enum.take(enumerable, -count)
@@ -54,8 +58,8 @@ defmodule Stream4 do
   @spec largest_palindrome_product_of_3digit_numbers :: integer
   def largest_palindrome_product_of_3digit_numbers do
     range_cycle = Stream.cycle(@min_max_range)
-    range_to_x = &(Stream.take(range_cycle, &1 - @min_num))
-    map_to_product = &(Stream.map(&1, fn y -> &2 * y end))
+    range_to_x = &Stream.take(range_cycle, &1 - @min_num)
+    map_to_product = &Stream.map(&1, fn y -> &2 * y end)
 
     range_cycle
     |> Stream.take(@nums_count)

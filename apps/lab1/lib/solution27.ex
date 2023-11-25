@@ -18,7 +18,7 @@ defmodule Solution27 do
     for a <- @limit_a, b <- @limit_b do
       max_continuous_prime(a, b)
     end
-    |> Enum.max_by(&(&1))
+    |> Enum.max_by(& &1)
   end
 
   def solve do
