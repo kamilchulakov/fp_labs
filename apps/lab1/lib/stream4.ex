@@ -7,15 +7,13 @@ defmodule Stream4 do
   @nums_count @min_max_range |> Enum.count()
 
   defmacro is_even(integer) do
-    quote do
-      rem(unquote(integer), 2) == 0
-    end
+    quote do: rem(unquote(integer), 2) == 0
   end
 
   defp drop_last(enumerable), do: Enum.take(enumerable, length(enumerable) - 1)
 
   defp is_mirrored({[], []}), do: :true
-  defp is_mirrored({[tail1], [tail2]}), do: tail1 == tail2
+  defp is_mirrored({[x], [x]}), do: :true
   defp is_mirrored({[head1 | tail1], [head2 | tail2]}) do
     if head1 != Enum.at(tail2, -1) || head2 != Enum.at(tail1, -1) do
       :false
