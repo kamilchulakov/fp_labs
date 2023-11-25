@@ -12,12 +12,15 @@ defmodule Stream4 do
     end
   end
 
+  defp drop_last(enumerable), do: Enum.take(enumerable, length(enumerable) - 1)
+
   defp is_mirrored({[], []}), do: :true
-  defp is_mirrored({[head | tail1], tail2}) do
-    if head != Enum.at(tail2, -1) do
+  defp is_mirrored({[tail1], [tail2]}), do: tail1 == tail2
+  defp is_mirrored({[head1 | tail1], [head2 | tail2]}) do
+    if head1 != Enum.at(tail2, -1) || head2 != Enum.at(tail1, -1) do
       :false
     else
-      is_mirrored({tail1, Enum.take(tail2, length(tail2) - 1)})
+      is_mirrored({drop_last(tail1), drop_last(tail2)})
     end
   end
 
