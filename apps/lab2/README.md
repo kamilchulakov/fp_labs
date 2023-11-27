@@ -4,8 +4,123 @@
 
 #### 3. Prefix Tree Set
 
+- https://en.wikipedia.org/wiki/Trie
+- http://blog.josephwilk.net/elixir/sets-in-elixir.html (read part about Trie after X commit)
+
 ## Цель работы
 
 Освоиться с построением пользовательских типов данных, полиморфизмом, рекурсивными алгоритмами и средствами
 тестирования (unit testing, property-based testing).
 
+## Требования к разработанному ПО
+
+1. Функции:
+   - добавление и удаление элементов;
+   - фильтрация;
+   - отображение (map);
+   - свертки (левая и правая);
+   - структура должна быть моноидом.
+
+2. Структуры данных должны быть неизменяемыми.
+3. Библиотека должна быть протестирована в рамках unit testing.
+4. Библиотека должна быть протестирована в рамках property-based тестирования (как минимум 3 свойства, включая свойства
+   моноида).
+5. Структура должна быть полиморфной.
+6. Требуется использовать идиоматичный для технологии стиль программирования. Примечание: некоторые языки позволяют
+   получить большую часть API через реализацию небольшого интерфейса. Так как лабораторная работа про ФП, а не про
+   экосистему языка -- необходимо реализовать их вручную и по возможности -- обеспечить совместимость.
+
+## Особенности реализации
+
+### Чистые модули
+
+- Модуль - единица абстракции
+- Чистые модули не содержат собственного состояния (pure ~ stateless)
+- Функции-модификаторы возвращают измененную абстракцию. Пример: `String.upcase/1`
+- Функции-запросы возвращают данные другого типа. Пример: `String.length/1`
+
+```kotlin
+object PureStringModule {
+   fun upcase(string: String): String = string.uppercase()
+   fun length(string: String): Int = string.length
+}
+
+object PureExtensionsStringModule {
+   fun String.upcase(): String = uppercase()
+   fun String.length(): Int = length
+}
+```
+
+### Записи
+
+> Records are simply tuples where the first element is an atom.
+
+Атом — константа, название которой является и значением.
+
+У записи есть поля и значения:
+
+```elixir
+require Record
+
+Record.defrecord(:node, children: [], is_end: false)
+```
+
+Сгенерирует 3 макроса:
+
+- `node/0` — для создания записи с дефолтными значениями
+- `node/1` — для создания записи с 1 параметризованным значением или для получения индекса поля в кортеже
+- `node/2` — для изменения записи или доступа к полю
+
+- https://hexdocs.pm/elixir/Record.html#defrecord/3
+
+### Trie specs
+
+```elixir
+@spec insert(trie :: t, word :: String.t) :: t
+@spec delete(trie :: t, word :: String.t) :: t
+@spec search(trie :: t, prefix :: String.t) :: [trie_node]
+```
+
+## Trie in Kotlin
+
+- My old solution for [LeetCode](https://leetcode.com/problems/implement-trie-prefix-tree)
+
+```kotlin
+class Trie {
+   private val root = Node()
+   fun insert(word: String) {
+      var nd = root
+      for (i in word.indices) {
+         if (!nd.has(word[i])) nd.children[word[i]] = Node()
+         nd = nd.child(word[i])
+      }
+      nd.isEnd = true
+   }
+
+   fun search(word: String): Boolean {
+      var nd = root
+      for (i in word.indices) {
+         if (!nd.has(word[i])) return false
+         nd = nd.child(word[i])
+      }
+      return nd.isEnd
+   }
+
+   fun startsWith(prefix: String): Boolean {
+      var nd = root
+      for (i in prefix.indices) {
+         if (!nd.has(prefix[i])) return false
+         nd = nd.child(prefix[i])
+      }
+      return true
+   }
+}
+
+class Node(
+   var isEnd: Boolean = false,
+   val children: MutableMap<Char, Node> = mutableMapOf()
+) {
+   fun has(c: Char) = children[c] != null
+   fun child(c: Char) = children[c]!!
+}
+```
