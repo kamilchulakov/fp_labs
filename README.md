@@ -11,6 +11,7 @@
 
 ## Code-Style
 
+- https://github.com/rrrene/elixir-style-guide
 - https://github.com/christopheradams/elixir_style_guide
 
 ## Project structure
