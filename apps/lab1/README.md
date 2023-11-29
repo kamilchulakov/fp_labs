@@ -41,6 +41,41 @@
   end
 ```
 
+### Решение через бесконечные последовательности
+
+```elixir
+  defp foldl([], acc, _fun), do: acc
+  defp foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
+  defp foldl(stream, acc, fun), do: foldl(Enum.to_list(stream), acc, fun)
+
+  defp max_product(stream) do
+    stream
+    |> foldl(nil, fn product, acc ->
+      cond do
+        acc == nil -> product
+        product > acc -> product
+        true -> acc
+      end
+    end)
+  end
+
+  @spec largest_palindrome_product_of_3digit_numbers :: integer
+  def largest_palindrome_product_of_3digit_numbers do
+    range_cycle = Stream.cycle(@min_max_range)
+    range_to_x = &Stream.take(range_cycle, &1 - @min_num)
+    map_to_product = &Stream.map(&1, fn y -> &2 * y end)
+
+    range_cycle
+    |> Stream.take(@nums_count)
+    |> Stream.flat_map(fn x ->
+      range_to_x.(x)
+      |> map_to_product.(x)
+    end)
+    |> Stream.filter(&is_palindrome(&1))
+    |> max_product()
+  end
+```
+
 ## 27. Quadratic Primes
 
 ### Описание проблемы
@@ -74,4 +109,6 @@ defp find_best do
 ```
 
 ## Вывод
-В ходе работы познакомился с базовыми концепциями функционального программирования на примере Elixir.
+
+В ходе работы познакомился с базовыми концепциями функционального программирования на примере Elixir: рекурсия, свёртки,
+последовательности, генераторы
