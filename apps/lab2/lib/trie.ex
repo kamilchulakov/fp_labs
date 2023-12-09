@@ -18,10 +18,16 @@ defmodule Trie do
 
   @spec insert(trie :: t, word :: word) :: t
   def insert(trie, word) do
-    # {node, leftovers} = find_node
+    insert(trie, to_charlist(word))
+    {node, leftovers} = find_node(trie.root, word)
+
     # new = node_insert(node, leftovers)
     # set_new
     trie
+  end
+
+  defp insert(trie, chars) do
+
   end
 
   @spec delete(trie :: t, word :: String.t()) :: t
@@ -29,4 +35,29 @@ defmodule Trie do
 
   @spec search(trie :: t, prefix :: word) :: [Node.trie_node()]
   def search(trie, word), do: [trie.root]
+
+  defp find_node(root, []), do: {root, []}
+  defp find_node(root, [char | word]) do
+    node = root.children
+           |> Enum.find(fn node -> node.char == char end)
+    if node == nil do
+      {root, [char, word]}
+    else
+      find_node(node, word)
+    end
+  end
+
+  defp insert_node() do
+
+  end
+
+  # TODO:
+  # add = insert
+  # map
+  # filter
+  # reduce
+  # find = search
+  # delete
+  # merge
+  # size = word count
 end

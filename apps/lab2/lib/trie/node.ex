@@ -5,7 +5,7 @@ defmodule Trie.Node do
 
   require Record
 
-  Record.defrecord(:trie_node, children: [], is_end: false)
+  Record.defrecord(:trie_node, char: '', children: [], is_end: false)
 
-  @type trie_node :: record(:trie_node, children: [trie_node], is_end: boolean)
+  @type trie_node :: record(:trie_node, char: char, children: [trie_node], is_end: boolean)
 end
