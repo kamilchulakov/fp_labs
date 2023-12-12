@@ -80,12 +80,11 @@ defmodule Stream4 do
     map_next = &Stream.map(&1..@max_num, fn y -> &1 * y end)
     next_fun = fn {num, _} -> {num + 1, map_next.(num + 1)} end
     iterate_stream = Stream.iterate({99, []}, next_fun)
+    map_to_products = fn {_, products} -> products end
 
     iterate_stream
     |> Stream.take(@nums_count)
-    |> Stream.flat_map(fn {_, products} ->
-      products
-    end)
+    |> Stream.flat_map(map_to_products)
     |> Stream.filter(&is_palindrome(&1))
     |> max_product()
   end
