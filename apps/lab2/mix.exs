@@ -23,7 +23,9 @@ defmodule Lab2.MixProject do
 
   defp deps do
     [
-      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
+      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false},
+      {:benchee, "~> 1.2.0", only: :dev},
+      {:benchee_dsl, "~> 0.5", only: :dev}
     ]
   end
 end
