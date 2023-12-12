@@ -40,9 +40,13 @@ defmodule Stream4 do
     |> is_mirrored
   end
 
-  defp foldl([], acc, _fun), do: acc
-  defp foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
-  defp foldl(stream, acc, fun), do: foldl(Enum.to_list(stream), acc, fun)
+  def foldr([head | []], acc, fun), do: fun.(head, acc)
+  def foldr([head | tail], acc, fun), do: fun.(head, foldr(tail, acc, fun))
+  def foldr(stream, acc, fun), do: foldr(Enum.to_list(stream), acc, fun)
+
+  def foldl([], acc, _fun), do: acc
+  def foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
+  def foldl(stream, acc, fun), do: foldl(Enum.to_list(stream), acc, fun)
 
   defp max_product(stream) do
     stream
