@@ -59,8 +59,8 @@ defmodule Stream4 do
     end)
   end
 
-  @spec largest_palindrome_product_of_3digit_numbers :: integer
-  def largest_palindrome_product_of_3digit_numbers do
+  @spec largest_palindrome_product_of_3digit_numbers_cycle :: integer
+  def largest_palindrome_product_of_3digit_numbers_cycle do
     range_cycle = Stream.cycle(@min_max_range)
     range_to_x = &Stream.take(range_cycle, &1 - @min_num)
     map_to_product = &Stream.map(&1, fn y -> &2 * y end)
@@ -70,6 +70,21 @@ defmodule Stream4 do
     |> Stream.flat_map(fn x ->
       range_to_x.(x)
       |> map_to_product.(x)
+    end)
+    |> Stream.filter(&is_palindrome(&1))
+    |> max_product()
+  end
+
+  @spec largest_palindrome_product_of_3digit_numbers_iter :: integer
+  def largest_palindrome_product_of_3digit_numbers_iter do
+    map_next = &Stream.map(&1..@max_num, fn y -> &1 * y end)
+    next_fun = fn {num, _} -> {num + 1, map_next.(num + 1)} end
+    iterate_stream = Stream.iterate({99, []}, next_fun)
+
+    iterate_stream
+    |> Stream.take(@nums_count)
+    |> Stream.flat_map(fn {_, products} ->
+      products
     end)
     |> Stream.filter(&is_palindrome(&1))
     |> max_product()
