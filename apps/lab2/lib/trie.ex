@@ -27,7 +27,6 @@ defmodule Trie do
   end
 
   defp insert(trie, chars) do
-
   end
 
   @spec delete(trie :: t, word :: String.t()) :: t
@@ -37,9 +36,12 @@ defmodule Trie do
   def search(trie, word), do: [trie.root]
 
   defp find_node(root, []), do: {root, []}
+
   defp find_node(root, [char | word]) do
-    node = root.children
-           |> Enum.find(fn node -> node.char == char end)
+    node =
+      root.children
+      |> Enum.find(fn node -> node.char == char end)
+
     if node == nil do
       {root, [char, word]}
     else
@@ -48,7 +50,6 @@ defmodule Trie do
   end
 
   defp insert_node() do
-
   end
 
   # TODO:

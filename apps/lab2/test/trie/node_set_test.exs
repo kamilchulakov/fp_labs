@@ -14,6 +14,4 @@ defmodule Trie.NodeSetTest do
   test "find returns first matched element" do
     assert NodeSet.find([1, 2], fn _ -> true end) == 1
   end
-
-
 end
