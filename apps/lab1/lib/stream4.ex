@@ -78,8 +78,13 @@ defmodule Stream4 do
   @spec largest_palindrome_product_of_3digit_numbers_iter :: integer
   def largest_palindrome_product_of_3digit_numbers_iter do
     map_next = &Stream.map(&1..@max_num, fn y -> &1 * y end)
-    next_fun = fn {num, _} -> {num + 1, map_next.(num + 1)} end
-    iterate_stream = Stream.iterate({99, []}, next_fun)
+
+    next_fun = fn {num, _} ->
+      next_num = num + 1
+      {next_num, map_next.(next_num)}
+    end
+
+    iterate_stream = Stream.iterate({@min_num - 1, []}, next_fun)
     map_to_products = fn {_, products} -> products end
 
     iterate_stream
