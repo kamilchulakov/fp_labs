@@ -29,7 +29,10 @@ defmodule Lab1.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       # {:sibling_app_in_umbrella, in_umbrella: true}
       {:elixir_math, "~> 0.1.0"},
-      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
+      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false},
+      {:benchee, "~> 1.1", only: :dev},
+      {:benchee_dsl, "~> 0.5", only: :dev},
+      {:benchee_markdown, "~> 0.3.2", only: :dev}
     ]
   end
 end
