@@ -2,26 +2,37 @@ defmodule Trie do
   @moduledoc """
   Implements a Trie.
 
+  ### TODO:
+  - [ ] insert
+  - [ ] search
+  - [ ] entries
+
   ### Links
     - https://en.wikipedia.org/wiki/Trie
   """
 
+  require Record
   alias Trie.Node
 
   defstruct [:root]
 
   @typedoc """
-    #{Trie.Node} value type.
+    Type that represents #{Trie.Node} value.
   """
   @type x :: char() | integer() | binary()
 
-  @type t(x) :: %__MODULE__{root: Node.trie_node(x)}
+  @typedoc """
+    Type that represents stored word.
+  """
+  @type word :: list(x())
 
-  @spec new(root :: Node.trie_node(x)) :: t(x)
-  def new(root), do: %__MODULE__{root: root}
+  @type t :: %__MODULE__{root: Node.trie_node(x())}
 
-  # TODO:
-  # insert
-  # search
-  # entries
+  @spec new(root :: Node.trie_node(x())) :: t()
+  def new(root) when Record.is_record(root), do: %__MODULE__{root: root}
+
+  @spec insert(trie :: t(), word :: word()) :: t()
+  def insert(trie, _word) do
+    trie
+  end
 end
