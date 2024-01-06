@@ -6,8 +6,6 @@ defmodule TrieTest do
 
   alias Trie.Node
 
-
-
   test "new" do
     Trie.new(Node.trie_node(x: "string"))
   end
