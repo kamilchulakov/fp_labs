@@ -124,3 +124,8 @@ class Node(
    fun child(c: Char) = children[c]!!
 }
 ```
+
+- https://blog.10pines.com/2023/05/22/expressive-design-in-elixir-with-polymorphic-protocols/
+
+> Good designs tend to be more explicit, so let's also model the unarmed scenario by creating a Weapon that doesn't affect the warrior's power.
+
