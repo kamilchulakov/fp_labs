@@ -21,7 +21,7 @@ defmodule Trie.Node do
   defp insert_child(children \\ [], word)
 
   defp insert_child([], [x]), do: [word_node(x)]
-  # TODO: refactor
+
   defp insert_child([head | tail], [x]) when trie_node(head, :x) == x,
     do: [trie_node(head, word_end: true) | tail]
 
