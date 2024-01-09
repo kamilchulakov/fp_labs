@@ -3,7 +3,7 @@ defmodule Trie do
   Implements a Trie.
 
   ### TODO:
-  - [ ] insert
+  - [x] insert
   - [ ] search
   - [ ] entries
 
@@ -12,6 +12,8 @@ defmodule Trie do
   """
 
   require Record
+  require Trie.Node
+
   alias Trie.Node
 
   defstruct [:root]
@@ -28,11 +30,13 @@ defmodule Trie do
 
   @type t :: %__MODULE__{root: Node.trie_node(x())}
 
-  @spec new(root :: Node.trie_node(x())) :: t()
-  def new(root) when Record.is_record(root), do: %__MODULE__{root: root}
+  @spec new() :: t()
+  def new, do: %__MODULE__{root: Node.trie_node(x: nil)}
 
   @spec insert(trie :: t(), word :: word()) :: t()
-  def insert(trie, _word) do
-    trie
+  def insert(trie, word) do
+    %__MODULE__{
+      root: Node.insert(trie.root, word)
+    }
   end
 end

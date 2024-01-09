@@ -129,3 +129,5 @@ class Node(
 
 > Good designs tend to be more explicit, so let's also model the unarmed scenario by creating a Weapon that doesn't affect the warrior's power.
 
+- https://hexdocs.pm/elixir/Access.html
+
