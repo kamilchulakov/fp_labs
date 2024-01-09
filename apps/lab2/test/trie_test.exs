@@ -16,20 +16,42 @@ defmodule TrieTest do
       new_trie = Trie.insert(trie, [1, 2, 3])
       assert new_trie != trie
 
-      expected_root = Node.trie_node(children: [Node.trie_node(x: 1, children: [Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)])])])
+      expected_root =
+        Node.trie_node(
+          children: [
+            Node.trie_node(
+              x: 1,
+              children: [Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)])]
+            )
+          ]
+        )
+
       assert new_trie.root == expected_root
     end
 
     test "multiple" do
-      expected_root = Node.trie_node(children: [
-        Node.trie_node(x: 1, children: [Node.trie_node(x: 2, word_end: true, children: [Node.trie_node(x: 3, word_end: true)])]),
-        Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)]),
-      ])
+      expected_root =
+        Node.trie_node(
+          children: [
+            Node.trie_node(
+              x: 1,
+              children: [
+                Node.trie_node(
+                  x: 2,
+                  word_end: true,
+                  children: [Node.trie_node(x: 3, word_end: true)]
+                )
+              ]
+            ),
+            Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)])
+          ]
+        )
 
-      trie = Trie.new()
-      |> Trie.insert([1, 2, 3])
-      |> Trie.insert([1, 2])
-      |> Trie.insert([2, 3])
+      trie =
+        Trie.new()
+        |> Trie.insert([1, 2, 3])
+        |> Trie.insert([1, 2])
+        |> Trie.insert([2, 3])
 
       assert trie.root == expected_root
     end
