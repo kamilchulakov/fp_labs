@@ -20,8 +20,9 @@ defmodule Trie do
 
   @typedoc """
     Type that represents #{Trie.Node} value.
+    Only root nodes have nil.
   """
-  @type x :: char() | integer() | binary()
+  @type x :: char() | integer() | binary() | nil
 
   @typedoc """
     Type that represents stored word.
