@@ -5,7 +5,7 @@ defmodule Trie do
   ### TODO:
   - [x] insert
   - [ ] search
-  - [ ] entries
+  - [x] entries
 
   ### Links
     - https://en.wikipedia.org/wiki/Trie
@@ -40,4 +40,7 @@ defmodule Trie do
       root: Node.insert(trie.root, word)
     }
   end
+
+  @spec entries(trie :: t()) :: [word()]
+  def entries(trie), do: Node.entries(trie.root)
 end

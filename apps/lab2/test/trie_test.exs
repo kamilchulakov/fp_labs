@@ -39,11 +39,18 @@ defmodule TrieTest do
                 Node.trie_node(
                   x: 2,
                   word_end: true,
-                  children: [Node.trie_node(x: 3, word_end: true)]
+                  children: [
+                    Node.trie_node(x: 3, word_end: true)
+                  ]
                 )
               ]
             ),
-            Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)])
+            Node.trie_node(
+              x: 2,
+              children: [
+                Node.trie_node(x: 3, word_end: true)
+              ]
+            )
           ]
         )
 
@@ -54,6 +61,18 @@ defmodule TrieTest do
         |> Trie.insert([2, 3])
 
       assert trie.root == expected_root
+    end
+  end
+
+  describe "entries" do
+    test "simple" do
+      trie =
+        Trie.new()
+        |> Trie.insert([1, 2, 3])
+        |> Trie.insert([1, 2])
+        |> Trie.insert([2, 3])
+
+      assert Trie.entries(trie) == [[1, 2], [1, 2, 3], [2, 3]]
     end
   end
 end
