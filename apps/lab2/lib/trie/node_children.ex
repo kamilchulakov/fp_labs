@@ -1,4 +1,4 @@
-defmodule Trie.NodeSet do
+defmodule Trie.NodeChildren do
   @moduledoc """
   ### Operations
   - find(set, predicate)

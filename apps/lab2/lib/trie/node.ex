@@ -2,7 +2,7 @@ defmodule Trie.Node do
   @moduledoc """
   Provides a node record with children set and is_end flag
   """
-  alias Trie.NodeSet
+  alias Trie.NodeChildren
   require Record
 
   Record.defrecord(:trie_node, x: nil, children: [], word_end: false)
@@ -40,7 +40,7 @@ defmodule Trie.Node do
 
   def entries(node)
       when trie_node(node, :x) == nil,
-      do: NodeSet.foldl(children(node), [], fn child, acc -> acc ++ entries(child) end)
+      do: NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ entries(child) end)
 
   def entries(node, prefix \\ [])
 
@@ -55,14 +55,14 @@ defmodule Trie.Node do
   def entries(node, prefix)
       when trie_node(node, :x) != nil and trie_node(node, :word_end) == true,
       do:
-        NodeSet.foldl(children(node), [], fn child, acc ->
+        NodeChildren.foldl(children(node), [], fn child, acc ->
           acc ++ [node_word(node, prefix)] ++ entries(child, node_word(node, prefix))
         end)
 
   def entries(node, prefix)
       when trie_node(node, :x) != nil and trie_node(node, :word_end) == false,
       do:
-        NodeSet.foldl(children(node), [], fn child, acc ->
+        NodeChildren.foldl(children(node), [], fn child, acc ->
           acc ++ entries(child, node_word(node, prefix))
         end)
 
