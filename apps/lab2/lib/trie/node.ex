@@ -5,38 +5,38 @@ defmodule Trie.Node do
   alias Trie.NodeChildren
   require Record
 
-  Record.defrecord(:trie_node, x: nil, children: [], word_end: false)
+  Record.defrecord(:trie_node, x: nil, children: [], word: nil)
 
-  @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word_end: boolean)
-  @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word_end: boolean)
+  @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word: any())
+  @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word: any())
 
-  def insert(node, word) when trie_node(node, :x) == nil and is_list(word),
-    do: trie_node(node, children: insert_child(children(node), word))
+  def insert(node, wordable, word) when trie_node(node, :x) == nil and is_list(wordable),
+    do: trie_node(node, children: insert_child(children(node), wordable, word))
 
-  def insert(node, [x]) when trie_node(node, :x) == x, do: trie_node(node, word_end: true)
+  def insert(node, [x], word) when trie_node(node, :x) == x, do: trie_node(node, word: word)
 
-  def insert(node, [head | tail]) when trie_node(node, :x) == head,
-    do: trie_node(node, children: insert_child(children(node), tail))
+  def insert(node, [head | tail], word) when trie_node(node, :x) == head,
+    do: trie_node(node, children: insert_child(children(node), tail, word))
 
-  defp insert_child(children \\ [], word)
+  defp insert_child(children \\ [], wordable, word)
 
-  defp insert_child([], [x]), do: [word_node(x)]
+  defp insert_child([], [x], word), do: [word_node(x, word)]
 
-  defp insert_child([head | tail], [x]) when trie_node(head, :x) == x,
-    do: [trie_node(head, word_end: true) | tail]
+  defp insert_child([head | tail], [x], word) when trie_node(head, :x) == x,
+    do: [trie_node(head, word: word) | tail]
 
-  defp insert_child([head | tail], [x]) when trie_node(head, :x) != x,
-    do: [head | insert_child(tail, x)]
+  defp insert_child([head | tail], [x], word) when trie_node(head, :x) != x,
+    do: [head | insert_child(tail, x, word)]
 
-  defp insert_child([], [head | tail]), do: [trie_node(x: head, children: insert_child(tail))]
+  defp insert_child([], [head | tail], word), do: [trie_node(x: head, children: insert_child(tail, word))]
 
-  defp insert_child([head_child | tail_child], [head_x | tail_x])
+  defp insert_child([head_child | tail_child], [head_x | tail_x], word)
        when trie_node(head_child, :x) == head_x,
-       do: [insert(head_child, [head_x | tail_x]) | tail_child]
+       do: [insert(head_child, [head_x | tail_x], word) | tail_child]
 
-  defp insert_child([head_child | tail_child], [head_x | tail_x])
+  defp insert_child([head_child | tail_child], [head_x | tail_x], word)
        when trie_node(head_child, :x) != head_x,
-       do: [head_child | insert_child(tail_child, [head_x | tail_x])]
+       do: [head_child | insert_child(tail_child, [head_x | tail_x], word)]
 
   def entries(node)
       when trie_node(node, :x) == nil,
@@ -45,28 +45,28 @@ defmodule Trie.Node do
   def entries(node, prefix \\ [])
 
   def entries(node, prefix)
-      when trie_node(node, :children) == [] and trie_node(node, :word_end) == true,
+      when trie_node(node, :children) == [] and trie_node(node, :word) != nil,
       do: [node_word(node, prefix)]
 
   def entries(node, _)
-      when trie_node(node, :children) == [] and trie_node(node, :word_end) == false,
+      when trie_node(node, :children) == [] and trie_node(node, :word) == nil,
       do: []
 
   def entries(node, prefix)
-      when trie_node(node, :x) != nil and trie_node(node, :word_end) == true,
+      when trie_node(node, :x) != nil and trie_node(node, :word) != nil,
       do:
         NodeChildren.foldl(children(node), [], fn child, acc ->
           acc ++ [node_word(node, prefix)] ++ entries(child, node_word(node, prefix))
         end)
 
   def entries(node, prefix)
-      when trie_node(node, :x) != nil and trie_node(node, :word_end) == false,
+      when trie_node(node, :x) != nil and trie_node(node, :word) == nil,
       do:
         NodeChildren.foldl(children(node), [], fn child, acc ->
           acc ++ entries(child, node_word(node, prefix))
         end)
 
   defp node_word(node, prefix), do: prefix ++ [trie_node(node, :x)]
-  defp word_node(x), do: trie_node(x: x, word_end: true)
+  defp word_node(x, word), do: trie_node(x: x, word: word)
   defp children(node), do: trie_node(node, :children)
 end

@@ -21,7 +21,7 @@ defmodule TrieTest do
           children: [
             Node.trie_node(
               x: 1,
-              children: [Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word_end: true)])]
+              children: [Node.trie_node(x: 2, children: [Node.trie_node(x: 3, word: [1, 2, 3])])]
             )
           ]
         )
@@ -40,13 +40,13 @@ defmodule TrieTest do
             Node.trie_node(
               x: 1,
               children: [
-                Node.trie_node(x: 2, word_end: true)
+                Node.trie_node(x: 2, word: [1, 2])
               ]
             ),
             Node.trie_node(
               x: 51,
               children: [
-                Node.trie_node(x: 52, word_end: true)
+                Node.trie_node(x: 52, word: "34")
               ]
             )
           ]
@@ -65,9 +65,9 @@ defmodule TrieTest do
               children: [
                 Node.trie_node(
                   x: 2,
-                  word_end: true,
+                  word: [1, 2],
                   children: [
-                    Node.trie_node(x: 3, word_end: true)
+                    Node.trie_node(x: 3, word: [1, 2, 3])
                   ]
                 )
               ]
@@ -75,7 +75,7 @@ defmodule TrieTest do
             Node.trie_node(
               x: 2,
               children: [
-                Node.trie_node(x: 3, word_end: true)
+                Node.trie_node(x: 3, word: [2, 3])
               ]
             )
           ]
