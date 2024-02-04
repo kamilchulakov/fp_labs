@@ -131,3 +131,7 @@ class Node(
 
 - https://hexdocs.pm/elixir/Access.html
 
+- https://hexdocs.pm/elixir/keywords-and-maps.html
+
+- http://elixir-br.github.io/getting-started/meta/domain-specific-languages.html
+- https://hexdocs.pm/elixir/main/macro-anti-patterns.html

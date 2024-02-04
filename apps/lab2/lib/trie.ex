@@ -7,6 +7,10 @@ defmodule Trie do
   - [ ] search
   - [x] entries
 
+  - [x] wordable protocol
+  - [ ] keyword list
+  - [ ] store word in node
+
   ### Links
     - https://en.wikipedia.org/wiki/Trie
   """
@@ -15,6 +19,7 @@ defmodule Trie do
   require Trie.Node
 
   alias Trie.Node
+  alias Trie.Wordable
 
   defstruct [:root]
 
@@ -27,7 +32,7 @@ defmodule Trie do
   @typedoc """
     Type that represents stored word.
   """
-  @type word :: list(x())
+  @type word :: list(x()) | bitstring()
 
   @type t :: %__MODULE__{root: Node.trie_node(x())}
 
@@ -35,12 +40,12 @@ defmodule Trie do
   def new, do: %__MODULE__{root: Node.trie_node(x: nil)}
 
   @spec insert(trie :: t(), word :: word()) :: t()
-  def insert(trie, word) do
+  def insert(%__MODULE__{root: root}, word) do
     %__MODULE__{
-      root: Node.insert(trie.root, word)
+      root: Node.insert(root, Wordable.to_word(word))
     }
   end
 
   @spec entries(trie :: t()) :: [word()]
-  def entries(trie), do: Node.entries(trie.root)
+  def entries(%__MODULE__{root: root}), do: Node.entries(root)
 end

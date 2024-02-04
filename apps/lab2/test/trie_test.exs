@@ -29,6 +29,33 @@ defmodule TrieTest do
       assert new_trie.root == expected_root
     end
 
+    test "any wordable" do
+      trie = Trie.new()
+      |> Trie.insert([1, 2])
+      |> Trie.insert("34")
+
+      expected_trie = %Trie{
+        root: Node.trie_node(
+          children: [
+            Node.trie_node(
+              x: 1,
+              children: [
+                Node.trie_node(x: 2, word_end: true)
+              ]
+            ),
+            Node.trie_node(
+              x: 51,
+              children: [
+                Node.trie_node(x: 52, word_end: true)
+              ]
+            )
+          ]
+        )
+      }
+
+      assert trie == expected_trie
+    end
+
     test "multiple" do
       expected_root =
         Node.trie_node(
