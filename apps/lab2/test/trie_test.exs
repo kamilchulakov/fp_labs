@@ -120,4 +120,15 @@ defmodule TrieTest do
       assert Trie.entries(trie) == [[104, 101, 322, 322, 111]]
     end
   end
+
+  describe "search" do
+    test "different types same word" do
+      trie =
+        Trie.new()
+        |> Trie.insert([104, 101, 322, 322, 111])
+        |> Trie.insert("hełło")
+
+      assert Trie.search(trie, [104, 101]) == ["hełło"]
+    end
+  end
 end

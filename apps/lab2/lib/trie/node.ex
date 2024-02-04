@@ -46,6 +46,11 @@ defmodule Trie.Node do
   def search(node, prefix \\ [])
 
   def search(node, prefix)
+      when trie_node(node, :x) == nil,
+      do:
+        NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
+
+  def search(node, prefix)
       when trie_node(node, :children) == [] and trie_node(node, :word) != nil,
       do: [node_word(node, prefix)]
 

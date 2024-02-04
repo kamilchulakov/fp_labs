@@ -4,12 +4,12 @@ defmodule Trie do
 
   ### TODO:
   - [x] insert
-  - [ ] search
+  - [x] search
   - [x] entries
 
   - [x] wordable protocol
   - [ ] keyword list
-  - [ ] store word in node
+  - [x] store word in node
 
   ### Links
     - https://en.wikipedia.org/wiki/Trie
@@ -48,4 +48,7 @@ defmodule Trie do
 
   @spec entries(trie :: t()) :: [word()]
   def entries(%__MODULE__{root: root}), do: Node.entries(root)
+
+  @spec search(trie :: t(), prefix: word()) :: [word()]
+  def search(%__MODULE__{root: root}, prefix), do: Node.search(root, Wordable.to_wordable(prefix))
 end
