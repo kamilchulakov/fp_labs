@@ -28,7 +28,8 @@ defmodule Trie.Node do
   defp insert_child([head | tail], [x], word) when trie_node(head, :x) != x,
     do: [head | insert_child(tail, x, word)]
 
-  defp insert_child([], [head | tail], word), do: [trie_node(x: head, children: insert_child(tail, word))]
+  defp insert_child([], [head | tail], word),
+    do: [trie_node(x: head, children: insert_child(tail, word))]
 
   defp insert_child([head_child | tail_child], [head_x | tail_x], word)
        when trie_node(head_child, :x) == head_x,
