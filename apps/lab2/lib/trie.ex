@@ -42,7 +42,7 @@ defmodule Trie do
   @spec insert(trie :: t(), word :: word()) :: t()
   def insert(%__MODULE__{root: root}, word) do
     %__MODULE__{
-      root: Node.insert(root, Wordable.to_word(word))
+      root: Node.insert(root, Wordable.to_wordable(word))
     }
   end
 
