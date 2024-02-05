@@ -17,3 +17,7 @@ end
 defimpl Trie.Wordable, for: Atom do
   def to_wordable(atom), do: Atom.to_charlist(atom)
 end
+
+defimpl Trie.Wordable, for: Integer do
+  def to_wordable(integer), do: Integer.digits(integer)
+end

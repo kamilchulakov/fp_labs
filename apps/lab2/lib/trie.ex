@@ -32,7 +32,7 @@ defmodule Trie do
   @typedoc """
     Type that represents stored word.
   """
-  @type word :: list(x()) | tuple() | bitstring() | atom()
+  @type word :: list(x()) | tuple() | bitstring() | atom() | integer()
 
   @type t :: %__MODULE__{root: Node.trie_node(x())}
 

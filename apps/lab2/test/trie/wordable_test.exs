@@ -16,4 +16,16 @@ defmodule Trie.WordableTest do
   test "string is wordable" do
     assert to_wordable("hełło") == [104, 101, 322, 322, 111]
   end
+
+  test "tuple is wordable" do
+    assert to_wordable({1, 2}) == [1, 2]
+  end
+
+  test "atom is wordable" do
+    assert to_wordable(:hełło) == [104, 101, 322, 322, 111]
+  end
+
+  test "integer is wordable" do
+    assert to_wordable(123) == [1, 2, 3]
+  end
 end

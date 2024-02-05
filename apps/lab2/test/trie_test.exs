@@ -120,6 +120,13 @@ defmodule TrieTest do
         |> Trie.insert([104, 101, 322, 322, 111])
 
       assert Trie.entries(trie) == [[104, 101, 322, 322, 111]]
+
+      trie =
+        Trie.new()
+        |> Trie.insert([1, 2, 3])
+        |> Trie.insert(123)
+
+      assert Trie.entries(trie) == [123]
     end
   end
 
