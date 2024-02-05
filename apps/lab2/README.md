@@ -143,3 +143,18 @@ Typechecking files...
 lib/trie/wordable.ex: The spec 'impl_for!'/1 on line 1 doesn't match the function name/arity
 lib/trie/wordable.ex: Call to undefined function Trie.Wordable.Map.'__impl__'/1 on line 1
 ```
+
+- Kotlin сохраняет только первое слово
+```kotlin
+data class Message(val text: String) {
+    override fun hashCode(): Int = 1
+    override fun equals(other: Any?) = true
+}
+
+fun main() {
+    val data = mutableSetOf(Message("haha"))
+    data.add(Message("hihi"))
+    println(data) // [Message(text=haha)]
+    println(data.any({ it.text == "hihi"})) // false
+}
+```

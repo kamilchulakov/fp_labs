@@ -10,10 +10,14 @@ defmodule Trie.Node do
   @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word: any())
   @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word: any())
 
-  def insert(node, wordable, word) when trie_node(node, :x) == nil and is_list(wordable),
+  def insert(node, wordable, word) when trie_node(node, :x) == nil,
     do: trie_node(node, children: insert_child(children(node), wordable, word))
 
-  def insert(node, [x], word) when trie_node(node, :x) == x, do: trie_node(node, word: word)
+  def insert(node, [x], word) when trie_node(node, :x) == x and trie_node(node, :word) == nil,
+    do: trie_node(node, word: word)
+
+  def insert(node, [x], _) when trie_node(node, :x) == x and trie_node(node, :word) != nil,
+    do: node
 
   def insert(node, [head | tail], word) when trie_node(node, :x) == head,
     do: trie_node(node, children: insert_child(children(node), tail, word))
@@ -22,8 +26,15 @@ defmodule Trie.Node do
 
   defp insert_child([], [x], word), do: [word_node(x, word)]
 
-  defp insert_child([head | tail], [x], word) when trie_node(head, :x) == x,
-    do: [trie_node(head, word: word) | tail]
+  defp insert_child([head | tail], [x], word)
+       when trie_node(head, :x) == x and trie_node(head, :word) == nil,
+       do: [trie_node(head, word: word) | tail]
+
+  defp insert_child(children = [head | _], [x], _)
+       when trie_node(head, :x) == x and trie_node(head, :word) != nil do
+    IO.warn("Word synonym exists", [])
+    children
+  end
 
   defp insert_child([head | tail], [x], word) when trie_node(head, :x) != x,
     do: [head | insert_child(tail, x, word)]
