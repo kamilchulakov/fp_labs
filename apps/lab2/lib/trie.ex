@@ -4,8 +4,8 @@ defmodule Trie do
 
   ### TODO:
   - [x] insert
-  - [x] search
   - [x] entries
+  - [ ] search
 
   - [x] wordable protocol
   - [-] keyword list. due to protocol implementation, we got no atom keys
