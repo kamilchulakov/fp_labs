@@ -1,4 +1,4 @@
 [
   # Ignores errors in a specific line in a file
-  "lib/trie/wordable.ex:1",
+  "apps/lab2/lib/trie/wordable.ex:1",
 ]
