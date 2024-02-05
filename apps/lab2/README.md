@@ -135,3 +135,11 @@ class Node(
 
 - http://elixir-br.github.io/getting-started/meta/domain-specific-languages.html
 - https://hexdocs.pm/elixir/main/macro-anti-patterns.html
+
+
+- ignoring `gradient` warnings for:
+```
+Typechecking files...
+lib/trie/wordable.ex: The spec 'impl_for!'/1 on line 1 doesn't match the function name/arity
+lib/trie/wordable.ex: Call to undefined function Trie.Wordable.Map.'__impl__'/1 on line 1
+```

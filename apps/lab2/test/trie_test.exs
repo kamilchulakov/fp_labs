@@ -108,6 +108,8 @@ defmodule TrieTest do
       trie =
         Trie.new()
         |> Trie.insert([104, 101, 322, 322, 111])
+        |> Trie.insert({104, 101, 322, 322, 111})
+        |> Trie.insert(:hełło)
         |> Trie.insert("hełło")
 
       assert Trie.entries(trie) == ["hełło"]
