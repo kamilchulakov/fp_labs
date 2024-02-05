@@ -8,7 +8,7 @@ defmodule Trie do
   - [x] entries
 
   - [x] wordable protocol
-  - [ ] keyword list
+  - [-] keyword list. due to protocol implementation, we got no atom keys
   - [x] store word in node
 
   ### Links
@@ -32,12 +32,12 @@ defmodule Trie do
   @typedoc """
     Type that represents stored word.
   """
-  @type word :: list(x()) | tuple() | bitstring() | atom() | integer()
+  @type word :: Wordable.t()
 
   @type t :: %__MODULE__{root: Node.trie_node(x())}
 
   @spec new() :: t()
-  def new, do: %__MODULE__{root: Node.trie_node(x: nil)}
+  def new, do: %__MODULE__{root: Node.trie_node()}
 
   @spec insert(trie :: t(), word :: word()) :: t()
   def insert(%__MODULE__{root: root}, word) do
