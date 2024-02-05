@@ -32,7 +32,6 @@ defmodule Trie.Node do
 
   defp insert_child(children = [head | _], [x], _)
        when trie_node(head, :x) == x and trie_node(head, :word) != nil do
-    IO.warn("Word synonym exists", [])
     children
   end
 
@@ -61,29 +60,57 @@ defmodule Trie.Node do
       do:
         NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
 
-  def search(node, prefix)
-      when trie_node(node, :children) == [] and trie_node(node, :word) != nil,
-      do: [node_word(node, prefix)]
+  def search(node, [])
+      when trie_node(node, :word) == nil,
+      do: NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
+
+  def search(node, [])
+      when trie_node(node, :word) != nil,
+      do:
+        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+          acc ++ search(child)
+        end)
+
+  def search(node, [prefix_x])
+      when trie_node(node, :x) != prefix_x,
+      do: []
+
+  def search(node, [prefix_head | _])
+      when trie_node(node, :x) != prefix_head,
+      do: []
 
   def search(node, _)
       when trie_node(node, :children) == [] and trie_node(node, :word) == nil,
       do: []
 
-  def search(node, prefix)
-      when trie_node(node, :x) != nil and trie_node(node, :word) != nil,
+  def search(node, [prefix_x])
+      when trie_node(node, :x) == prefix_x and trie_node(node, :word) != nil,
       do:
-        NodeChildren.foldl(children(node), [], fn child, acc ->
-          acc ++ [node_word(node, prefix)] ++ search(child, node_word(node, prefix))
+        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+          acc ++ search(child)
         end)
 
-  def search(node, prefix)
-      when trie_node(node, :x) != nil and trie_node(node, :word) == nil,
+  def search(node, [prefix_x])
+      when trie_node(node, :x) == prefix_x and trie_node(node, :word) == nil,
       do:
         NodeChildren.foldl(children(node), [], fn child, acc ->
-          acc ++ search(child, node_word(node, prefix))
+          acc ++ search(child)
         end)
 
-  defp node_word(node, _prefix), do: trie_node(node, :word)
+  def search(node, [prefix_head | prefix_tail])
+      when trie_node(node, :x) == prefix_head and trie_node(node, :word) != nil,
+      do:
+        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+          acc ++ search(child, prefix_tail)
+        end)
+
+  def search(node, [prefix_head | prefix_tail])
+      when trie_node(node, :x) == prefix_head and trie_node(node, :word) == nil,
+      do:
+        NodeChildren.foldl(children(node), [], fn child, acc ->
+          acc ++ search(child, prefix_tail)
+        end)
+
   defp word_node(x, word), do: trie_node(x: x, word: word)
   defp children(node), do: trie_node(node, :children)
 end
