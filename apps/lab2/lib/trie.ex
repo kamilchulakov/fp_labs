@@ -33,8 +33,8 @@ defmodule Trie do
   require Trie.Node
 
   alias Trie.Node
-  alias Trie.Wordable
   alias Trie.List
+  alias Trie.Wordable
 
   @enforce_keys [:root]
   defstruct [:root]
