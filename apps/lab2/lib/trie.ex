@@ -3,13 +3,24 @@ defmodule Trie do
   Implements a Trie.
 
   ### TODO:
+  as trie:
   - [x] insert
   - [x] entries
   - [ ] search
 
   - [x] wordable protocol
-  - [-] keyword list. due to protocol implementation, we got no atom keys
+  - [-] ~~keyword list~~ (due to protocol implementation, I got no atom keys)
   - [x] store word in node
+
+  as set:
+  - [x] add/remove
+  - [ ] map
+  - [ ] foldl
+  - [ ] foldr
+  - [ ] filter
+
+  - [ ] merge
+  - [ ] equals
 
   ### Links
     - https://en.wikipedia.org/wiki/Trie
@@ -51,4 +62,11 @@ defmodule Trie do
 
   @spec search(trie :: t(), prefix: word()) :: [word()]
   def search(%__MODULE__{root: root}, prefix), do: Node.search(root, Wordable.to_wordable(prefix))
+
+  @spec add(trie :: t(), word :: word()) :: t()
+  def add(trie, word), do: insert(trie, word)
+
+  @spec remove(trie :: t(), word :: word()) :: t()
+  def remove(%__MODULE__{root: root}, word),
+    do: %__MODULE__{root: Node.remove(root, Wordable.to_wordable(word))}
 end

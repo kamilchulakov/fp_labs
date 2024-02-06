@@ -154,4 +154,20 @@ defmodule TrieTest do
       assert Trie.search(trie, [104, 101]) == [[104, 101], {104, 101, 322, 322, 111}]
     end
   end
+
+  describe "add/remove" do
+    test "add is same as insert" do
+      assert Trie.new() |> Trie.insert("hełło") == Trie.new() |> Trie.add("hełło")
+    end
+
+    test "initial trie after add and remove" do
+      trie =
+        Trie.new()
+        |> Trie.add("add")
+        |> Trie.remove("add")
+
+      assert Trie.entries(trie) == []
+      assert trie == Trie.new()
+    end
+  end
 end

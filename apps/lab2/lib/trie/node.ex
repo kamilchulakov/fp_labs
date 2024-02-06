@@ -111,6 +111,51 @@ defmodule Trie.Node do
           acc ++ search(child, prefix_tail)
         end)
 
+  def remove(node, [wordable_head]) do
+    case find_child(node, x: wordable_head) do
+      nil -> node
+      child -> remove_word(node, child)
+    end
+  end
+
+  def remove(node, [wordable_head | wordable_tail]),
+    do:
+      trie_node(
+        node,
+        children:
+          NodeChildren.map_if(
+            children(node),
+            &node_x_filter(&1, wordable_head),
+            &remove(&1, wordable_tail)
+          )
+      )
+      |> remove_trash_children
+
+  defp find_child(node, x: x), do: NodeChildren.find(children(node), &node_x_filter(&1, x))
+
+  defp remove_word(parent, child),
+    do:
+      trie_node(
+        parent,
+        children:
+          NodeChildren.map_if(
+            children(parent),
+            &node_x_filter(&1, trie_node(child, :x)),
+            &trie_node(&1, word: nil)
+          )
+      )
+      |> remove_trash_children
+
   defp word_node(x, word), do: trie_node(x: x, word: word)
   defp children(node), do: trie_node(node, :children)
+  defp node_x_filter(node, x), do: trie_node(node, :x) == x
+
+  defp remove_trash_children(node),
+    do:
+      trie_node(
+        node,
+        children: NodeChildren.filter(children(node), &(not trash_node(&1)))
+      )
+
+  defp trash_node(node), do: trie_node(node, :word) == nil and trie_node(node, :children) == []
 end

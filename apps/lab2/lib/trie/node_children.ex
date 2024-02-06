@@ -26,7 +26,7 @@ defmodule Trie.NodeChildren do
   def find([], _), do: nil
 
   def find(set, predicate) do
-    [first, _] = filter(set, predicate)
+    [first | _] = filter(set, predicate)
     first
   end
 
@@ -34,5 +34,18 @@ defmodule Trie.NodeChildren do
 
   def filter(set, predicate) do
     foldl(set, [], &add_if(&2, &1, predicate))
+  end
+
+  def map_if([], _, _), do: []
+
+  def map_if([head | tail], predicate, mapper) do
+    fun = fn x, acc ->
+      case predicate.(x) do
+        true -> [mapper.(x) | acc]
+        _ -> acc
+      end
+    end
+
+    foldl(tail, fun.(head, []), fun)
   end
 end
