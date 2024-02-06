@@ -10,7 +10,7 @@ defmodule Trie.Node do
   @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word: any())
   @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word: any())
 
-  def insert(node, wordable, word) when trie_node(node, :x) == nil,
+  def insert(node, wordable, word) when trie_node(node, :x) == nil and is_list(wordable),
     do: trie_node(node, children: insert_child(children(node), wordable, word))
 
   def insert(node, [x], word) when trie_node(node, :x) == x and trie_node(node, :word) == nil,
@@ -36,7 +36,7 @@ defmodule Trie.Node do
   end
 
   defp insert_child([head | tail], [x], word) when trie_node(head, :x) != x,
-    do: [head | insert_child(tail, x, word)]
+    do: [head | insert_child(tail, [x], word)]
 
   defp insert_child([], [head | tail], word),
     do: [trie_node(x: head, children: insert_child(tail, word))]
@@ -57,8 +57,7 @@ defmodule Trie.Node do
 
   def search(node, prefix)
       when trie_node(node, :x) == nil,
-      do:
-        List.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
+      do: List.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
 
   def search(node, [])
       when trie_node(node, :word) == nil,
@@ -118,20 +117,20 @@ defmodule Trie.Node do
     end
   end
 
-  def remove(node, [wordable_head | wordable_tail]), do:
-    trie_node(
-      node,
-      children:
-        List.map_if(
-          children(node),
-          &node_x_filter(&1, wordable_head),
-          &remove(&1, wordable_tail)
-        )
-    )
-    |> remove_trash_children
+  def remove(node, [wordable_head | wordable_tail]),
+    do:
+      trie_node(
+        node,
+        children:
+          List.map_if(
+            children(node),
+            &node_x_filter(&1, wordable_head),
+            &remove(&1, wordable_tail)
+          )
+      )
+      |> remove_trash_children
 
-  defp find_child(node, x: x), do:
-    List.find(children(node), &node_x_filter(&1, x))
+  defp find_child(node, x: x), do: List.find(children(node), &node_x_filter(&1, x))
 
   defp remove_word(parent, child),
     do:

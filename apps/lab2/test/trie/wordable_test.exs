@@ -17,6 +17,14 @@ defmodule Trie.WordableTest do
     assert to_wordable("hełło") == [104, 101, 322, 322, 111]
   end
 
+  test "empty string" do
+    assert to_wordable("") == []
+  end
+
+  test "single char string" do
+    assert to_wordable("1") == [49]
+  end
+
   test "tuple is wordable" do
     assert to_wordable({1, 2}) == [1, 2]
   end

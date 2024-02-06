@@ -97,11 +97,12 @@ defmodule TrieTest do
     test "simple" do
       trie =
         Trie.new()
+        |> Trie.insert([4, 2])
         |> Trie.insert([1, 2, 3])
         |> Trie.insert([1, 2])
         |> Trie.insert([2, 3])
 
-      assert Trie.entries(trie) == [[1, 2], [1, 2, 3], [2, 3]]
+      assert Trie.entries(trie) == [[4, 2], [1, 2], [1, 2, 3], [2, 3]]
     end
 
     test "first word is stored" do
@@ -169,5 +170,47 @@ defmodule TrieTest do
       assert Trie.entries(trie) == []
       assert trie == Trie.new()
     end
+
+    test "add all" do
+      words = ["1", "2", "3"]
+
+      trie =
+        Trie.new()
+        |> Trie.add_all(words)
+
+      assert Trie.entries(trie) == words
+    end
+  end
+
+  describe "foldl" do
+    trie =
+      Trie.new()
+      |> Trie.add_all(["3", "2", "1"])
+
+    assert Trie.foldl(trie, [], &[&1 <> ")" | &2]) == ["1)", "2)", "3)"]
+  end
+
+  describe "foldr" do
+    trie =
+      Trie.new()
+      |> Trie.add_all(["3", "2", "1"])
+
+    assert Trie.foldr(trie, [], &[&1 <> ")" | &2]) == ["3)", "2)", "1)"]
+  end
+
+  describe "filter" do
+    trie =
+      Trie.new(["1", "2", "22222", {123}])
+      |> Trie.filter(&(not is_bitstring(&1)))
+
+    assert Trie.entries(trie) == [{123}]
+  end
+
+  describe "map" do
+    trie =
+      Trie.new(["1", "2", "3"])
+      |> Trie.map(&(&1 <> "."))
+
+    assert Trie.entries(trie) == ["1.", "2.", "3."]
   end
 end

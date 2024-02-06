@@ -24,6 +24,9 @@ defmodule Trie.List do
   def foldl([], acc, _), do: acc
   def foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
 
+  def foldr([], acc, _), do: acc
+  def foldr([head | tail], acc, fun), do: fun.(head, foldr(tail, acc, fun))
+
   def find([], _), do: nil
 
   def find(set, predicate) do
@@ -49,4 +52,6 @@ defmodule Trie.List do
 
     foldl(tail, fun.(head, []), fun)
   end
+
+  def map(list, mapper), do: foldl(list, [], &(&2 ++ [mapper.(&1)]))
 end

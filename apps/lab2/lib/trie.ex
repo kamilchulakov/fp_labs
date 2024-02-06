@@ -5,8 +5,8 @@ defmodule Trie do
   ### TODO:
   as trie:
   - [x] insert
-  - [x] entries
-  - [ ] search
+  - [ ] entries SHOUlD BE SORTED?
+  - [ ] search SHOUlD BE SORTED?
 
   - [x] wordable protocol
   - [-] ~~keyword list~~ (due to protocol implementation, I got no atom keys)
@@ -14,10 +14,13 @@ defmodule Trie do
 
   as set:
   - [x] add/remove
-  - [ ] map
-  - [ ] foldl
-  - [ ] foldr
-  - [ ] filter
+  - [x] add_all
+  - [x] map
+  - [x] foldl
+  - [x] foldr
+  - [x] filter
+
+  - [ ] specs
 
   - [ ] merge
   - [ ] equals
@@ -31,7 +34,9 @@ defmodule Trie do
 
   alias Trie.Node
   alias Trie.Wordable
+  alias Trie.List
 
+  @enforce_keys [:root]
   defstruct [:root]
 
   @typedoc """
@@ -50,6 +55,12 @@ defmodule Trie do
   @spec new() :: t()
   def new, do: %__MODULE__{root: Node.trie_node()}
 
+  @spec new(words :: list(word())) :: t()
+  def new(words),
+    do:
+      new()
+      |> add_all(words)
+
   @spec insert(trie :: t(), word :: word()) :: t()
   def insert(%__MODULE__{root: root}, word) do
     %__MODULE__{
@@ -66,7 +77,36 @@ defmodule Trie do
   @spec add(trie :: t(), word :: word()) :: t()
   def add(trie, word), do: insert(trie, word)
 
+  @spec add_all(trie :: t(), words :: list(word())) :: t()
+  def add_all(trie, words), do: List.foldl(words, trie, &add(&2, &1))
+
   @spec remove(trie :: t(), word :: word()) :: t()
   def remove(%__MODULE__{root: root}, word),
     do: %__MODULE__{root: Node.remove(root, Wordable.to_wordable(word))}
+
+  def foldl(trie, acc, fun) do
+    trie
+    |> entries
+    |> List.foldl(acc, fun)
+  end
+
+  def foldr(trie, acc, fun) do
+    trie
+    |> entries
+    |> List.foldr(acc, fun)
+  end
+
+  def filter(trie, predicate) do
+    trie
+    |> entries
+    |> List.filter(predicate)
+    |> Trie.new()
+  end
+
+  def map(trie, mapper) do
+    trie
+    |> entries
+    |> List.map(mapper)
+    |> Trie.new()
+  end
 end
