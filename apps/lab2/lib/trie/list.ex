@@ -1,9 +1,10 @@
-defmodule Trie.NodeChildren do
+defmodule Trie.List do
   @moduledoc """
   ### Operations
-  - find(set, predicate)
-  - filter(set, predicate)
-  - foldl(set, acc, fun)
+  - find(list, predicate)
+  - filter(list, predicate)
+  - foldl(list, acc, fun)
+  - map_if(list, predicate, mapper)
   """
 
   defp add_if([], x, predicate) do

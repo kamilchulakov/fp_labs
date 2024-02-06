@@ -2,7 +2,7 @@ defmodule Trie.Node do
   @moduledoc """
   Provides a node record with children set and is_end flag
   """
-  alias Trie.NodeChildren
+  alias Trie.List
   require Record
 
   Record.defrecord(:trie_node, x: nil, children: [], word: nil)
@@ -51,23 +51,23 @@ defmodule Trie.Node do
 
   def entries(node)
       when trie_node(node, :x) == nil,
-      do: NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
+      do: List.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
 
   def search(node, prefix \\ [])
 
   def search(node, prefix)
       when trie_node(node, :x) == nil,
       do:
-        NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
+        List.foldl(children(node), [], fn child, acc -> acc ++ search(child, prefix) end)
 
   def search(node, [])
       when trie_node(node, :word) == nil,
-      do: NodeChildren.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
+      do: List.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
 
   def search(node, [])
       when trie_node(node, :word) != nil,
       do:
-        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+        List.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
           acc ++ search(child)
         end)
 
@@ -86,28 +86,28 @@ defmodule Trie.Node do
   def search(node, [prefix_x])
       when trie_node(node, :x) == prefix_x and trie_node(node, :word) != nil,
       do:
-        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+        List.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
           acc ++ search(child)
         end)
 
   def search(node, [prefix_x])
       when trie_node(node, :x) == prefix_x and trie_node(node, :word) == nil,
       do:
-        NodeChildren.foldl(children(node), [], fn child, acc ->
+        List.foldl(children(node), [], fn child, acc ->
           acc ++ search(child)
         end)
 
   def search(node, [prefix_head | prefix_tail])
       when trie_node(node, :x) == prefix_head and trie_node(node, :word) != nil,
       do:
-        NodeChildren.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
+        List.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
           acc ++ search(child, prefix_tail)
         end)
 
   def search(node, [prefix_head | prefix_tail])
       when trie_node(node, :x) == prefix_head and trie_node(node, :word) == nil,
       do:
-        NodeChildren.foldl(children(node), [], fn child, acc ->
+        List.foldl(children(node), [], fn child, acc ->
           acc ++ search(child, prefix_tail)
         end)
 
@@ -118,27 +118,27 @@ defmodule Trie.Node do
     end
   end
 
-  def remove(node, [wordable_head | wordable_tail]),
-    do:
-      trie_node(
-        node,
-        children:
-          NodeChildren.map_if(
-            children(node),
-            &node_x_filter(&1, wordable_head),
-            &remove(&1, wordable_tail)
-          )
-      )
-      |> remove_trash_children
+  def remove(node, [wordable_head | wordable_tail]), do:
+    trie_node(
+      node,
+      children:
+        List.map_if(
+          children(node),
+          &node_x_filter(&1, wordable_head),
+          &remove(&1, wordable_tail)
+        )
+    )
+    |> remove_trash_children
 
-  defp find_child(node, x: x), do: NodeChildren.find(children(node), &node_x_filter(&1, x))
+  defp find_child(node, x: x), do:
+    List.find(children(node), &node_x_filter(&1, x))
 
   defp remove_word(parent, child),
     do:
       trie_node(
         parent,
         children:
-          NodeChildren.map_if(
+          List.map_if(
             children(parent),
             &node_x_filter(&1, trie_node(child, :x)),
             &trie_node(&1, word: nil)
@@ -154,8 +154,9 @@ defmodule Trie.Node do
     do:
       trie_node(
         node,
-        children: NodeChildren.filter(children(node), &(not trash_node(&1)))
+        children: List.filter(children(node), &(not trash_node(&1)))
       )
 
+  # although word can be `[nil]`, it can't be `nil`
   defp trash_node(node), do: trie_node(node, :word) == nil and trie_node(node, :children) == []
 end

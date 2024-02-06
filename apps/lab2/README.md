@@ -147,14 +147,15 @@ lib/trie/wordable.ex: Call to undefined function Trie.Wordable.Map.'__impl__'/1 
 - Kotlin сохраняет только первое слово
 ```kotlin
 data class Message(val text: String) {
-    override fun hashCode(): Int = 1
-    override fun equals(other: Any?) = true
+   override fun hashCode(): Int = 1
+   override fun equals(other: Any?) = true
 }
 
 fun main() {
-    val data = mutableSetOf(Message("haha"))
-    data.add(Message("hihi"))
-    println(data) // [Message(text=haha)]
-    println(data.any({ it.text == "hihi"})) // false
+   val data = mutableSetOf(Message("haha"))
+   data.add(Message("hihi"))
+   println(data) // [Message(text=haha)]
+   println(data.any({ it.text == "hihi"})) // false
+   println(data == mutableSetOf(Message("hihi"))) // true
 }
 ```
