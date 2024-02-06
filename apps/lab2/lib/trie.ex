@@ -100,13 +100,13 @@ defmodule Trie do
     trie
     |> entries
     |> List.filter(predicate)
-    |> Trie.new()
+    |> new
   end
 
   def map(trie, mapper) do
     trie
     |> entries
     |> List.map(mapper)
-    |> Trie.new()
+    |> new
   end
 end
