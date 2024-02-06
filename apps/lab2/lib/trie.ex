@@ -32,8 +32,8 @@ defmodule Trie do
   require Record
   require Trie.Node
 
-  alias Trie.Node
   alias Trie.List
+  alias Trie.Node
   alias Trie.Wordable
 
   @enforce_keys [:root]
