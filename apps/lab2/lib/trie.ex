@@ -5,8 +5,8 @@ defmodule Trie do
   ### TODO:
   as trie:
   - [x] insert
-  - [ ] entries SHOUlD BE SORTED?
-  - [ ] search SHOUlD BE SORTED?
+  - [x] entries
+  - [x] search
 
   - [x] wordable protocol
   - [-] ~~keyword list~~ (due to protocol implementation, I got no atom keys)

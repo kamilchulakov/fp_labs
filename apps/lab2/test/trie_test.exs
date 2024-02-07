@@ -77,7 +77,11 @@ defmodule TrieTest do
             Node.trie_node(
               x: 2,
               children: [
-                Node.trie_node(x: 3, word: [2, 3])
+                Node.trie_node(
+                  x: 3,
+                  word: [2, 3],
+                  children: [Node.trie_node(x: 4, word: [2, 3, 4])]
+                )
               ]
             )
           ]
@@ -85,6 +89,7 @@ defmodule TrieTest do
 
       trie =
         Trie.new()
+        |> Trie.insert([2, 3, 4])
         |> Trie.insert([1, 2, 3])
         |> Trie.insert([1, 2])
         |> Trie.insert([2, 3])
@@ -102,7 +107,7 @@ defmodule TrieTest do
         |> Trie.insert([1, 2])
         |> Trie.insert([2, 3])
 
-      assert Trie.entries(trie) == [[4, 2], [1, 2], [1, 2, 3], [2, 3]]
+      assert Trie.entries(trie) == [[1, 2], [1, 2, 3], [2, 3], [4, 2]]
     end
 
     test "first word is stored" do
@@ -141,6 +146,12 @@ defmodule TrieTest do
 
       assert Trie.entries(trie) == [123]
     end
+
+    test "entries are sorted" do
+      trie = Trie.new(["b", "abc", "a", "ab", "d", "cd", "c"])
+
+      assert Trie.entries(trie) == ["a", "ab", "abc", "b", "c", "cd", "d"]
+    end
   end
 
   describe "search" do
@@ -149,10 +160,15 @@ defmodule TrieTest do
         Trie.new()
         |> Trie.insert({104, 101, 322, 322, 111})
         |> Trie.insert([1, 2, 3])
+        |> Trie.insert({104, 101, 105})
         |> Trie.insert([104, 101])
         |> Trie.insert("hełło")
 
-      assert Trie.search(trie, [104, 101]) == [[104, 101], {104, 101, 322, 322, 111}]
+      assert Trie.search(trie, [104, 101]) == [
+               [104, 101],
+               {104, 101, 105},
+               {104, 101, 322, 322, 111}
+             ]
     end
   end
 
@@ -187,7 +203,7 @@ defmodule TrieTest do
       Trie.new()
       |> Trie.add_all(["3", "2", "1"])
 
-    assert Trie.foldl(trie, [], &[&1 <> ")" | &2]) == ["1)", "2)", "3)"]
+    assert Trie.foldl(trie, [], &[&1 <> ")" | &2]) == ["3)", "2)", "1)"]
   end
 
   describe "foldr" do
@@ -195,7 +211,7 @@ defmodule TrieTest do
       Trie.new()
       |> Trie.add_all(["3", "2", "1"])
 
-    assert Trie.foldr(trie, [], &[&1 <> ")" | &2]) == ["3)", "2)", "1)"]
+    assert Trie.foldr(trie, [], &[&1 <> ")" | &2]) == ["1)", "2)", "3)"]
   end
 
   describe "filter" do

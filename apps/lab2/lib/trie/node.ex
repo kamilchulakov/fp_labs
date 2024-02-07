@@ -35,6 +35,9 @@ defmodule Trie.Node do
     children
   end
 
+  defp insert_child(children = [head | _], [x], word) when trie_node(head, :x) > x,
+    do: [word_node(x, word) | children]
+
   defp insert_child([head | tail], [x], word) when trie_node(head, :x) != x,
     do: [head | insert_child(tail, [x], word)]
 
@@ -44,6 +47,10 @@ defmodule Trie.Node do
   defp insert_child([head_child | tail_child], [head_x | tail_x], word)
        when trie_node(head_child, :x) == head_x,
        do: [insert(head_child, [head_x | tail_x], word) | tail_child]
+
+  defp insert_child(children = [head_child | _], wordable = [head_x | _], word)
+       when trie_node(head_child, :x) > head_x,
+       do: [insert(trie_node(x: head_x), wordable, word) | children]
 
   defp insert_child([head_child | tail_child], [head_x | tail_x], word)
        when trie_node(head_child, :x) != head_x,
