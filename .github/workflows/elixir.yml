@@ -40,7 +40,7 @@ jobs:
     name: Check test coverage
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ ! endsWith(${BRANCH_NAME}, 'master') }}
+    if: ${{ ! endsWith(github.ref, 'master') }}
     
     steps:
     - uses: actions/checkout@v3
