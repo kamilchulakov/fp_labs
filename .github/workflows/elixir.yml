@@ -42,7 +42,9 @@ jobs:
     if: ${{ ! equals(${BRANCH_NAME}, 'master') }}
     
     steps:
-    - Run tests
+    - name: Go to current app
+      run: cd apps/${BRANCH_NAME}
+    - name: Run tests
       run: mix test --cover --export-coverage default
-    - Run coverage check
+    - name: Run coverage check
       run: mix test.coverage
