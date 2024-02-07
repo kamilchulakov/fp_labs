@@ -137,6 +137,22 @@ defmodule Trie.Node do
       )
       |> remove_trash_children
 
+  def equals?(node, other) when trie_node(node, :x) != trie_node(other, :x), do: false
+  def equals?(node, other) when trie_node(node, :word) != trie_node(other, :word), do: false
+  def equals?(node, other), do: equals_children?(children(node), children(other))
+
+  defp equals_children?([], []), do: true
+  defp equals_children?(_, []), do: false
+  defp equals_children?([], _), do: false
+
+  defp equals_children?([head | tail], [other_head | other_tail]) do
+    if equals?(head, other_head) do
+      equals_children?(tail, other_tail)
+    else
+      false
+    end
+  end
+
   defp find_child(node, x: x), do: List.find(children(node), &node_x_filter(&1, x))
 
   defp remove_word(parent, child),

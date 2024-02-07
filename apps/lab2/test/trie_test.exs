@@ -198,7 +198,7 @@ defmodule TrieTest do
     end
   end
 
-  describe "foldl" do
+  test "foldl" do
     trie =
       Trie.new()
       |> Trie.add_all(["3", "2", "1"])
@@ -206,7 +206,7 @@ defmodule TrieTest do
     assert Trie.foldl(trie, [], &[&1 <> ")" | &2]) == ["3)", "2)", "1)"]
   end
 
-  describe "foldr" do
+  test "foldr" do
     trie =
       Trie.new()
       |> Trie.add_all(["3", "2", "1"])
@@ -214,7 +214,7 @@ defmodule TrieTest do
     assert Trie.foldr(trie, [], &[&1 <> ")" | &2]) == ["1)", "2)", "3)"]
   end
 
-  describe "filter" do
+  test "filter" do
     trie =
       Trie.new(["1", "2", "22222", {123}])
       |> Trie.filter(&(not is_bitstring(&1)))
@@ -222,11 +222,35 @@ defmodule TrieTest do
     assert Trie.entries(trie) == [{123}]
   end
 
-  describe "map" do
+  test "map" do
     trie =
       Trie.new(["1", "2", "3"])
       |> Trie.map(&(&1 <> "."))
 
     assert Trie.entries(trie) == ["1.", "2.", "3."]
+  end
+
+  test "merge" do
+    trie =
+      Trie.new(["a", "lot", "of", "words"])
+      |> Trie.merge(Trie.new(["3", "more", "words"]))
+
+    assert Trie.entries(trie) == ["3", "a", "lot", "more", "of", "words"]
+  end
+
+  describe "equals" do
+    test "same wordable" do
+      trie = Trie.new(["hełło"])
+      other = Trie.new([:hełło])
+
+      assert Trie.equals?(trie, other) == false
+    end
+
+    test "same words" do
+      trie = Trie.new([" ", "Equivalence", "..."])
+      other = Trie.new(["Equivalence", " ", "..."])
+
+      assert Trie.equals?(trie, other) == true
+    end
   end
 end

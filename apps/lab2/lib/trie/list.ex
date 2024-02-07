@@ -4,22 +4,10 @@ defmodule Trie.List do
   - find(list, predicate)
   - filter(list, predicate)
   - foldl(list, acc, fun)
+  - map(list, mapper)
   - map_if(list, predicate, mapper)
+  - merge(list, other)
   """
-
-  defp add_if([], x, predicate) do
-    case predicate.(x) do
-      true -> [x]
-      false -> []
-    end
-  end
-
-  defp add_if([set], x, predicate) do
-    case predicate.(x) do
-      true -> [set, x]
-      false -> [set]
-    end
-  end
 
   def foldl([], acc, _), do: acc
   def foldl([head | tail], acc, fun), do: foldl(tail, fun.(head, acc), fun)
@@ -54,4 +42,20 @@ defmodule Trie.List do
   end
 
   def map(list, mapper), do: foldl(list, [], &(&2 ++ [mapper.(&1)]))
+
+  def merge(list, other), do: list ++ other
+
+  defp add_if([], x, predicate) do
+    case predicate.(x) do
+      true -> [x]
+      false -> []
+    end
+  end
+
+  defp add_if([set], x, predicate) do
+    case predicate.(x) do
+      true -> [set, x]
+      false -> [set]
+    end
+  end
 end

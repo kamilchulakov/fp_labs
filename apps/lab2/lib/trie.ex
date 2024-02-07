@@ -22,8 +22,8 @@ defmodule Trie do
 
   - [ ] specs
 
-  - [ ] merge
-  - [ ] equals
+  - [x] merge
+  - [x] equals
 
   ### Links
     - https://en.wikipedia.org/wiki/Trie
@@ -108,5 +108,15 @@ defmodule Trie do
     |> entries
     |> List.map(mapper)
     |> new
+  end
+
+  def merge(trie, other) do
+    trie
+    |> add_all(entries(other))
+  end
+
+  def equals?(%__MODULE__{root: root}, %__MODULE__{root: other_root}) do
+    root
+    |> Node.equals?(other_root)
   end
 end
