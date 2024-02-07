@@ -33,3 +33,16 @@ jobs:
       run: mix gradient
     - name: Run tests
       run: mix test
+
+  coverage:
+    name: Check test coverage
+    needs: build
+    if: ${{ ! endsWith(github.ref, 'master') }}
+    
+    steps:
+    - Go to current app
+      run: cd apps/${GITHUB_REF##*/}
+    - Run tests
+      run: mix test --cover --export-coverage default
+    - Run coverage check
+      run: mix test.coverage
