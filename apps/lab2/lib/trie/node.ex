@@ -10,8 +10,9 @@ defmodule Trie.Node do
   @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word: any())
   @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word: any())
 
-  def insert(node, wordable, word) when trie_node(node, :x) == nil and is_list(wordable),
-    do: trie_node(node, children: insert_child(children(node), wordable, word))
+  def insert(node, wordable, word)
+      when trie_node(node, :x) == nil and is_list(wordable) and length(wordable) != 0,
+      do: trie_node(node, children: insert_child(children(node), wordable, word))
 
   def insert(node, [x], word) when trie_node(node, :x) == x and trie_node(node, :word) == nil,
     do: trie_node(node, word: word)

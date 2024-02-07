@@ -58,6 +58,27 @@ defmodule TrieTest do
       assert trie == expected_trie
     end
 
+    test "empty string" do
+      assert_raise FunctionClauseError, fn ->
+        Trie.new()
+        |> Trie.insert("")
+      end
+    end
+
+    test "empty list" do
+      assert_raise FunctionClauseError, fn ->
+        Trie.new()
+        |> Trie.insert([])
+      end
+    end
+
+    test "empty tuple" do
+      assert_raise FunctionClauseError, fn ->
+        Trie.new()
+        |> Trie.insert({})
+      end
+    end
+
     test "multiple" do
       expected_root =
         Node.trie_node(
