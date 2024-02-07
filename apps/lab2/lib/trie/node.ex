@@ -25,7 +25,9 @@ defmodule Trie.Node do
   def insert(node, [head | tail], word) when trie_node(node, :x) == head,
     do: trie_node(node, children: insert_child(children(node), tail, word))
 
-  @spec insert_child(children :: [trie_node()], wordable :: list(), word :: Wordable.t()) :: [trie_node()]
+  @spec insert_child(children :: [trie_node()], wordable :: list(), word :: Wordable.t()) :: [
+          trie_node()
+        ]
   defp insert_child(children \\ [], wordable, word)
 
   defp insert_child([], [x], word), do: [word_node(x, word)]
@@ -142,7 +144,8 @@ defmodule Trie.Node do
   def equals?(node, other) when trie_node(node, :word) != trie_node(other, :word), do: false
   def equals?(node, other), do: equals_children?(children(node), children(other))
 
-  @spec equals_children?(node_children :: [trie_node()], other_children :: [trie_node()]) :: boolean()
+  @spec equals_children?(node_children :: [trie_node()], other_children :: [trie_node()]) ::
+          boolean()
   defp equals_children?([], []), do: true
   defp equals_children?(_, []), do: false
   defp equals_children?([], _), do: false
