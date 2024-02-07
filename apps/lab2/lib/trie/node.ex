@@ -2,8 +2,8 @@ defmodule Trie.Node do
   @moduledoc """
   Provides a node record with children set and is_end flag
   """
-  alias Trie.Wordable
   alias Trie.List
+  alias Trie.Wordable
   require Record
 
   Record.defrecord(:trie_node, x: nil, children: [], word: nil)
