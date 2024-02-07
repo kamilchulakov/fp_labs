@@ -170,6 +170,12 @@ defmodule TrieTest do
                {104, 101, 322, 322, 111}
              ]
     end
+
+    test "empty trie" do
+      trie = Trie.new()
+
+      assert Trie.search(trie, "w") == []
+    end
   end
 
   describe "add/remove" do
@@ -251,6 +257,25 @@ defmodule TrieTest do
       other = Trie.new(["Equivalence", " ", "..."])
 
       assert Trie.equals?(trie, other) == true
+    end
+
+    test "empty tries" do
+      assert Trie.equals?(Trie.new(), Trie.new()) == true
+    end
+
+    test "empty trie and non-empty trie" do
+      assert Trie.equals?(Trie.new(), Trie.new(["word"])) == false
+    end
+
+    test "non-empty trie and empty trie" do
+      assert Trie.equals?(Trie.new(["word"]), Trie.new()) == false
+    end
+
+    test "different tries" do
+      trie = Trie.new(["1231313", "0000000"])
+      other = Trie.new([:hełło])
+
+      assert Trie.equals?(trie, other) == false
     end
   end
 end
