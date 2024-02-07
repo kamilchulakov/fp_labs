@@ -104,14 +104,7 @@ defmodule Trie.Node do
         end)
 
   def search(node, [prefix_head | prefix_tail])
-      when trie_node(node, :x) == prefix_head and trie_node(node, :word) != nil,
-      do:
-        List.foldl(children(node), [trie_node(node, :word)], fn child, acc ->
-          acc ++ search(child, prefix_tail)
-        end)
-
-  def search(node, [prefix_head | prefix_tail])
-      when trie_node(node, :x) == prefix_head and trie_node(node, :word) == nil,
+      when trie_node(node, :x) == prefix_head,
       do:
         List.foldl(children(node), [], fn child, acc ->
           acc ++ search(child, prefix_tail)
@@ -144,7 +137,6 @@ defmodule Trie.Node do
   defp equals_children?([], []), do: true
   defp equals_children?(_, []), do: false
   defp equals_children?([], _), do: false
-
   defp equals_children?([head | tail], [other_head | other_tail]) do
     if equals?(head, other_head) do
       equals_children?(tail, other_tail)

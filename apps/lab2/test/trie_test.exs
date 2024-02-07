@@ -176,6 +176,21 @@ defmodule TrieTest do
 
       assert Trie.search(trie, "w") == []
     end
+
+    test "many words" do
+      trie =
+        Trie.new()
+        |> Trie.add_all(["fruits", "flowers", "forest"])
+        |> Trie.add_all(["yellow", "red", "green"])
+        |> Trie.add_all(["lemons", "roses", "tree"])
+        |> Trie.add_all(["yellow lemons", "red roses", "green tree"])
+        |> Trie.add_all(["yellow lemons are fruits", "red roses are flowers", "green tree in the forest"])
+        |> Trie.add("forest full of green trees")
+        |> Trie.add_all(["yes", "please", "for"])
+
+      assert Trie.search(trie, "yellow") == ["yellow", "yellow lemons", "yellow lemons are fruits"]
+      assert Trie.search(trie, "forest") == ["forest", "forest full of green trees"]
+    end
   end
 
   describe "add/remove" do
@@ -191,6 +206,12 @@ defmodule TrieTest do
 
       assert Trie.entries(trie) == []
       assert trie == Trie.new()
+    end
+
+    test "remove on empty trie" do
+      trie = Trie.new()
+
+      assert Trie.remove(trie, " ") == Trie.new()
     end
 
     test "add all" do
