@@ -137,6 +137,7 @@ defmodule Trie.Node do
   defp equals_children?([], []), do: true
   defp equals_children?(_, []), do: false
   defp equals_children?([], _), do: false
+
   defp equals_children?([head | tail], [other_head | other_tail]) do
     if equals?(head, other_head) do
       equals_children?(tail, other_tail)

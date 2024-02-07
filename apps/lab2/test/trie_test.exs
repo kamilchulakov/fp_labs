@@ -184,11 +184,20 @@ defmodule TrieTest do
         |> Trie.add_all(["yellow", "red", "green"])
         |> Trie.add_all(["lemons", "roses", "tree"])
         |> Trie.add_all(["yellow lemons", "red roses", "green tree"])
-        |> Trie.add_all(["yellow lemons are fruits", "red roses are flowers", "green tree in the forest"])
+        |> Trie.add_all([
+          "yellow lemons are fruits",
+          "red roses are flowers",
+          "green tree in the forest"
+        ])
         |> Trie.add("forest full of green trees")
         |> Trie.add_all(["yes", "please", "for"])
 
-      assert Trie.search(trie, "yellow") == ["yellow", "yellow lemons", "yellow lemons are fruits"]
+      assert Trie.search(trie, "yellow") == [
+               "yellow",
+               "yellow lemons",
+               "yellow lemons are fruits"
+             ]
+
       assert Trie.search(trie, "forest") == ["forest", "forest full of green trees"]
     end
   end
