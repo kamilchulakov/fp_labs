@@ -2,6 +2,7 @@ defmodule Trie.Node do
   @moduledoc """
   Provides a node record with children set and is_end flag
   """
+  alias Trie.Wordable
   alias Trie.List
   require Record
 
@@ -10,6 +11,7 @@ defmodule Trie.Node do
   @type trie_node :: record(:trie_node, x: any(), children: [trie_node], word: any())
   @type trie_node(x) :: record(:trie_node, x: x, children: [trie_node(x)], word: any())
 
+  @spec insert(node :: trie_node(), wordable :: list(), word :: Wordable.t()) :: trie_node()
   def insert(node, wordable, word)
       when trie_node(node, :x) == nil and is_list(wordable) and length(wordable) != 0,
       do: trie_node(node, children: insert_child(children(node), wordable, word))
@@ -23,6 +25,7 @@ defmodule Trie.Node do
   def insert(node, [head | tail], word) when trie_node(node, :x) == head,
     do: trie_node(node, children: insert_child(children(node), tail, word))
 
+  @spec insert_child(children :: [trie_node()], wordable :: list(), word :: Wordable.t()) :: [trie_node()]
   defp insert_child(children \\ [], wordable, word)
 
   defp insert_child([], [x], word), do: [word_node(x, word)]
@@ -57,10 +60,12 @@ defmodule Trie.Node do
        when trie_node(head_child, :x) != head_x,
        do: [head_child | insert_child(tail_child, [head_x | tail_x], word)]
 
+  @spec entries(node :: trie_node()) :: [any()]
   def entries(node)
       when trie_node(node, :x) == nil,
       do: List.foldl(children(node), [], fn child, acc -> acc ++ search(child) end)
 
+  @spec search(node :: trie_node(), prefix :: list()) :: [any()]
   def search(node, prefix \\ [])
 
   def search(node, prefix)
@@ -111,6 +116,7 @@ defmodule Trie.Node do
           acc ++ search(child, prefix_tail)
         end)
 
+  @spec remove(node :: trie_node(), word :: list()) :: trie_node()
   def remove(node, [wordable_head]) do
     case find_child(node, x: wordable_head) do
       nil -> node
@@ -131,10 +137,12 @@ defmodule Trie.Node do
       )
       |> remove_trash_children
 
+  @spec equals?(node :: trie_node(), other :: trie_node()) :: boolean()
   def equals?(node, other) when trie_node(node, :x) != trie_node(other, :x), do: false
   def equals?(node, other) when trie_node(node, :word) != trie_node(other, :word), do: false
   def equals?(node, other), do: equals_children?(children(node), children(other))
 
+  @spec equals_children?(node_children :: [trie_node()], other_children :: [trie_node()]) :: boolean()
   defp equals_children?([], []), do: true
   defp equals_children?(_, []), do: false
   defp equals_children?([], _), do: false
@@ -147,8 +155,10 @@ defmodule Trie.Node do
     end
   end
 
+  @spec find_child(node :: trie_node(), x :: any()) :: trie_node() | nil
   defp find_child(node, x: x), do: List.find(children(node), &node_x_filter(&1, x))
 
+  @spec remove_word(parent :: trie_node(), child :: trie_node()) :: trie_node()
   defp remove_word(parent, child),
     do:
       trie_node(

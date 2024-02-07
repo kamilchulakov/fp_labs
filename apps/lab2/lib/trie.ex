@@ -20,10 +20,10 @@ defmodule Trie do
   - [x] foldr
   - [x] filter
 
-  - [ ] specs
-
   - [x] merge
   - [x] equals
+
+  - [ ] property tests
 
   ### Links
     - https://en.wikipedia.org/wiki/Trie
@@ -84,18 +84,21 @@ defmodule Trie do
   def remove(%__MODULE__{root: root}, word),
     do: %__MODULE__{root: Node.remove(root, Wordable.to_wordable(word))}
 
+  @spec foldl(trie :: t(), acc :: any(), fun :: function()) :: any()
   def foldl(trie, acc, fun) do
     trie
     |> entries
     |> List.foldl(acc, fun)
   end
 
+  @spec foldr(trie :: t(), acc :: any(), fun :: function()) :: any()
   def foldr(trie, acc, fun) do
     trie
     |> entries
     |> List.foldr(acc, fun)
   end
 
+  @spec filter(trie :: t(), predicate :: function()) :: t()
   def filter(trie, predicate) do
     trie
     |> entries
@@ -103,6 +106,7 @@ defmodule Trie do
     |> new
   end
 
+  @spec map(trie :: t(), mapper :: function()) :: t()
   def map(trie, mapper) do
     trie
     |> entries
@@ -110,11 +114,13 @@ defmodule Trie do
     |> new
   end
 
+  @spec merge(trie :: t(), other :: t()) :: t()
   def merge(trie, other) do
     trie
     |> add_all(entries(other))
   end
 
+  @spec equals?(trie :: t(), other :: t()) :: boolean()
   def equals?(%__MODULE__{root: root}, %__MODULE__{root: other_root}) do
     root
     |> Node.equals?(other_root)
