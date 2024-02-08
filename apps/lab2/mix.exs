@@ -25,7 +25,8 @@ defmodule Lab2.MixProject do
     [
       {:gradient, github: "esl/gradient", only: :dev, runtime: false},
       {:benchee, "~> 1.2.0", only: :dev},
-      {:benchee_dsl, "~> 0.5", only: :dev}
+      {:benchee_dsl, "~> 0.5", only: :dev},
+      {:stream_data, "~> 0.6", only: :test}
     ]
   end
 end

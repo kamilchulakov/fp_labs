@@ -161,3 +161,4 @@ fun main() {
 ```
 
 - entries are sorted, if guard matches (when it is allowed by type)
+- https://en.wikipedia.org/wiki/Monoid
