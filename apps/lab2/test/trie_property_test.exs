@@ -3,7 +3,7 @@ defmodule TriePropertyTest do
   use ExUnitProperties
 
   property "Identity element" do
-    check all trie <- trie_generator() do
+    check all(trie <- trie_generator()) do
       empty_trie = Trie.new()
 
       assert Trie.equals?(Trie.merge(empty_trie, trie), trie)
@@ -12,16 +12,16 @@ defmodule TriePropertyTest do
   end
 
   property "Associativity" do
-    check all trie1 <- trie_generator(), trie2 <- trie_generator(), trie3 <- trie_generator() do
+    check all(trie1 <- trie_generator(), trie2 <- trie_generator(), trie3 <- trie_generator()) do
       assert Trie.equals?(
-        Trie.merge(Trie.merge(trie1, trie2), trie3),
-        Trie.merge(trie1, Trie.merge(trie2, trie3))
-      )
+               Trie.merge(Trie.merge(trie1, trie2), trie3),
+               Trie.merge(trie1, Trie.merge(trie2, trie3))
+             )
     end
   end
 
   property "Sorted entries" do
-    check all trie <- trie_generator() do
+    check all(trie <- trie_generator()) do
       entries = Trie.entries(trie)
 
       assert entries == Enum.sort_by(entries, &Integer.digits/1)
@@ -29,7 +29,7 @@ defmodule TriePropertyTest do
   end
 
   defp trie_generator do
-    gen all words <- list_of(integer()) do
+    gen all(words <- list_of(integer())) do
       Trie.new(words)
     end
   end
