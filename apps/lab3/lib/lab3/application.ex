@@ -8,8 +8,9 @@ defmodule Lab3.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Lab3.Worker.start_link(arg)
-      # {Lab3.Worker, arg}
+      {Lab3.Producer, 0},
+      {Lab3.ProducerConsumer, []},
+      {Lab3.Consumer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
