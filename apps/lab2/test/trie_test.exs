@@ -168,10 +168,22 @@ defmodule TrieTest do
       assert Trie.entries(trie) == [123]
     end
 
-    test "entries are sorted" do
+    test "string entries are sorted" do
       trie = Trie.new(["b", "abc", "a", "ab", "d", "cd", "c"])
 
       assert Trie.entries(trie) == ["a", "ab", "abc", "b", "c", "cd", "d"]
+    end
+
+    test "positive integer entries are sorted" do
+      trie = Trie.new([2, 11, 121])
+
+      assert Trie.entries(trie) == [11, 121, 2]
+    end
+
+    test "negative integer entries are sorted" do
+      trie = Trie.new([-2, -11, -121])
+
+      assert Trie.entries(trie) == [-2, -121, -11]
     end
   end
 

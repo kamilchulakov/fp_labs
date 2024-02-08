@@ -24,7 +24,7 @@ defmodule TriePropertyTest do
     check all trie <- trie_generator() do
       entries = Trie.entries(trie)
 
-      assert entries == Enum.sort(entries)
+      assert entries == Enum.sort_by(entries, &Integer.digits/1)
     end
   end
 
