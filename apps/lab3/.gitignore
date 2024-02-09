@@ -24,3 +24,6 @@ lab3-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore executable (built via "mix escript.build")
+/lab3

@@ -86,3 +86,9 @@ o o o o o o . . x x x
 > GenStage.PartitionDispatcher - dispatches all events to a fixed amount of consumers that works as partitions according to a hash function.
 
 - https://medium.com/@andreichernykh/elixir-a-few-things-about-genstage-id-wish-to-knew-some-time-ago-b826ca7d48ba
+
+- https://medium.com/blackode/writing-the-command-line-application-in-elixir-78a8d1b1850
+
+## Build and run
+- `mix escript.build`
+- `./lab3 --window  5`

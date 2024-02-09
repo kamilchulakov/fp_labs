@@ -5,10 +5,19 @@ defmodule Lab3.Application do
 
   use Application
 
+  def main(args) do
+    start(:normal, args)
+    :timer.sleep(:infinity)
+  end
+
   @impl true
-  def start(_type, _args) do
+  def start(_type, args) do
+    config = Lab3.Config.new(args)
+
+    IO.inspect(config)
+
     children = [
-      {Lab3.Producer, 0},
+      {Lab3.Producer, config.window},
       {Lab3.ProducerConsumer, []},
       {Lab3.Consumer, []}
     ]
