@@ -7,11 +7,11 @@ defmodule Lab3.Stage.Producer do
 
   def init(counter), do: {:producer, counter}
 
+  # Produces 1 point at a time
   def handle_demand(demand, state) when demand == 1 do
-    point1 = read_point()
-    point2 = read_point()
+    point = read_point()
 
-    {:noreply, [[point1, point2]], state}
+    {:noreply, [point], state}
   end
 
   defp read_point do

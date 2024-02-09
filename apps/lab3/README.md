@@ -91,7 +91,7 @@ o o o o o o . . x x x
 - https://medium.com/blackode/writing-the-command-line-application-in-elixir-78a8d1b1850
 
 - `mix escript.build`
-- `./lab3 --window  5`
+- `./lab3 --window 5 --step 0.5`
 
 ## Problems
 No float range in Elixir :( (and Erlang)
