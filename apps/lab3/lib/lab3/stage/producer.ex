@@ -1,4 +1,4 @@
-defmodule Lab3.Producer do
+defmodule Lab3.Stage.Producer do
   use GenStage
 
   def start_link(state) do

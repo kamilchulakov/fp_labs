@@ -17,9 +17,9 @@ defmodule Lab3.Application do
     IO.inspect(config)
 
     children = [
-      {Lab3.Producer, config.window},
-      {Lab3.ProducerConsumer, []},
-      {Lab3.Consumer, []}
+      {Lab3.Stage.Producer, config.window},
+      {Lab3.Stage.ProducerConsumer, []},
+      {Lab3.Stage.Consumer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

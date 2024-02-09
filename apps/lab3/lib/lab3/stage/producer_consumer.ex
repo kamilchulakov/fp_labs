@@ -1,4 +1,4 @@
-defmodule Lab3.ProducerConsumer do
+defmodule Lab3.Stage.ProducerConsumer do
   use GenStage
 
   require Integer
@@ -8,7 +8,7 @@ defmodule Lab3.ProducerConsumer do
   end
 
   def init(state) do
-    {:producer_consumer, state, subscribe_to: [{Lab3.Producer, max_demand: 1}]}
+    {:producer_consumer, state, subscribe_to: [{Lab3.Stage.Producer, max_demand: 1}]}
   end
 
   def handle_events(events, _from, state) do

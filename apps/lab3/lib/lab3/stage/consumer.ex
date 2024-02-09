@@ -1,4 +1,4 @@
-defmodule Lab3.Consumer do
+defmodule Lab3.Stage.Consumer do
   use GenStage
 
   def start_link(_initial) do
@@ -6,7 +6,7 @@ defmodule Lab3.Consumer do
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [Lab3.ProducerConsumer]}
+    {:consumer, state, subscribe_to: [Lab3.Stage.ProducerConsumer]}
   end
 
   def handle_events(events, _from, state) do
