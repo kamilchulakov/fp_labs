@@ -1,4 +1,8 @@
 defmodule Lab3.Util.Window do
+  @moduledoc """
+  Struct to operate with fixed size list.
+  """
+
   @enforce_keys [:size]
   defstruct [:size, elements: []]
 

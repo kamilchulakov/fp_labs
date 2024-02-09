@@ -1,11 +1,13 @@
 defmodule Lab3.Stage.ProducerConsumer do
+  @moduledoc """
+  Stage for handling events and emitting interpolation results.
+  """
+
   use GenStage
 
-  alias Lab3.Util.Window
   alias Lab3.Interpolation.Linear
   alias Lab3.Stage.ProducerConsumer.State
-
-  require Integer
+  alias Lab3.Util.Window
 
   def start_link(step) do
     GenStage.start_link(__MODULE__, State.new(step), name: __MODULE__)
@@ -28,6 +30,10 @@ defmodule Lab3.Stage.ProducerConsumer do
 end
 
 defmodule Lab3.Stage.ProducerConsumer.State do
+  @moduledoc """
+  Struct to store state.
+  """
+
   alias Lab3.Util.Window
 
   @enforce_keys [:step]

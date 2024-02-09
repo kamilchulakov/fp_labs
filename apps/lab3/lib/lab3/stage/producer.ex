@@ -1,4 +1,8 @@
 defmodule Lab3.Stage.Producer do
+  @moduledoc """
+  Stage for handling input and emitting events.
+  """
+
   use GenStage
 
   def start_link(state) do

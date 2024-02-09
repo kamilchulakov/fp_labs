@@ -14,8 +14,6 @@ defmodule Lab3.Application do
   def start(_type, args) do
     config = Lab3.Config.new(args)
 
-    IO.inspect(config)
-
     children = [
       {Lab3.Stage.Producer, config.window},
       {Lab3.Stage.ProducerConsumer, config.step},

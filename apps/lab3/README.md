@@ -80,8 +80,10 @@ o o o o o o . . x x x
 - https://elixirschool.com/en/lessons/data_processing/genstage
 
 - `producer`: обработка входного потока
-- `producer_consumer`: алгоритм аппроксимации
+- `producer_consumer`: алгоритмы аппроксимации
 - `consumer`: печать выходных данных
+
+[producer] -> [producer_consumer] -> [consumer]
 
 > GenStage.PartitionDispatcher - dispatches all events to a fixed amount of consumers that works as partitions according to a hash function.
 

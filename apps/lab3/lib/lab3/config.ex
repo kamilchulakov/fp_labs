@@ -1,4 +1,8 @@
 defmodule Lab3.Config do
+  @moduledoc """
+  Struct to store config.
+  """
+
   @enforce_keys [:step]
   defstruct [:step, window: 5]
 
