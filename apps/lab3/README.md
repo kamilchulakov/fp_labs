@@ -87,8 +87,12 @@ o o o o o o . . x x x
 
 - https://medium.com/@andreichernykh/elixir-a-few-things-about-genstage-id-wish-to-knew-some-time-ago-b826ca7d48ba
 
+## Build and run
 - https://medium.com/blackode/writing-the-command-line-application-in-elixir-78a8d1b1850
 
-## Build and run
 - `mix escript.build`
 - `./lab3 --window  5`
+
+## Problems
+No float range in Elixir :( (and Erlang)
+- https://stackoverflow.com/questions/34383303/range-of-floating-point-numbers

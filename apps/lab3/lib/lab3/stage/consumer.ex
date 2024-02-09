@@ -10,9 +10,7 @@ defmodule Lab3.Stage.Consumer do
   end
 
   def handle_events(events, _from, state) do
-    for event <- events do
-      IO.puts("Consumed: " <> event)
-    end
+    IO.inspect(events)
 
     # As a consumer we never emit events
     {:noreply, [], state}

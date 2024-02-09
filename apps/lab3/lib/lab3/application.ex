@@ -18,7 +18,7 @@ defmodule Lab3.Application do
 
     children = [
       {Lab3.Stage.Producer, config.window},
-      {Lab3.Stage.ProducerConsumer, []},
+      {Lab3.Stage.ProducerConsumer, config.step},
       {Lab3.Stage.Consumer, []}
     ]
 

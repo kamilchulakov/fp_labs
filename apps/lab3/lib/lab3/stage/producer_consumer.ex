@@ -1,21 +1,21 @@
 defmodule Lab3.Stage.ProducerConsumer do
   use GenStage
 
+  alias Lab3.Interpolation.Linear
+
   require Integer
 
-  def start_link(_initial) do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
+  def start_link(step) do
+    GenStage.start_link(__MODULE__, step, name: __MODULE__)
   end
 
   def init(state) do
     {:producer_consumer, state, subscribe_to: [{Lab3.Stage.Producer, max_demand: 1}]}
   end
 
-  def handle_events(events, _from, state) do
-    for event <- events do
-      IO.puts("Handled: " <> event)
-    end
+  def handle_events([points], _from, step) when length(points) == 2 do
+    result = Linear.interpolate(points, step)
 
-    {:noreply, events, state}
+    {:noreply, [result], step}
   end
 end
