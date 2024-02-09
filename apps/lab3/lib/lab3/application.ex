@@ -15,8 +15,8 @@ defmodule Lab3.Application do
     config = Lab3.Config.new(args)
 
     children = [
-      {Lab3.Stage.Producer, config.window},
-      {Lab3.Stage.ProducerConsumer, config.step},
+      {Lab3.Stage.Producer, []},
+      {Lab3.Stage.ProducerConsumer, [step: config.step, window: config.window]},
       {Lab3.Stage.Consumer, []}
     ]
 

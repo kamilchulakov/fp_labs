@@ -5,11 +5,11 @@ defmodule Lab3.Stage.Producer do
 
   use GenStage
 
-  def start_link(state) do
-    GenStage.start_link(__MODULE__, state, name: __MODULE__)
+  def start_link(_state) do
+    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
   end
 
-  def init(counter), do: {:producer, counter}
+  def init(state), do: {:producer, state}
 
   # Produces 1 point at a time
   def handle_demand(demand, state) when demand == 1 do

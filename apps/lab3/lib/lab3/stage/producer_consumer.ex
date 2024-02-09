@@ -5,12 +5,13 @@ defmodule Lab3.Stage.ProducerConsumer do
 
   use GenStage
 
+  alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
   alias Lab3.Stage.ProducerConsumer.State
   alias Lab3.Util.Window
 
-  def start_link(step) do
-    GenStage.start_link(__MODULE__, State.new(step), name: __MODULE__)
+  def start_link(step: step, window: window) do
+    GenStage.start_link(__MODULE__, State.new(step, window), name: __MODULE__)
   end
 
   def init(state) do
@@ -20,13 +21,19 @@ defmodule Lab3.Stage.ProducerConsumer do
   def handle_events([point], _from, state) do
     new_state = State.add_point(state, point)
 
-    if Window.full?(new_state.linear) do
-      result = {:linear, Linear.interpolate(new_state.linear.elements, state.step)}
-      {:noreply, [result], new_state}
-    else
-      {:noreply, [], new_state}
-    end
+    result =
+      new_state.methods
+      |> Enum.filter(fn {_, window} -> Window.full?(window) end)
+      |> Enum.map(fn {method, window} ->
+        {method, handle_method(method, window, new_state.step)}
+      end)
+
+    {:noreply, result, new_state}
   end
+
+  def handle_method(:linear, window, step), do: Linear.interpolate(window.elements, step)
+
+  def handle_method(:lagrange, window, step), do: Lagrange.interpolate(window.elements, step)
 end
 
 defmodule Lab3.Stage.ProducerConsumer.State do
@@ -36,14 +43,28 @@ defmodule Lab3.Stage.ProducerConsumer.State do
 
   alias Lab3.Util.Window
 
-  @enforce_keys [:step]
-  defstruct [:step, linear: Window.new(2)]
+  @enforce_keys [:step, :methods]
+  defstruct [:step, :methods]
 
-  def new(step), do: %__MODULE__{step: step}
-
-  def add_point(%__MODULE__{step: step, linear: linear_window}, point),
+  def new(step, window),
     do: %__MODULE__{
       step: step,
-      linear: Window.push(linear_window, point)
+      methods: %{
+        lagrange: Window.new(window),
+        linear: Window.new(2)
+      }
     }
+
+  def add_point(
+        %__MODULE__{
+          step: step,
+          methods: methods
+        },
+        point
+      ),
+      do: %__MODULE__{
+        step: step,
+        methods:
+          Enum.map(methods, fn {method, window} -> {method, Window.push(window, point)} end)
+      }
 end

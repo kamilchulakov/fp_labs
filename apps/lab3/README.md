@@ -98,3 +98,13 @@ o o o o o o . . x x x
 ## Problems
 No float range in Elixir :( (and Erlang)
 - https://stackoverflow.com/questions/34383303/range-of-floating-point-numbers
+
+
+- `step=0.0`
+
+```plain
+mix test
+Compiling 9 files (.ex)
+Generated lab3 app
+....Killed
+```

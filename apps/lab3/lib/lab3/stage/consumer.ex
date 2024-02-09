@@ -13,14 +13,19 @@ defmodule Lab3.Stage.Consumer do
     {:consumer, state, subscribe_to: [Lab3.Stage.ProducerConsumer]}
   end
 
-  def handle_events([{method, points}], _from, state) do
+  def handle_events(events, _from, state) do
+    events
+    |> Enum.each(&handle_event/1)
+
+    # As a consumer we never emit events
+    {:noreply, [], state}
+  end
+
+  def handle_event({method, points}) do
     IO.puts("Method: #{method}")
 
     points
     |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end)
     |> IO.puts()
-
-    # As a consumer we never emit events
-    {:noreply, [], state}
   end
 end
