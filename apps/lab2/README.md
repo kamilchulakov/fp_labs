@@ -140,7 +140,7 @@ end
 ### Почему не X для дочерних узлов?
 \- https://hexdocs.pm/elixir/keywords-and-maps.html
 
-- Очень хотел перейти на `Keywords List` вместо обычно списка, но протокол не гарантирует список атомов.
+- Очень хотел перейти на `Keywords List` вместо обычного списка, но протокол не гарантирует список атомов.
 - `Map` часто требует работы через свой API. 
 
 
@@ -368,9 +368,8 @@ Typechecking files...
 lib/trie/wordable.ex: The spec 'impl_for!'/1 on line 1 doesn't match the function name/arity
 lib/trie/wordable.ex: Call to undefined function Trie.Wordable.Map.'__impl__'/1 on line 1
 ```
+- Github Action badge очень неудобно использовать, приходится делать настройки для бранчей, а после мерджа в мастер их надо менять...
+
 
 ## Вывод
 В ходе работы познакомился с ключевыми концепциями в Elixir: `Struct`, `Behaviour`, `Protocol`, `Keywords List`, `Map`, `Record`, понял в чём отличие `use`, `alias` и `require`, немного узнал про макросы, научился пользовать ковром (cover - инструмент измерения test coverage в экосистеме Elixir) и дергать его в Github Action.
-
-
-
