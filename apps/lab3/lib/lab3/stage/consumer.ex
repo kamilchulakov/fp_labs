@@ -17,7 +17,7 @@ defmodule Lab3.Stage.Consumer do
     IO.puts("Method: #{method}")
 
     points
-    |> Enum.map_join(" ", fn {x, y} -> "{#{x}, #{y}}" end)
+    |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end)
     |> IO.puts()
 
     # As a consumer we never emit events

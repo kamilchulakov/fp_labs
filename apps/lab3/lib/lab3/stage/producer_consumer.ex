@@ -42,5 +42,8 @@ defmodule Lab3.Stage.ProducerConsumer.State do
   def new(step), do: %__MODULE__{step: step}
 
   def add_point(%__MODULE__{step: step, linear: linear_window}, point),
-    do: %__MODULE__{step: step, linear: Window.push(linear_window, point)}
+    do: %__MODULE__{
+      step: step,
+      linear: Window.push(linear_window, point)
+    }
 end

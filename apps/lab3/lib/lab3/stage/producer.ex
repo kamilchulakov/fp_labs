@@ -13,15 +13,18 @@ defmodule Lab3.Stage.Producer do
 
   # Produces 1 point at a time
   def handle_demand(demand, state) when demand == 1 do
-    point = read_point()
-
-    {:noreply, [point], state}
+    case read_point() do
+      nil -> {:noreply, [], state}
+      point -> {:noreply, [point], state}
+    end
   end
 
   defp read_point do
     IO.gets("")
     |> line_to_point
   end
+
+  defp line_to_point(:eof), do: nil
 
   defp line_to_point(line) do
     line
