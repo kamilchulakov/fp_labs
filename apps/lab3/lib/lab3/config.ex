@@ -1,5 +1,5 @@
 defmodule Lab3.Config do
-  defstruct window: 1
+  defstruct window: 5
 
   def new(args) do
     case OptionParser.parse(args, strict: [window: :integer]) do
