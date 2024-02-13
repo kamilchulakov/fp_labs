@@ -3,24 +3,26 @@ defmodule Lab3.Stage.Producer do
   Stage for handling input and emitting events.
   """
 
-  use GenStage
+  use GenServer
 
   def start_link(_state) do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: :input)
+    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: :input)
   end
 
-  def init(state), do: {:producer, state}
+  def init(state) do
+    {:ok, state, {:continue, :read_points}}
+   end
 
   # Produces 1 point at a time
-  def handle_demand(demand, state) when demand == 1 do
+  def handle_continue(:read_points, state) do
     case read_point() do
-      nil -> {:noreply, [], state}
-      point -> {:noreply, [point], state}
+      point -> cast_point(point)
     end
+    {:noreply, state, {:continue, :read_points}}
   end
 
   defp read_point do
-    IO.gets("")
+    IO.gets(">")
     |> line_to_point
   end
 
@@ -32,5 +34,10 @@ defmodule Lab3.Stage.Producer do
     |> Enum.map(&Float.parse/1)
     |> Enum.map(&elem(&1, 0))
     |> List.to_tuple()
+  end
+
+  defp cast_point(point) do
+    GenServer.cast(:pc1, point)
+    GenServer.cast(:pc2, point)
   end
 end

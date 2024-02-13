@@ -3,22 +3,22 @@ defmodule Lab3.Stage.Consumer do
   Stage for printing interpolation results.
   """
 
-  use GenStage
+  use GenServer
 
   def start_link(_initial) do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: :printer)
+    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: :printer)
   end
 
   def init(state) do
-    {:consumer, state}
+    {:ok, state}
   end
 
-  def handle_events(events, _from, state) do
-    events
+  def handle_cast(results, state) do
+    results
     |> Enum.each(&handle_event/1)
 
     # As a consumer we never emit events
-    {:noreply, [], state}
+    {:noreply, state}
   end
 
   def handle_event({method, points}) do

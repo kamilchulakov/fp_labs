@@ -3,7 +3,7 @@ defmodule Lab3.Stage.ProducerConsumer do
   Stage for handling events and emitting interpolation results.
   """
 
-  use GenStage
+  use GenServer
 
   alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
@@ -11,14 +11,14 @@ defmodule Lab3.Stage.ProducerConsumer do
   alias Lab3.Util.Window
 
   def start_link(name: name, step: step, window: window) do
-    GenStage.start_link(__MODULE__, State.new(step, window), name: name)
+    GenServer.start_link(__MODULE__, State.new(step, window), name: name)
   end
 
   def init(state) do
-    {:producer_consumer, state}
+    {:ok, state}
   end
 
-  def handle_events([point], _from, state) do
+  def handle_cast(point, state) do
     new_state = State.add_point(state, point)
 
     result =
@@ -28,7 +28,9 @@ defmodule Lab3.Stage.ProducerConsumer do
         {method, handle_method(method, window, new_state.step)}
       end)
 
-    {:noreply, result, new_state}
+    GenServer.cast(:printer, result)
+
+    {:noreply, new_state}
   end
 
   def handle_method(:linear, window, step), do: Linear.interpolate(window.elements, step)
