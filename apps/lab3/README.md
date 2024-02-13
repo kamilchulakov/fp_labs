@@ -117,6 +117,9 @@ end
 ### Custom Broadway
 - https://hexdocs.pm/broadway/architecture.html
 
+Buffer is just like in Kotlin
+- https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/buffer.html
+
 ### Сборка и запуск
 - Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
 ```elixir

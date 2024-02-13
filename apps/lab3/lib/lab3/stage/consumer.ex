@@ -13,19 +13,13 @@ defmodule Lab3.Stage.Consumer do
     {:ok, state}
   end
 
-  def handle_cast(results, state) do
-    results
-    |> Enum.each(&handle_event/1)
-
-    # As a consumer we never emit events
-    {:noreply, state}
-  end
-
-  def handle_event({method, points}) do
+  def handle_cast({method, points}, state) do
     IO.puts("Method: #{method}")
 
     points
     |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end)
     |> IO.puts()
+
+    {:noreply, state}
   end
 end

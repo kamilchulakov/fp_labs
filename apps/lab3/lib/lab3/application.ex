@@ -16,11 +16,14 @@ defmodule Lab3.Application do
     config = Lab3.Config.new(args)
 
     producer = Supervisor.child_spec({Lab3.Stage.Producer, []}, id: :input)
-    producer_consumer_1 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, [name: :pc1, step: config.step, window: config.window]}, id: :pc1)
-    producer_consumer_2 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, [name: :pc2, step: config.step, window: config.window]}, id: :pc2)
+
+    buffer = Supervisor.child_spec({Lab3.Stage.PointBuffer, []}, id: :buffer)
+
+    producer_consumer_1 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, [algorithm: :linear, step: config.step, window: 2]}, id: :linear)
+    producer_consumer_2 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, [algorithm: :lagrange, step: config.step, window: config.window]}, id: :lagrange)
 
     consumer = Supervisor.child_spec({Lab3.Stage.Consumer, []}, id: :printer)
 
-    Pipeline.pipeline(producer: producer, processors: [producer_consumer_1, producer_consumer_2], consumer: consumer)
+    Pipeline.pipeline(producer: producer, buffer: buffer, processors: [producer_consumer_1, producer_consumer_2], consumer: consumer)
   end
 end

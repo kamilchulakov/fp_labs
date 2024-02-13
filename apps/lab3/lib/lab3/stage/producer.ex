@@ -11,13 +11,15 @@ defmodule Lab3.Stage.Producer do
 
   def init(state) do
     {:ok, state, {:continue, :read_points}}
-   end
+  end
 
   # Produces 1 point at a time
   def handle_continue(:read_points, state) do
     case read_point() do
+      nil -> GenServer.stop(:input)
       point -> cast_point(point)
     end
+
     {:noreply, state, {:continue, :read_points}}
   end
 
@@ -37,7 +39,6 @@ defmodule Lab3.Stage.Producer do
   end
 
   defp cast_point(point) do
-    GenServer.cast(:pc1, point)
-    GenServer.cast(:pc2, point)
+    GenServer.cast(:buffer, {:add_point, point})
   end
 end

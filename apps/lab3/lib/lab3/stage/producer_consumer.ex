@@ -8,34 +8,28 @@ defmodule Lab3.Stage.ProducerConsumer do
   alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
   alias Lab3.Stage.ProducerConsumer.State
-  alias Lab3.Util.Window
 
-  def start_link(name: name, step: step, window: window) do
-    GenServer.start_link(__MODULE__, State.new(step, window), name: name)
+  def start_link(algorithm: algorithm, step: step, window: window) do
+    GenServer.start_link(__MODULE__, State.new(step, window, algorithm), name: algorithm)
   end
 
   def init(state) do
+    GenServer.cast(:buffer, {:add_window, algorithm: state.algorithm, size: state.window})
+
     {:ok, state}
   end
 
-  def handle_cast(point, state) do
-    new_state = State.add_point(state, point)
+  def handle_cast(points, state) when length(points) == state.window do
+    result = handle_method(state.algorithm, points, state.step)
 
-    result =
-      new_state.methods
-      |> Enum.filter(fn {_, window} -> Window.full?(window) end)
-      |> Enum.map(fn {method, window} ->
-        {method, handle_method(method, window, new_state.step)}
-      end)
+    GenServer.cast(:printer, {state.algorithm, result})
 
-    GenServer.cast(:printer, result)
-
-    {:noreply, new_state}
+    {:noreply, state}
   end
 
-  def handle_method(:linear, window, step), do: Linear.interpolate(window.elements, step)
+  def handle_method(:linear, points, step), do: Linear.interpolate(points, step)
 
-  def handle_method(:lagrange, window, step), do: Lagrange.interpolate(window.elements, step)
+  def handle_method(:lagrange, points, step), do: Lagrange.interpolate(points, step)
 end
 
 defmodule Lab3.Stage.ProducerConsumer.State do
@@ -43,30 +37,13 @@ defmodule Lab3.Stage.ProducerConsumer.State do
   Struct to store state.
   """
 
-  alias Lab3.Util.Window
+  @enforce_keys [:step, :window, :algorithm]
+  defstruct [:step, :window, :algorithm]
 
-  @enforce_keys [:step, :methods]
-  defstruct [:step, :methods]
-
-  def new(step, window),
+  def new(step, window, algorithm),
     do: %__MODULE__{
       step: step,
-      methods: %{
-        lagrange: Window.new(window),
-        linear: Window.new(2)
-      }
+      window: window,
+      algorithm: algorithm
     }
-
-  def add_point(
-        %__MODULE__{
-          step: step,
-          methods: methods
-        },
-        point
-      ),
-      do: %__MODULE__{
-        step: step,
-        methods:
-          Enum.map(methods, fn {method, window} -> {method, Window.push(window, point)} end)
-      }
 end
