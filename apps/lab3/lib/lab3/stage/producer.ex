@@ -5,8 +5,14 @@ defmodule Lab3.Stage.Producer do
 
   use GenServer
 
-  def start_link(name: name) do
-    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: name)
+  @enforce_keys [:buffer]
+  defstruct [:buffer]
+
+  defp new(buffer),
+    do: %__MODULE__{buffer: buffer}
+
+  def start_link(name: name, buffer: buffer) do
+    GenServer.start_link(__MODULE__, new(buffer), name: name)
   end
 
   def init(state) do
@@ -17,7 +23,7 @@ defmodule Lab3.Stage.Producer do
   def handle_continue(:read_points, state) do
     case read_point() do
       nil -> GenServer.stop(:input)
-      point -> cast_point(point)
+      point -> cast_point(point, state.buffer)
     end
 
     {:noreply, state, {:continue, :read_points}}
@@ -38,7 +44,7 @@ defmodule Lab3.Stage.Producer do
     |> List.to_tuple()
   end
 
-  defp cast_point(point) do
-    GenServer.cast(:buffer, {:add_point, point})
+  defp cast_point(point, buffer) do
+    GenServer.cast(buffer, {:add_point, point})
   end
 end
