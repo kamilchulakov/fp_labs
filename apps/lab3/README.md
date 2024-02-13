@@ -114,6 +114,9 @@ defmodule Lab3.Stage.ProducerConsumer.State do
 end
 ```
 
+### Custom Broadway
+- https://hexdocs.pm/broadway/architecture.html
+
 ### Сборка и запуск
 - Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
 ```elixir
