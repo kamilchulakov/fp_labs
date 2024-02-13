@@ -9,8 +9,8 @@ defmodule Lab3.Stage.PointBuffer do
   @enforce_keys [:windows]
   defstruct [:windows]
 
-  def start_link(_state) do
-    GenServer.start_link(__MODULE__, new(), name: :buffer)
+  def start_link(name: name) do
+    GenServer.start_link(__MODULE__, new(), name: name)
   end
 
   def init(state) do

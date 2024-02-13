@@ -5,8 +5,8 @@ defmodule Lab3.Stage.Producer do
 
   use GenServer
 
-  def start_link(_state) do
-    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: :input)
+  def start_link(name: name) do
+    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: name)
   end
 
   def init(state) do

@@ -9,8 +9,8 @@ defmodule Lab3.Stage.ProducerConsumer do
   alias Lab3.Interpolation.Linear
   alias Lab3.Stage.ProducerConsumer.State
 
-  def start_link(algorithm: algorithm, step: step, window: window) do
-    GenServer.start_link(__MODULE__, State.new(step, window, algorithm), name: algorithm)
+  def start_link(name: name, algorithm: algorithm, step: step, window: window) do
+    GenServer.start_link(__MODULE__, State.new(step, window, algorithm), name: name)
   end
 
   def init(state) do

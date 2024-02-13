@@ -5,8 +5,8 @@ defmodule Lab3.Stage.Consumer do
 
   use GenServer
 
-  def start_link(_initial) do
-    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: :printer)
+  def start_link(name: name) do
+    GenServer.start_link(__MODULE__, :state_doesnt_matter, name: name)
   end
 
   def init(state) do
