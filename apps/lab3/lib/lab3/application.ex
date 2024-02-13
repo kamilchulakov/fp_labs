@@ -15,15 +15,16 @@ defmodule Lab3.Application do
   def start(_type, args) do
     config = Lab3.Config.new(args)
 
-    producer = Supervisor.child_spec({Lab3.Stage.Producer, name: :input}, id: :input)
+    producer = {Lab3.Stage.Producer, name: :input}
+    buffer = {Lab3.Stage.PointBuffer, name: :buffer}
 
-    buffer = Supervisor.child_spec({Lab3.Stage.PointBuffer, name: :buffer}, id: :buffer)
+    processors = [
+      {Lab3.Stage.ProducerConsumer, name: :linear, algorithm: :linear, step: config.step, window: 2},
+      {Lab3.Stage.ProducerConsumer, name: :lagrange, algorithm: :lagrange, step: config.step, window: config.window}
+    ]
 
-    producer_consumer_1 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, name: :linear, algorithm: :linear, step: config.step, window: 2}, id: :linear)
-    producer_consumer_2 = Supervisor.child_spec({Lab3.Stage.ProducerConsumer, name: :lagrange, algorithm: :lagrange, step: config.step, window: config.window}, id: :lagrange)
+    consumer = {Lab3.Stage.Consumer, name: :printer}
 
-    consumer = Supervisor.child_spec({Lab3.Stage.Consumer, name: :printer}, id: :printer)
-
-    Pipeline.pipeline(producer: producer, buffer: buffer, processors: [producer_consumer_1, producer_consumer_2], consumer: consumer)
+    Pipeline.pipeline(producer: producer, buffer: buffer, processors: processors, consumer: consumer)
   end
 end
