@@ -1,4 +1,4 @@
-defmodule Lab3.Stage.Consumer do
+defmodule Lab3.Stage.Printer do
   @moduledoc """
   Stage for printing interpolation results.
   """

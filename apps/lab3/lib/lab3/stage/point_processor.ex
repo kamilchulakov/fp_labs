@@ -1,4 +1,4 @@
-defmodule Lab3.Stage.ProducerConsumer do
+defmodule Lab3.Stage.PointProcessor do
   @moduledoc """
   Stage for handling events and emitting interpolation results.
   """
@@ -7,10 +7,14 @@ defmodule Lab3.Stage.ProducerConsumer do
 
   alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
-  alias Lab3.Stage.ProducerConsumer.State
+  alias Lab3.Stage.PointProcessor.State
 
-  def start_link(name: name, algorithm: algorithm, step: step, window: window, buffer: buffer, consumer: consumer) do
-    GenServer.start_link(__MODULE__, State.new(step, window, algorithm, buffer, consumer), name: name)
+  def start_link(opts) do
+    GenServer.start_link(
+      __MODULE__,
+      State.new(opts[:step], opts[:window], opts[:algorithm], opts[:buffer], opts[:consumer]),
+      name: opts[:name]
+    )
   end
 
   def init(state) do
@@ -32,7 +36,7 @@ defmodule Lab3.Stage.ProducerConsumer do
   def handle_method(:lagrange, points, step), do: Lagrange.interpolate(points, step)
 end
 
-defmodule Lab3.Stage.ProducerConsumer.State do
+defmodule Lab3.Stage.PointProcessor.State do
   @moduledoc """
   Struct to store state.
   """

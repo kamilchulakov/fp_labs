@@ -1,6 +1,6 @@
-defmodule Lab3.Stage.Producer do
+defmodule Lab3.Stage.PointProducer do
   @moduledoc """
-  Stage for handling input and emitting events.
+  Stage for handling input and producing points.
   """
 
   use GenServer

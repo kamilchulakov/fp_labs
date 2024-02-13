@@ -9,6 +9,8 @@ defmodule Lab3.Stage.PointBuffer do
   @enforce_keys [:windows]
   defstruct [:windows]
 
+  defp new(windows \\ %{}), do: %__MODULE__{windows: windows}
+
   def start_link(name: name) do
     GenServer.start_link(__MODULE__, new(), name: name)
   end
@@ -18,7 +20,7 @@ defmodule Lab3.Stage.PointBuffer do
   end
 
   def handle_cast({:add_window, algorithm: algorithm, size: size}, %__MODULE__{windows: windows}) do
-    {:noreply, Map.put(windows, algorithm, Window.new(size)) |> new() }
+    {:noreply, Map.put(windows, algorithm, Window.new(size)) |> new()}
   end
 
   def handle_cast({:add_point, point}, %__MODULE__{windows: windows}) do
@@ -30,8 +32,6 @@ defmodule Lab3.Stage.PointBuffer do
 
     {:noreply, state}
   end
-
-  defp new(windows \\ %{}), do: %__MODULE__{windows: windows}
 
   defp add_point(windows, point) do
     windows
