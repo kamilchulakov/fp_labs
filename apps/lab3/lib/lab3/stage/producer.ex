@@ -6,7 +6,7 @@ defmodule Lab3.Stage.Producer do
   use GenStage
 
   def start_link(_state) do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
+    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: :input)
   end
 
   def init(state), do: {:producer, state}

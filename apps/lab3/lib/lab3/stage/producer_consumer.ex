@@ -10,12 +10,12 @@ defmodule Lab3.Stage.ProducerConsumer do
   alias Lab3.Stage.ProducerConsumer.State
   alias Lab3.Util.Window
 
-  def start_link(step: step, window: window) do
-    GenStage.start_link(__MODULE__, State.new(step, window), name: __MODULE__)
+  def start_link(name: name, step: step, window: window) do
+    GenStage.start_link(__MODULE__, State.new(step, window), name: name)
   end
 
   def init(state) do
-    {:producer_consumer, state, subscribe_to: [{Lab3.Stage.Producer, max_demand: 1}]}
+    {:producer_consumer, state}
   end
 
   def handle_events([point], _from, state) do
