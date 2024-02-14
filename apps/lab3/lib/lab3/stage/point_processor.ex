@@ -24,9 +24,11 @@ defmodule Lab3.Stage.PointProcessor do
   end
 
   def handle_cast(points, state) when length(points) == state.window do
-    result = handle_algorithm(state.algorithm, points, state.step)
+    result =
+      handle_algorithm(state.algorithm, points, state.step)
+      |> to_string(state.algorithm)
 
-    GenServer.cast(state.consumer, {state.algorithm, result})
+    GenServer.cast(state.consumer, result)
 
     {:noreply, state}
   end
@@ -34,6 +36,10 @@ defmodule Lab3.Stage.PointProcessor do
   def handle_algorithm(:linear, points, step), do: Linear.interpolate(points, step)
 
   def handle_algorithm(:lagrange, points, step), do: Lagrange.interpolate(points, step)
+
+  defp to_string(points, algorithm) do
+    "Algorithm #{algorithm}:\n" <> (points |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end))
+  end
 end
 
 defmodule Lab3.Stage.PointProcessor.State do

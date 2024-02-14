@@ -13,12 +13,8 @@ defmodule Lab3.Stage.Printer do
     {:ok, state}
   end
 
-  def handle_cast({method, points}, state) do
-    IO.puts("Method: #{method}")
-
-    points
-    |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end)
-    |> IO.puts()
+  def handle_cast(string, state) do
+    IO.puts(string)
 
     {:noreply, state}
   end
