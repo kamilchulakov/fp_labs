@@ -5,14 +5,14 @@ defmodule Lab3.Stage.PointProducer do
 
   use GenServer
 
-  @enforce_keys [:buffer]
-  defstruct [:buffer]
+  @enforce_keys [:buffer, :name]
+  defstruct [:buffer, :name]
 
-  defp new(buffer),
-    do: %__MODULE__{buffer: buffer}
+  defp new(buffer, name),
+    do: %__MODULE__{buffer: buffer, name: name}
 
   def start_link(name: name, buffer: buffer) do
-    GenServer.start_link(__MODULE__, new(buffer), name: name)
+    GenServer.start_link(__MODULE__, new(buffer, name), name: name)
   end
 
   def init(state) do
@@ -22,7 +22,7 @@ defmodule Lab3.Stage.PointProducer do
   # Produces 1 point at a time
   def handle_continue(:read_points, state) do
     case read_point() do
-      nil -> GenServer.stop(:input)
+      nil -> GenServer.stop(state.name)
       point -> cast_point(point, state.buffer)
     end
 
@@ -30,7 +30,7 @@ defmodule Lab3.Stage.PointProducer do
   end
 
   defp read_point do
-    IO.gets(">")
+    IO.gets("")
     |> line_to_point
   end
 

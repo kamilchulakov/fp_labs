@@ -24,16 +24,16 @@ defmodule Lab3.Stage.PointProcessor do
   end
 
   def handle_cast(points, state) when length(points) == state.window do
-    result = handle_method(state.algorithm, points, state.step)
+    result = handle_algorithm(state.algorithm, points, state.step)
 
     GenServer.cast(state.consumer, {state.algorithm, result})
 
     {:noreply, state}
   end
 
-  def handle_method(:linear, points, step), do: Linear.interpolate(points, step)
+  def handle_algorithm(:linear, points, step), do: Linear.interpolate(points, step)
 
-  def handle_method(:lagrange, points, step), do: Lagrange.interpolate(points, step)
+  def handle_algorithm(:lagrange, points, step), do: Lagrange.interpolate(points, step)
 end
 
 defmodule Lab3.Stage.PointProcessor.State do
