@@ -210,3 +210,5 @@ Generated lab3 app
 
 ## Вывод
 В ходе работы познакомился с `GenStage` ...
+
+- https://semaphoreci.com/community/tutorials/a-practical-guide-to-test-doubles-in-elixir

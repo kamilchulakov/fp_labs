@@ -22,7 +22,9 @@ defmodule Lab3.Application do
       {Lab3.Stage.PointProcessor,
        name: :linear, algorithm: :linear, step: config.step, window: 2},
       {Lab3.Stage.PointProcessor,
-       name: :lagrange, algorithm: :lagrange, step: config.step, window: config.window}
+       name: :lagrange, algorithm: :lagrange, step: config.step, window: config.window},
+      {Lab3.Stage.PointProcessor,
+       name: :gauss, algorithm: :gauss, step: config.step, window: config.window}
     ]
 
     consumer = {Lab3.Stage.Printer, name: :printer}

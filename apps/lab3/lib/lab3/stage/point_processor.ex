@@ -7,6 +7,7 @@ defmodule Lab3.Stage.PointProcessor do
 
   alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
+  alias Lab3.Interpolation.Gauss
   alias Lab3.Stage.PointProcessor.State
 
   def start_link(opts) do
@@ -32,6 +33,8 @@ defmodule Lab3.Stage.PointProcessor do
 
     {:noreply, state}
   end
+
+  def handle_algorithm(:gauss, points, step), do: Gauss.interpolate(points, step)
 
   def handle_algorithm(:linear, points, step), do: Linear.interpolate(points, step)
 
