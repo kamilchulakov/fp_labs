@@ -38,7 +38,8 @@ defmodule Lab3.Stage.PointProcessor do
   def handle_algorithm(:lagrange, points, step), do: Lagrange.interpolate(points, step)
 
   defp to_string(points, algorithm) do
-    "Algorithm #{algorithm}:\n" <> (points |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end))
+    "Algorithm #{algorithm}:\n" <>
+      (points |> Enum.map_join(", ", fn {x, y} -> "{#{x}, #{y}}" end))
   end
 end
 
