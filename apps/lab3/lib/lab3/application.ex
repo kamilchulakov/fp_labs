@@ -17,7 +17,7 @@ defmodule Lab3.Application do
   def start(_type, args) do
     config = Lab3.Config.new(args)
 
-    producer = {Lab3.Stage.PointProducer, name: :input}
+    producer = {Lab3.Stage.PointProducer, name: :input, separator: config.separator}
     buffer = {Lab3.Stage.PointBuffer, name: :buffer}
 
     processors = [

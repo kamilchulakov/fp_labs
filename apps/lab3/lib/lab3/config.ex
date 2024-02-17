@@ -4,7 +4,7 @@ defmodule Lab3.Config do
   """
 
   @enforce_keys [:step]
-  defstruct [:step, window: 5]
+  defstruct [:step, window: 5, separator: " "]
 
   def new(args) do
     case OptionParser.parse(args, strict: [window: :integer, step: :float]) do
