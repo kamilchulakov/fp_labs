@@ -7,7 +7,9 @@ defmodule Lab3.Application do
   use Application
 
   def main(args) do
-    start(:normal, args)
+    {:ok, pid} = start(:normal, args)
+
+    Process.link(pid)
     :timer.sleep(:infinity)
   end
 

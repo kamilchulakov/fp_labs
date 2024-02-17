@@ -22,7 +22,9 @@ defmodule Lab3.Stage.PointBuffer do
 
   @impl true
   def handle_cast({:add_window, algorithm: algorithm, size: size}, %__MODULE__{windows: windows}) do
-    {:noreply, Map.put(windows, algorithm, Window.new(size)) |> new()}
+    # New window is not created for same algorithm (in case of restart or multiple workers)
+    # So worker will keep falling...
+    {:noreply, Map.put_new(windows, algorithm, Window.new(size)) |> new()}
   end
 
   def handle_cast({:add_point, point}, %__MODULE__{windows: windows}) do
@@ -47,6 +49,6 @@ defmodule Lab3.Stage.PointBuffer do
       GenServer.cast(algorithm, window.elements)
     end)
 
-    windows
+    Map.new(windows)
   end
 end
