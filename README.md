@@ -1,6 +1,7 @@
 # Functional Programming Labs
 
-![Mix Test](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg)
+- Lab1: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=master)
+- Lab2: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=lab2)
 
 **Выполнил:** Чулаков Камиль 
 
@@ -17,3 +18,6 @@
 ## Project structure
 - Umbrella project is created by `mix --umbrella`
 - Each sub (child) project is a separate laboratory work with its own structure
+
+## ...
+- [Exercism](https://exercism.org/profiles/kamilchulakov)

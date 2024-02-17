@@ -12,14 +12,14 @@ defmodule Stream4 do
 
   defp drop_last(enumerable), do: Enum.take(enumerable, length(enumerable) - 1)
 
-  defp is_mirrored({[], []}), do: true
-  defp is_mirrored({[x], [x]}), do: true
+  defp mirrored?({[], []}), do: true
+  defp mirrored?({[x], [x]}), do: true
 
-  defp is_mirrored({[head1 | tail1], [head2 | tail2]}) do
+  defp mirrored?({[head1 | tail1], [head2 | tail2]}) do
     if head1 != Enum.at(tail2, -1) || head2 != Enum.at(tail1, -1) do
       false
     else
-      is_mirrored({drop_last(tail1), drop_last(tail2)})
+      mirrored?({drop_last(tail1), drop_last(tail2)})
     end
   end
 
@@ -34,10 +34,10 @@ defmodule Stream4 do
     {head, tail}
   end
 
-  defp is_palindrome(integer) do
+  defp palindrome?(integer) do
     Integer.digits(integer)
     |> split_by_count
-    |> is_mirrored
+    |> mirrored?
   end
 
   def foldr([head | []], acc, fun), do: fun.(head, acc)
@@ -71,7 +71,7 @@ defmodule Stream4 do
       range_to_x.(x)
       |> map_to_product.(x)
     end)
-    |> Stream.filter(&is_palindrome(&1))
+    |> Stream.filter(&palindrome?(&1))
     |> max_product()
   end
 
@@ -90,7 +90,7 @@ defmodule Stream4 do
     iterate_stream
     |> Stream.take(@nums_count)
     |> Stream.flat_map(map_to_products)
-    |> Stream.filter(&is_palindrome(&1))
+    |> Stream.filter(&palindrome?(&1))
     |> max_product()
   end
 end
