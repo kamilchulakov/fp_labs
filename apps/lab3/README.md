@@ -70,17 +70,23 @@ Method: linear
 ### Обзор организации
 ```mermaid
 sequenceDiagram
+    participant IO
     participant PointProducer
     participant PointBuffer
-    participant PointProcessor
+    participant PointProcessor1
+    participant PointProcessor2
     participant Printer
-    Note right of PointProducer: No loops, just init continue!
+    PointProcessor1->>PointBuffer: Please, create window for my X algorithm with N size.
+    PointProcessor2->>PointBuffer: Please, create window for my Y algorithm with M size.
+    Note right of PointProducer: No loops, just GenServer.init/1 continue!
     loop :read_points
-        PointProducer->>PointProducer: Read point
-        PointProducer->>PointBuffer: Cast point({:add_point, point})
+        IO->>PointProducer: Input point.
+        PointProducer->>PointBuffer: Hold my point.
+        PointBuffer->>PointBuffer: Update windows. Check if full.
+        PointBuffer->>PointProcessor2: Your window is full. This is your points!
+        PointProcessor2->>Printer: Print my string.
+        Printer->>IO: Output string.
     end
-    PointBuffer-->>PointProcessor: Your window is full. This is your points!
-    PointProcessor->>Printer: Print my string
 ```
 
 - No loops, just init continue
