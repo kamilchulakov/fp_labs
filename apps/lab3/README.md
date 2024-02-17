@@ -49,22 +49,82 @@
 
 ## Особенности реализации
 ### Сборка и запуск
-Пример:
 - `mix escript.build`
-- `./lab3 --window 4 --step 0.75`
+- `./lab3 --window 3 --step 0.5`
+
+Как работает:
+```plain
+1 1
+1.9 3
+Algorithm linear:
+{1.0, 1.0}, {1.5, 2.111111111111111}
+3 4
+Algorithm linear:
+{1.9, 3.0}, {2.4, 3.4545454545454546}, {2.9, 3.9090909090909096}
+Algorithm lagrange:
+{1.0, 1.0}, {1.5, 2.242424242424242}, {2.0, 3.1565656565656566}, {2.5, 3.7424242424242427}, {3.0, 4.0}
+Algorithm gauss:
+{1.0, 1.0}, {1.5, 2.234567901234568}, {2.0, 3.160493827160494}, {2.5, 3.777777777777778}, {3.0, 4.086419753086419}
 ```
--1.5 -14.1014
--0.75 -0.931596
-Method: linear
-{-1.5, -14.1014}, {-0.75, -0.931596}
-0.75 0.931596
-Method: linear
-{-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}
-1.5 14.1014
-Method: lagrange
-{-1.5, -14.1014}, {-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}, {1.5, 14.1014}
-Method: linear
-{0.75, 0.931596}, {1.5, 14.1014}
+
+Как падает:
+```plain
+1 1
+1 1
+
+05:44:57.561 [error] GenServer :linear terminating
+** (ArithmeticError) bad argument in arithmetic expression
+    (lab3 0.1.0) lib/lab3/interpolation/linear.ex:11: anonymous fn/5 in Lab3.Interpolation.Linear.interpolate/2
+    (lab3 0.1.0) lib/lab3/interpolation/linear.ex:14: anonymous fn/2 in Lab3.Interpolation.Linear.interpolate/2
+    (elixir 1.15.7) lib/stream.ex:613: anonymous fn/4 in Stream.map/2
+    (elixir 1.15.7) lib/stream.ex:1759: Stream.do_unfold/4
+    (elixir 1.15.7) lib/stream.ex:1828: Enumerable.Stream.do_each/4
+    (elixir 1.15.7) lib/enum.ex:4387: Enum.reverse/1
+    (elixir 1.15.7) lib/enum.ex:3702: Enum.to_list/1
+    (lab3 0.1.0) lib/lab3/stage/point_processor.ex:31: Lab3.Stage.PointProcessor.handle_cast/2
+Last message: {:"$gen_cast", [{1.0, 1.0}, {1.0, 1.0}]}
+State: %Lab3.Stage.PointProcessor.State{step: 0.5, window: 2, algorithm: :linear, buffer: :buffer, consumer: :printer}
+1 1
+
+05:45:02.244 [error] GenServer :linear terminating
+** (ArithmeticError) bad argument in arithmetic expression
+    (lab3 0.1.0) lib/lab3/interpolation/linear.ex:11: anonymous fn/5 in Lab3.Interpolation.Linear.interpolate/2
+    (lab3 0.1.0) lib/lab3/interpolation/linear.ex:14: anonymous fn/2 in Lab3.Interpolation.Linear.interpolate/2
+    (elixir 1.15.7) lib/stream.ex:613: anonymous fn/4 in Stream.map/2
+    (elixir 1.15.7) lib/stream.ex:1759: Stream.do_unfold/4
+    (elixir 1.15.7) lib/stream.ex:1828: Enumerable.Stream.do_each/4
+    (elixir 1.15.7) lib/enum.ex:4387: Enum.reverse/1
+    (elixir 1.15.7) lib/enum.ex:3702: Enum.to_list/1
+    (lab3 0.1.0) lib/lab3/stage/point_processor.ex:31: Lab3.Stage.PointProcessor.handle_cast/2
+Last message: {:"$gen_cast", [{1.0, 1.0}, {1.0, 1.0}]}
+State: %Lab3.Stage.PointProcessor.State{step: 0.5, window: 2, algorithm: :linear, buffer: :buffer, consumer: :printer}
+
+05:45:02.248 [error] GenServer :lagrange terminating
+** (ArithmeticError) bad argument in arithmetic expression
+    (lab3 0.1.0) lib/lab3/interpolation/lagrange.ex:41: anonymous fn/3 in Lab3.Interpolation.Lagrange.polynomial/3
+    (elixir 1.15.7) lib/enum.ex:1693: Enum."-map/2-lists^map/1-1-"/2
+    (lab3 0.1.0) lib/lab3/interpolation/lagrange.ex:41: anonymous fn/5 in Lab3.Interpolation.Lagrange.polynomial/3
+    (elixir 1.15.7) lib/enum.ex:1693: Enum."-map/2-lists^map/1-1-"/2
+    (lab3 0.1.0) lib/lab3/interpolation/lagrange.ex:32: anonymous fn/2 in Lab3.Interpolation.Lagrange.polynomial_fun/1
+    (lab3 0.1.0) lib/lab3/interpolation/lagrange.ex:16: anonymous fn/2 in Lab3.Interpolation.Lagrange.interpolate/2
+    (elixir 1.15.7) lib/stream.ex:613: anonymous fn/4 in Stream.map/2
+    (elixir 1.15.7) lib/stream.ex:1759: Stream.do_unfold/4
+Last message: {:"$gen_cast", [{1.0, 1.0}, {1.0, 1.0}, {1.0, 1.0}]}
+State: %Lab3.Stage.PointProcessor.State{step: 0.5, window: 3, algorithm: :lagrange, buffer: :buffer, consumer: :printer}
+
+05:45:02.250 [error] GenServer :gauss terminating
+** (ArithmeticError) bad argument in arithmetic expression
+    (lab3 0.1.0) lib/lab3/interpolation/gauss.ex:34: Lab3.Interpolation.Gauss.gauss_polynomial/3
+    (lab3 0.1.0) lib/lab3/interpolation/gauss.ex:18: anonymous fn/3 in Lab3.Interpolation.Gauss.interpolate/2
+    (elixir 1.15.7) lib/stream.ex:613: anonymous fn/4 in Stream.map/2
+    (elixir 1.15.7) lib/stream.ex:1759: Stream.do_unfold/4
+    (elixir 1.15.7) lib/stream.ex:1828: Enumerable.Stream.do_each/4
+    (elixir 1.15.7) lib/enum.ex:4387: Enum.reverse/1
+    (elixir 1.15.7) lib/enum.ex:3702: Enum.to_list/1
+    (lab3 0.1.0) lib/lab3/stage/point_processor.ex:31: Lab3.Stage.PointProcessor.handle_cast/2
+Last message: {:"$gen_cast", [{1.0, 1.0}, {1.0, 1.0}, {1.0, 1.0}]}
+State: %Lab3.Stage.PointProcessor.State{step: 0.5, window: 3, algorithm: :gauss, buffer: :buffer, consumer: :printer}
+** (EXIT from #PID<0.100.0>) shutdown
 ```
 
 ### Обзор организации
@@ -89,11 +149,107 @@ sequenceDiagram
     end
 ```
 
-- No loops, just init continue
+### PointProducer
+> No loops, just init continue
 
-Buffer is just like in Kotlin
-- https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/buffer.html
-- It is good, because state can be restored
+```elixir
+  @impl true
+  def init(state) do
+    {:ok, state, {:continue, :read_points}}
+  end
+
+  # Produces 1 point at a time
+  @impl true
+  def handle_continue(:read_points, state) do
+    case read_point() do
+      nil -> GenServer.stop(state.name)
+      point -> cast_point(point, state.buffer)
+    end
+
+    {:noreply, state, {:continue, :read_points}}
+  end
+```
+
+### PointBuffer
+- Идейно похож на [buffer](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/buffer.html) в Kotlin Flow
+- Сохраняет точку в окна для каждого алгоритма
+- Если обработчик алгоритма умрёт, то после рестарта окно останется
+- Owner окна = Обработчик алгоритма (ключ = алгоритм)
+
+```elixir
+  @impl true
+  def init(state) do
+    {:ok, state}
+  end
+
+  @impl true
+  def handle_cast({:add_window, algorithm: algorithm, size: size}, %__MODULE__{windows: windows}) do
+    # New window is not created for same algorithm (in case of restart or multiple workers)
+    # So worker will keep falling...
+    {:noreply, Map.put_new(windows, algorithm, Window.new(size)) |> new()}
+  end
+
+  def handle_cast({:add_point, point}, %__MODULE__{windows: windows}) do
+    state =
+      windows
+      |> add_point(point)
+      |> cast_full()
+      |> new()
+
+    {:noreply, state}
+  end
+```
+
+### PointProcessor
+- Шаблон для выполнения конкретного алгоритма
+- Задаётся буффер, алгоритм и размер окна
+- При инициализации отправляет запрос буфферу, чтобы тот создал окно
+
+```elixir
+  @impl true
+  def init(state) do
+    GenServer.cast(state.buffer, {:add_window, algorithm: state.algorithm, size: state.window})
+
+    {:ok, state}
+  end
+
+  @impl true
+  def handle_cast(points, state) when length(points) == state.window do
+    result =
+      handle_algorithm(state.algorithm, points, state.step)
+      |> to_string(state.algorithm)
+
+    GenServer.cast(state.consumer, result)
+
+    {:noreply, state}
+  end
+
+  def handle_algorithm(:gauss, points, step), do: Gauss.interpolate(points, step)
+
+  def handle_algorithm(:linear, points, step), do: Linear.interpolate(points, step)
+
+  def handle_algorithm(:lagrange, points, step), do: Lagrange.interpolate(points, step)
+```
+
+### Config
+```elixir
+defmodule Lab3.Config do
+  @moduledoc """
+  Struct to store config.
+  """
+
+  @enforce_keys [:step]
+  defstruct [:step, window: 5, separator: " "]
+
+  def new(args) do
+    case OptionParser.parse(args, strict: [window: :integer, step: :float]) do
+      {[window: window, step: step], _, _} -> %__MODULE__{window: window, step: step}
+      {[step: step], _, _} -> %__MODULE__{step: step}
+      _ -> raise "--step <value> is missing"
+    end
+  end
+end
+```
 
 ### Костыли
 - Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
@@ -225,11 +381,13 @@ end
 ### Broadway
 - https://hexdocs.pm/broadway/architecture.html
 
-Понятные абстрации: `stage` и `pipiline`.
+Понятные абстрации: `stage` и `pipeline`.
 
 ### KIF
 Everyone knows KISS.
+
 Today I'd like to introduce KIF: Keep It Falling.
+
 Principle: `Once something falls, it should continue falling.`
 
 Example:
@@ -239,6 +397,4 @@ Example:
 - It gets restarted again...
 
 ## Вывод
-В ходе работы познакомился с `GenStage` ...
-
-- https://semaphoreci.com/community/tutorials/a-practical-guide-to-test-doubles-in-elixir
+В ходе работы познакомился с `GenServer` и `GenStage`, узнал о недостатках экосистемы языка.
