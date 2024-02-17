@@ -15,11 +15,13 @@ defmodule Lab3.Stage.PointProducer do
     GenServer.start_link(__MODULE__, new(buffer, name), name: name)
   end
 
+  @impl true
   def init(state) do
     {:ok, state, {:continue, :read_points}}
   end
 
   # Produces 1 point at a time
+  @impl true
   def handle_continue(:read_points, state) do
     case read_point() do
       nil -> GenServer.stop(state.name)

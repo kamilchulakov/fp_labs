@@ -1,4 +1,8 @@
 defmodule Lab3.Util.Matrix do
+  @moduledoc """
+  Struct to store matrix.
+  """
+
   @enforce_keys [:rows, :n, :m]
   defstruct [:rows, :n, :m]
 

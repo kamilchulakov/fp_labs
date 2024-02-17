@@ -9,6 +9,5 @@ defmodule Lab3.Util.FloatStream do
     from
     |> Stream.iterate(&(&1 + step))
     |> Stream.take_while(&(&1 <= to))
-    |> Enum.to_list()
   end
 end

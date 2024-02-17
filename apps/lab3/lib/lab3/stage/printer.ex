@@ -9,10 +9,12 @@ defmodule Lab3.Stage.Printer do
     GenServer.start_link(__MODULE__, :state_doesnt_matter, name: name)
   end
 
+  @impl true
   def init(state) do
     {:ok, state}
   end
 
+  @impl true
   def handle_cast(string, state) do
     IO.puts(string)
 

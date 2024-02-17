@@ -15,10 +15,12 @@ defmodule Lab3.Stage.PointBuffer do
     GenServer.start_link(__MODULE__, new(), name: name)
   end
 
+  @impl true
   def init(state) do
     {:ok, state}
   end
 
+  @impl true
   def handle_cast({:add_window, algorithm: algorithm, size: size}, %__MODULE__{windows: windows}) do
     {:noreply, Map.put(windows, algorithm, Window.new(size)) |> new()}
   end

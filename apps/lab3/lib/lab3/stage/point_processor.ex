@@ -13,17 +13,19 @@ defmodule Lab3.Stage.PointProcessor do
   def start_link(opts) do
     GenServer.start_link(
       __MODULE__,
-      State.new(opts[:step], opts[:window], opts[:algorithm], opts[:buffer], opts[:consumer]),
+      State.new(opts),
       name: opts[:name]
     )
   end
 
+  @impl true
   def init(state) do
     GenServer.cast(state.buffer, {:add_window, algorithm: state.algorithm, size: state.window})
 
     {:ok, state}
   end
 
+  @impl true
   def handle_cast(points, state) when length(points) == state.window do
     result =
       handle_algorithm(state.algorithm, points, state.step)
@@ -54,12 +56,12 @@ defmodule Lab3.Stage.PointProcessor.State do
   @enforce_keys [:step, :window, :algorithm, :buffer, :consumer]
   defstruct [:step, :window, :algorithm, :buffer, :consumer]
 
-  def new(step, window, algorithm, buffer, consumer),
+  def new(opts),
     do: %__MODULE__{
-      step: step,
-      window: window,
-      algorithm: algorithm,
-      buffer: buffer,
-      consumer: consumer
+      step: opts[:step],
+      window: opts[:window],
+      algorithm: opts[:algorithm],
+      buffer: opts[:buffer],
+      consumer: opts[:consumer]
     }
 end
