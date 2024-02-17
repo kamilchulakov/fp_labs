@@ -5,9 +5,9 @@ defmodule Lab3.Stage.PointProcessor do
 
   use GenServer
 
+  alias Lab3.Interpolation.Gauss
   alias Lab3.Interpolation.Lagrange
   alias Lab3.Interpolation.Linear
-  alias Lab3.Interpolation.Gauss
   alias Lab3.Stage.PointProcessor.State
 
   def start_link(opts) do
