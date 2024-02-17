@@ -252,12 +252,22 @@ end
 ```
 
 ### Костыли
-- Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
+- Когда у тебя есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
 ```elixir
 def application do
     [
       extra_applications: [:logger]
     ]
+  end
+```
+
+- Когда у тебя есть `Application`, а надо прикрутить CLI (`escript`), приходится делать так:
+```elixir
+  def main(args) do
+    {:ok, pid} = start(:normal, args) # Application.start => Supervisor.start_link
+
+    Process.link(pid) # Dies with Supervisor 
+    :timer.sleep(:infinity) # Does not stop everything
   end
 ```
 
