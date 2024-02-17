@@ -48,6 +48,108 @@
 - Язык без всей этой прелести -- используйте генераторы/итераторы/и т.п.
 
 ## Особенности реализации
+### Сборка и запуск
+Пример:
+- `mix escript.build`
+- `./lab3 --window 4 --step 0.75`
+```
+-1.5 -14.1014
+-0.75 -0.931596
+Method: linear
+{-1.5, -14.1014}, {-0.75, -0.931596}
+0.75 0.931596
+Method: linear
+{-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}
+1.5 14.1014
+Method: lagrange
+{-1.5, -14.1014}, {-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}, {1.5, 14.1014}
+Method: linear
+{0.75, 0.931596}, {1.5, 14.1014}
+```
+
+### Обзор организации
+```mermaid
+sequenceDiagram
+    participant PointProducer
+    participant PointBuffer
+    participant PointProcessor
+    participant Printer
+    Note right of PointProducer: No loops, just init continue!
+    loop :read_points
+        PointProducer->>PointProducer: Read point
+        PointProducer->>PointBuffer: Cast point({:add_point, point})
+    end
+    PointBuffer-->>PointProcessor: Your window is full. This is your points!
+    PointProcessor->>Printer: Print my string
+```
+
+- No loops, just init continue
+
+Buffer is just like in Kotlin
+- https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/buffer.html
+- It is good, because state can be restored
+
+### Костыли
+- Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
+```elixir
+def application do
+    [
+      extra_applications: [:logger]
+    ]
+  end
+```
+
+- https://medium.com/blackode/writing-the-command-line-application-in-elixir-78a8d1b1850
+
+### FloatStream
+No float range in Elixir :( (and Erlang)
+\- https://stackoverflow.com/questions/34383303/range-of-floating-point-numbers
+
+```elixir
+defmodule Lab3.Util.FloatStream do
+  @spec new(from :: float(), to :: float(), step :: float()) :: Enumerable.t(float())
+  def new(from, to, step) do
+    from
+    |> Stream.iterate(&(&1 + step))
+    |> Stream.take_while(&(&1 <= to))
+  end
+end
+```
+
+### Window
+```elixir
+defmodule Lab3.Util.Window do
+  @moduledoc """
+  Struct to operate with fixed size list.
+  """
+
+  @enforce_keys [:size]
+  defstruct [:size, elements: []]
+
+  @type t :: %__MODULE__{}
+
+  @spec new(size :: pos_integer()) :: t()
+  def new(size) do
+    %__MODULE__{size: size}
+  end
+
+  def push(%__MODULE__{size: size, elements: []}, element) do
+    %__MODULE__{size: size, elements: [element]}
+  end
+
+  def push(%__MODULE__{size: size, elements: elements}, element) when length(elements) < size do
+    %__MODULE__{size: size, elements: elements ++ [element]}
+  end
+
+  def push(%__MODULE__{size: size, elements: [_ | tail]}, element) do
+    %__MODULE__{size: size, elements: tail ++ [element]}
+  end
+
+  def full?(%__MODULE__{size: size, elements: elements}), do: length(elements) == size
+end
+```
+
+## Архив идей
 ### GenStage
 >  GenStage provides a way for us to define a pipeline of work to be carried out by independent steps (or stages) in separate processes.
 \- https://elixirschool.com/en/lessons/data_processing/genstage
@@ -114,99 +216,21 @@ defmodule Lab3.Stage.ProducerConsumer.State do
 end
 ```
 
-### Custom Broadway
+### Broadway
 - https://hexdocs.pm/broadway/architecture.html
 
-Buffer is just like in Kotlin
-- https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/buffer.html
+Понятные абстрации: `stage` и `pipiline`.
 
-### Сборка и запуск
-- Когда у есть `Application`, становится больно. Приходится удалять ссылку на модуль в `MixProject` (`mod: {Lab3.Application, []}`), потому что `[]` - это аргументы
-```elixir
-def application do
-    [
-      extra_applications: [:logger]
-    ]
-  end
-```
+### KIF
+Everyone knows KISS.
+Today I'd like to introduce KIF: Keep It Falling.
+Principle: `Once something falls, it should continue falling.`
 
-- https://medium.com/blackode/writing-the-command-line-application-in-elixir-78a8d1b1850
-
-Пример:
-- `mix escript.build`
-- `./lab3 --window 4 --step 0.75`
-```
--1.5 -14.1014
--0.75 -0.931596
-Method: linear
-{-1.5, -14.1014}, {-0.75, -0.931596}
-0.75 0.931596
-Method: linear
-{-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}
-1.5 14.1014
-Method: lagrange
-{-1.5, -14.1014}, {-0.75, -0.931596}, {0.0, 0.0}, {0.75, 0.931596}, {1.5, 14.1014}
-Method: linear
-{0.75, 0.931596}, {1.5, 14.1014}
-```
-
-### FloatStream
-No float range in Elixir :( (and Erlang)
-\- https://stackoverflow.com/questions/34383303/range-of-floating-point-numbers
-
-```elixir
-defmodule Lab3.Util.FloatStream do
-  @spec new(from :: float(), to :: float(), step :: float()) :: Enumerable.t(float())
-  def new(from, to, step) do
-    from
-    |> Stream.iterate(&(&1 + step))
-    |> Stream.take_while(&(&1 <= to))
-    |> Enum.to_list()
-  end
-end
-```
-
-### Window
-```elixir
-defmodule Lab3.Util.Window do
-  @moduledoc """
-  Struct to operate with fixed size list.
-  """
-
-  @enforce_keys [:size]
-  defstruct [:size, elements: []]
-
-  @type t :: %__MODULE__{}
-
-  @spec new(size :: pos_integer()) :: t()
-  def new(size) do
-    %__MODULE__{size: size}
-  end
-
-  def push(%__MODULE__{size: size, elements: []}, element) do
-    %__MODULE__{size: size, elements: [element]}
-  end
-
-  def push(%__MODULE__{size: size, elements: elements}, element) when length(elements) < size do
-    %__MODULE__{size: size, elements: elements ++ [element]}
-  end
-
-  def push(%__MODULE__{size: size, elements: [_ | tail]}, element) do
-    %__MODULE__{size: size, elements: tail ++ [element]}
-  end
-
-  def full?(%__MODULE__{size: size, elements: elements}), do: length(elements) == size
-end
-```
-
-### Tests pain
-`--step 0.0`
-```plain
-mix test
-Compiling 9 files (.ex)
-Generated lab3 app
-....Killed
-```
+Example:
+- ArithmeticError is raised in gauss algorithm worker
+- It gets restarted
+- ArithmeticError is raised again since the points have the same invalid condition
+- It gets restarted again...
 
 ## Вывод
 В ходе работы познакомился с `GenStage` ...
