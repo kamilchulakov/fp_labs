@@ -2,6 +2,7 @@
 
 - Lab1: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=master)
 - Lab2: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=lab2)
+- Lab3: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=lab3)
 
 **Выполнил:** Чулаков Камиль 
 
