@@ -1,8 +1,8 @@
 # Functional Programming Labs
 
 - Lab1: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=master)
-- Lab2: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=lab2)
-- Lab3: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=lab3)
+- Lab2: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=master)
+- Lab3: ![CI](https://github.com/kamilchulakov/fp_labs/actions/workflows/elixir.yml/badge.svg?branch=master)
 
 **Выполнил:** Чулаков Камиль 
 
