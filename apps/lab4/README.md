@@ -4,6 +4,8 @@
 Implement redis (int, string, list), index (distributed), sharding, replica (in user query)
 
 ## Design
+Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietReliable)][SovietReliable]
+
 ### CAP
 <img src="./assets/cap_databases.png" width="400px"/>
 
@@ -38,7 +40,10 @@ No ideas yet
 
 ## Worth to mention
 - [Chordy](https://people.kth.se/~johanmon/dse/chordy.pdf)
-- [Yuriy Nasretdinov](https://github.com/YuriyNasretdinov)
+- [Yuriy Nasretdinov][Yuriy Nasretdinov]
 - [His 'distribkv' in Go playlist](https://www.youtube.com/playlist?list=PLWwSgbaBp9XrMkjEhmTIC37WX2JfwZp7I)
 - [Crafting a Database Engine: how DBs do what they do by Luca Ongaro (CubDB) | Ruby User Group Berlin](https://www.youtube.com/watch?v=fSgoeKJ06B4)
 - [Всё, что вы не знали о CAP теореме | Хабр](https://habr.com/ru/articles/328792/)
+
+[Yuriy Nasretdinov]: https://github.com/YuriyNasretdinov
+[SovietReliable]: https://www.youtube.com/@SovietReliable
