@@ -24,3 +24,6 @@ lab4-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore CubDB files
+/db

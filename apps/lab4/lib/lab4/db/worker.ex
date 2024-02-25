@@ -1,11 +1,11 @@
-defmodule Lab4.Db.Worker do
+defmodule Lab4.DB.Worker do
   use GenServer
 
   @enforce_keys [:db]
   defstruct [:db]
 
   def start_link(db: db) do
-    GenServer.start_link(__MODULE__, db, name: Lab4.Db.Worker)
+    GenServer.start_link(__MODULE__, db, name: __MODULE__)
   end
 
   @impl true

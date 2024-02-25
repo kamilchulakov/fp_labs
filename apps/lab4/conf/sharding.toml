@@ -1,15 +1,15 @@
 [[shards]]
-name = "Moscow"
-idx = 0
+name = "Saint-Petersburg"
+index = 0
 
 [[shards]]
-name = "Minsk"
-idx = 1
+name = "Moscow"
+index = 1
 
 [[shards]]
 name = "Yerevan"
-idx = 2
+index = 2
 
 [[shards]]
 name = "Kazan"
-idx = 3
+index = 3

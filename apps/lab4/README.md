@@ -23,20 +23,24 @@ Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietRel
 - Every node in cluster is equal.
 - So any node can redirect to correct shard.
 
-Endpoints:
-- get
-- set
-- ???
-- ?replicate?
+Single endpoint handling json:
+- generic operations: get/set/copy/del
+- list operations
+- cluster operations: replicate, slaves...
 
 ### CMD
 No ideas yet
 
 ### Config
-- name
-- index
-- adress
-- replicas
+- [TOML library](https://hex.pm/packages/toml/0.7.0)
+- Each shard:
+    - name
+    - index
+    - address
+    - replicas
+
+### Redis is hard :(
+- https://redis.io/docs/data-types/lists/
 
 ## Worth to mention
 - [Chordy](https://people.kth.se/~johanmon/dse/chordy.pdf)
@@ -47,3 +51,7 @@ No ideas yet
 
 [Yuriy Nasretdinov]: https://github.com/YuriyNasretdinov
 [SovietReliable]: https://www.youtube.com/@SovietReliable
+
+## Yuriy Guides
+- no `log fatal` in library code
+- static sharding = if you decided to live in Moscow, you can't never go anywhere else
