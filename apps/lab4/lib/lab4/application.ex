@@ -7,7 +7,8 @@ defmodule Lab4.Application do
 
   @impl true
   def start(_type, _args) do
-    {:ok, db} = CubDB.start_link(data_dir: "db/data")
+    config = Lab4.Config.new(path: "conf/sharding.toml", data_dir: "db/data")
+    {:ok, db} = CubDB.start_link(config.data_dir)
 
     children = [
       {Plug.Cowboy, scheme: :http, plug: Lab4.Http.Router, options: [port: 8080]},

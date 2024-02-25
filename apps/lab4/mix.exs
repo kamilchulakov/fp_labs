@@ -27,7 +27,8 @@ defmodule Lab4.MixProject do
   defp deps do
     [
       {:plug_cowboy, "~> 2.0"},
-      {:cubdb, "~> 2.0.2"}
+      {:cubdb, "~> 2.0.2"},
+      {:toml, "~> 0.7"}
     ]
   end
 end
