@@ -3,6 +3,12 @@
 ## Task
 Implement redis (int, string, list), index (distributed), sharding, replica (in user query)
 
+## Questions
+- distrubuted index?
+- demo instead of test?
+- do we really need types?
+- how many replicas can be?
+
 ## Design
 Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietReliable)][SovietReliable]
 
@@ -67,9 +73,3 @@ Maybe better to provide local socket address for each shard and global accessibl
 ## Yuriy Guides
 - no `log fatal` in library code
 - static sharding = if you decided to live in Moscow, you can't never go anywhere else
-
-## Questions
-- distrubuted index?
-- demo instead of test?
-- global addresses?
-- 
