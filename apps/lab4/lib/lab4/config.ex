@@ -3,23 +3,17 @@ defmodule Lab4.Config do
 
   alias Lab4.Config
 
-  defstruct [:shards, :data_dir, port: 8080]
+  defstruct [:shards, :data_dir]
 
   def new(args) do
-    strict_args = [port: :integer, sharding_file: :string, shard: :string, data_dir: :string]
+    strict_args = [sharding_file: :string, shard: :string, data_dir: :string]
     {parsed_args, _, _} = OptionParser.parse(args, strict: strict_args)
 
-    apply_args(port: parsed_args[:port])
-    |> apply_args(sharding_file: parsed_args[:sharding_file], shard: parsed_args[:shard])
+    apply_args(sharding_file: parsed_args[:sharding_file], shard: parsed_args[:shard])
     |> apply_args(data_dir: parsed_args[:data_dir])
   end
 
   defp apply_args(config \\ %__MODULE__{}, args)
-
-  defp apply_args(config, port: nil), do: config
-  defp apply_args(config, port: port) do
-    struct(config, port: port)
-  end
 
   defp apply_args(config, sharding_file: path, shard: shard) do
     struct(config, shards: parse_shards(path, shard))
@@ -57,8 +51,8 @@ defmodule Lab4.Config do
 end
 
 defmodule Lab4.Config.Shard do
-  @enforce_keys [:name, :index]
-  defstruct [:name, :index]
+  @enforce_keys [:name, :index, :port]
+  defstruct [:name, :index, :port]
 end
 
 defmodule Lab4.Config.ShardsInfo do
@@ -84,7 +78,8 @@ defmodule Lab4.Config.MapToShard do
   def transform(:shards, v) when is_map(v) do
     %Lab4.Config.Shard{
       name: v[:name],
-      index: v[:index]
+      index: v[:index],
+      port: String.to_integer(v[:port])
     }
   end
 

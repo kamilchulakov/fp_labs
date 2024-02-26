@@ -1,15 +1,19 @@
 [[shards]]
 name = "Saint-Petersburg"
 index = 0
+port = 8080
 
 [[shards]]
 name = "Moscow"
 index = 1
+port = 8081
 
 [[shards]]
 name = "Yerevan"
 index = 2
+port = 8082
 
 [[shards]]
 name = "Kazan"
 index = 3
+port = 8083

@@ -34,16 +34,19 @@ Trust me, `Plug` is trash.
 ### CMD
 ```sh
 mix escript.build
-./lab4 --sharding-file conf/sharding.toml --shard Saint-Petersburg --data-dir db/data --port 8081
+./lab4 --sharding-file conf/sharding.toml --shard Saint-Petersburg --data-dir db/spb
 ```
 
+You can find launch and kill scripts in `scripts` folder.
+
+Maybe better to provide local socket address for each shard and global accessible in sharding config file, but I keep my lab simple... 
 
 ### Config
 - [TOML library](https://hex.pm/packages/toml/0.7.0)
 - Each shard:
     - name
     - index
-    - address
+    - port
     - replicas
 
 ### Redis is hard :(
