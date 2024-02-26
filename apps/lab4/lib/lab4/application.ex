@@ -23,7 +23,7 @@ defmodule Lab4.Application do
     config = Config.new(args)
     shard = config.shards.current
 
-    Logger.info("Hello! My name is #{shard.name}")
+    Logger.info("Hello! My name is #{shard.name}", [shard: shard.index])
 
     names = names(shard)
 

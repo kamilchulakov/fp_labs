@@ -16,3 +16,8 @@ import Config
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+
+config :logger, :default_formatter,
+  level: :info,
+  format: "$time [$level] $metadata $message\n",
+  metadata: [:shard]

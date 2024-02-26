@@ -61,7 +61,7 @@ defmodule Lab4.Config do
       |> Map.get(:shards)
       |> Config.ShardsInfo.apply_current(shard)
 
-    Logger.info("Parsed shards")
+    Logger.info("Parsed shards", [shard: shards.current.index])
     Logger.debug(inspect(shards))
 
     shards
