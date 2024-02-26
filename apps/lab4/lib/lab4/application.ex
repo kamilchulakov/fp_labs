@@ -31,7 +31,8 @@ defmodule Lab4.Application do
     children = [
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
       {Plug.Cowboy, scheme: :http, plug: {Lab4.Http.Router, names}, options: [port: config.port]},
-      {Lab4.DB.Worker, db: names[:db], name: names[:db_worker]}
+      {Lab4.DB.Worker, db: names[:db], name: names[:db_worker]},
+      {Lab4.DB.Shard, shards: config.shards, name: names[:shard]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -44,7 +45,8 @@ defmodule Lab4.Application do
     %{
       db: String.to_atom("db-#{current_shard.index}"),
       db_worker: String.to_atom("db_worker-#{current_shard.index}"),
-      router: String.to_atom("router-#{current_shard.index}")
+      router: String.to_atom("router-#{current_shard.index}"),
+      shard: String.to_atom("shard-#{current_shard.index}"),
     }
   end
 end

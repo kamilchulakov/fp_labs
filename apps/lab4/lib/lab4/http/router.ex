@@ -1,17 +1,16 @@
 defmodule Lab4.Http.Router do
   use Plug.Router
 
-  alias Lab4.DB
-
   plug :match
   plug :dispatch
 
   def init(opts), do: opts
 
   match "/get/:key" do
-    value = GenServer.call(conn.private.opts.db_worker, {:get, key})
-    # DB.Shard.key_shard(key, opts[:count])
-    send_resp(conn, 200, "Get #{key}: #{value}")
+    opts = conn.private.opts
+    value = GenServer.call(opts.db_worker, {:get, key})
+    shard_index = GenServer.call(opts.shard, {:key_to_shard, key})
+    send_resp(conn, 200, "Get #{key}=#{value} on shard #{shard_index}")
   end
 
   match "set/:key/:value" do

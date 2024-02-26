@@ -23,10 +23,13 @@ Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietRel
 - Every node in cluster is equal.
 - So any node can redirect to correct shard.
 
+(TODO:)
 Single endpoint handling json:
 - generic operations: get/set/copy/del
 - list operations
 - cluster operations: replicate, slaves...
+
+Trust me, `Plug` is trash.
 
 ### CMD
 No ideas yet
