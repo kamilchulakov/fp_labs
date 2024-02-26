@@ -6,7 +6,14 @@ defmodule Lab4.Config do
   defstruct [:shards, :data_dir, :port, :replica]
 
   def new(args) do
-    strict_args = [sharding_file: :string, shard: :string, data_dir: :string, port: :integer, replica: :boolean]
+    strict_args = [
+      sharding_file: :string,
+      shard: :string,
+      data_dir: :string,
+      port: :integer,
+      replica: :boolean
+    ]
+
     {parsed_args, _, _} = OptionParser.parse(args, strict: strict_args)
 
     apply_args(port: parsed_args[:port])
@@ -61,7 +68,7 @@ defmodule Lab4.Config do
       |> Map.get(:shards)
       |> Config.ShardsInfo.apply_current(shard)
 
-    Logger.info("Parsed shards", [shard: shards.current.index])
+    Logger.info("Parsed shards", shard: shards.current.index)
     Logger.debug(inspect(shards))
 
     shards

@@ -39,6 +39,21 @@ defmodule Lab4.Http.Router do
     send_resp(conn, 200, "Purged")
   end
 
+  match "/next-replica-update" do
+    opts = conn.private.opts
+    [{key, value}] = GenServer.call(opts.names.db_worker, :next_replica_update)
+    send_resp(conn, 200, "#{key}=#{value}")
+  end
+
+  match "/replica-updated/:key/:value" do
+    opts = conn.private.opts
+
+    case GenServer.call(opts.names.db_worker, {:replica_updated, key, value}) do
+      :old_value -> send_resp(conn, 401, "Old value")
+      :ok -> send_resp(conn, 200, "Deleted")
+    end
+  end
+
   # Ugly workaround to get opts (passed to init/1) in route handlers.
   def call(conn, opts) do
     put_private(conn, :opts, opts)

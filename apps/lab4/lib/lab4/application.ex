@@ -23,27 +23,56 @@ defmodule Lab4.Application do
     config = Config.new(args)
     shard = config.shards.current
 
-    Logger.info("Hello! My name is #{shard.name}", [shard: shard.index])
+    Logger.info("Hello! My name is #{shard.name}", shard: shard.index)
 
+    opts = [strategy: :one_for_one, name: Lab4.Supervisor]
+    Supervisor.start_link(children(config, shard), opts)
+  end
+
+  defp children(config, shard) when config.replica == true do
     names = names(shard)
 
-    children = [
+    [
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
       {Plug.Cowboy,
        scheme: :http,
        plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: config.port]},
-      {DB.Worker, db: names[:db], shard: names[:shard], readonly: config.replica, name: names[:db_worker]},
+      {DB.Worker,
+       db: names[:db], shard: names[:shard], readonly: config.replica, name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
+  end
 
-    opts = [strategy: :one_for_one, name: Lab4.Supervisor]
-    Supervisor.start_link(children, opts)
+  defp children(config, shard) when config.replica == false do
+    names = names(shard)
+
+    [
+      Supervisor.child_spec({CubDB, [data_dir: config.data_dir, name: names[:db]]},
+        id: names[:db]
+      ),
+      Supervisor.child_spec(
+        {CubDB, [data_dir: "#{config.data_dir}/replica-bucket", name: names[:db_replica_bucket]]},
+        id: names[:db_replica_bucket]
+      ),
+      {Plug.Cowboy,
+       scheme: :http,
+       plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
+       options: [port: config.port]},
+      {DB.Worker,
+       db: names[:db],
+       db_replica_bucket: names[:db_replica_bucket],
+       shard: names[:shard],
+       readonly: config.replica,
+       name: names[:db_worker]},
+      {DB.Shard, shards: config.shards, name: names[:shard]}
+    ]
   end
 
   defp names(current_shard) do
     %{
       db: String.to_atom("db-#{current_shard.index}"),
+      db_replica_bucket: String.to_atom("db_replica_bucket-#{current_shard.index}"),
       db_worker: String.to_atom("db_worker-#{current_shard.index}"),
       router: String.to_atom("router-#{current_shard.index}"),
       shard: String.to_atom("shard-#{current_shard.index}")
@@ -52,6 +81,6 @@ defmodule Lab4.Application do
 
   defp addresses(shards) do
     shards.list
-    |> Enum.into(Map.new(), &({&1.index, "http://#{&1.address}"}))
+    |> Enum.into(Map.new(), &{&1.index, "http://#{&1.address}"})
   end
 end
