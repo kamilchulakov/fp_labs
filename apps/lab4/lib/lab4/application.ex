@@ -32,7 +32,7 @@ defmodule Lab4.Application do
       {Plug.Cowboy,
        scheme: :http,
        plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
-       options: [port: shard.port]},
+       options: [port: config.port]},
       {DB.Worker, db: names[:db], shard: names[:shard], name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
@@ -52,6 +52,6 @@ defmodule Lab4.Application do
 
   defp addresses(shards) do
     shards.list
-    |> Enum.into(Map.new(), &({&1.index, "http://localhost:#{&1.port}"}))
+    |> Enum.into(Map.new(), &({&1.index, "http://#{&1.address}"}))
   end
 end
