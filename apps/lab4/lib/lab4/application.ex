@@ -31,7 +31,7 @@ defmodule Lab4.Application do
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
       {Plug.Cowboy,
        scheme: :http,
-       plug: {Http.Router, %{names: names, shard: shard}},
+       plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: shard.port]},
       {DB.Worker, db: names[:db], name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
@@ -48,5 +48,10 @@ defmodule Lab4.Application do
       router: String.to_atom("router-#{current_shard.index}"),
       shard: String.to_atom("shard-#{current_shard.index}")
     }
+  end
+
+  defp addresses(shards) do
+    shards.list
+    |> Enum.into(Map.new(), &({&1.index, "http://localhost:#{&1.port}"}))
   end
 end
