@@ -25,8 +25,10 @@ defmodule Lab4.Http.Router do
     if shard_index != opts.shard.index do
       redirect_to(conn, shard_index)
     else
-      GenServer.call(opts.names.db_worker, {:set, key, value})
-      send_resp(conn, 200, "Set #{key}=#{value}")
+      case GenServer.call(opts.names.db_worker, {:set, key, value}) do
+        :ok -> send_resp(conn, 200, "Set #{key}=#{value}")
+        :readonly -> send_resp(conn, 403, "Forbidden to modify replica data")
+      end
     end
   end
 

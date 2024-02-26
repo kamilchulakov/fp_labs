@@ -33,7 +33,7 @@ defmodule Lab4.Application do
        scheme: :http,
        plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: config.port]},
-      {DB.Worker, db: names[:db], shard: names[:shard], name: names[:db_worker]},
+      {DB.Worker, db: names[:db], shard: names[:shard], readonly: config.replica, name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
 

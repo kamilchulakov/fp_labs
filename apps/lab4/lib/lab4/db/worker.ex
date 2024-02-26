@@ -1,8 +1,8 @@
 defmodule Lab4.DB.Worker do
   use GenServer
 
-  def start_link(db: db, shard: shard, name: name) do
-    GenServer.start_link(__MODULE__, %{db: db, shard: shard}, name: name)
+  def start_link(db: db, shard: shard, readonly: readonly, name: name) do
+    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly}, name: name)
   end
 
   @impl true
@@ -13,6 +13,10 @@ defmodule Lab4.DB.Worker do
   @impl true
   def handle_call({:get, key}, _from, %{db: db} = state) do
     {:reply, CubDB.get(db, key), state}
+  end
+
+  def handle_call({:set, _key, _value}, _from, %{readonly: true} = state) do
+    {:reply, :readonly, state}
   end
 
   def handle_call({:set, key, value}, _from, %{db: db} = state) do

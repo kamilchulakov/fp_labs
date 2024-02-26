@@ -2,18 +2,9 @@
 name = "Saint-Petersburg"
 index = 0
 address = "localhost:8080"
+replicas = ["localhost:8084"]
 
 [[shards]]
 name = "Moscow"
 index = 1
 address = "localhost:8081"
-
-[[shards]]
-name = "Yerevan"
-index = 2
-address = "localhost:8082"
-
-[[shards]]
-name = "Kazan"
-index = 3
-address = "localhost:8083"
