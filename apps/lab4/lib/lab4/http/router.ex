@@ -18,7 +18,7 @@ defmodule Lab4.Http.Router do
     end
   end
 
-  match "set/:key/:value" do
+  match "/set/:key/:value" do
     opts = conn.private.opts
     shard_index = GenServer.call(opts.names.shard, {:key_to_shard, key})
 
@@ -28,6 +28,13 @@ defmodule Lab4.Http.Router do
       GenServer.call(opts.names.db_worker, {:set, key, value})
       send_resp(conn, 200, "Set #{key}=#{value}")
     end
+  end
+
+  match "/purge" do
+    opts = conn.private.opts
+
+    GenServer.call(opts.names.db_worker, :delete_extra)
+    send_resp(conn, 200, "Purged")
   end
 
   # Ugly workaround to get opts (passed to init/1) in route handlers.

@@ -1,21 +1,30 @@
 defmodule Lab4.DB.Worker do
   use GenServer
 
-  def start_link(db: db, name: name) do
-    GenServer.start_link(__MODULE__, db, name: name)
+  def start_link(db: db, shard: shard, name: name) do
+    GenServer.start_link(__MODULE__, %{db: db, shard: shard}, name: name)
   end
 
   @impl true
-  def init(db) do
-    {:ok, db}
+  def init(state) do
+    {:ok, state}
   end
 
   @impl true
-  def handle_call({:get, key}, _from, db) do
-    {:reply, CubDB.get(db, key), db}
+  def handle_call({:get, key}, _from, %{db: db} = state) do
+    {:reply, CubDB.get(db, key), state}
   end
 
-  def handle_call({:set, key, value}, _from, db) do
-    {:reply, CubDB.put(db, key, value), db}
+  def handle_call({:set, key, value}, _from, %{db: db} = state) do
+    {:reply, CubDB.put(db, key, value), state}
+  end
+
+  def handle_call(:delete_extra, _from, state = %{db: db, shard: shard}) do
+    extra_keys =
+      CubDB.select(db)
+      |> Stream.filter(fn {key, _value} -> !GenServer.call(shard, {:current, key}) end)
+      |> Enum.to_list()
+
+    {:reply, CubDB.delete_multi(db, extra_keys), state}
   end
 end

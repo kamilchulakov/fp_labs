@@ -15,6 +15,10 @@ defmodule Lab4.DB.Shard do
     {:reply, key_to_shard(key, state.count), state}
   end
 
+  def handle_call({:current, key}, _from, state) do
+    {:reply, key_to_shard(key, state.count) == state.current.index, state}
+  end
+
   defp key_to_shard(key, count) do
     :erlang.phash2(key)
     |> Integer.mod(count)

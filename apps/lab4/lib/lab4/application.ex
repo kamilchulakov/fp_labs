@@ -25,7 +25,7 @@ defmodule Lab4.Application do
 
     Logger.info("Hello! My name is #{shard.name}")
 
-    names = names(config.shards.current)
+    names = names(shard)
 
     children = [
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
@@ -33,7 +33,7 @@ defmodule Lab4.Application do
        scheme: :http,
        plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: shard.port]},
-      {DB.Worker, db: names[:db], name: names[:db_worker]},
+      {DB.Worker, db: names[:db], shard: names[:shard], name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
 

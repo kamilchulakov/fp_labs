@@ -12,7 +12,9 @@ Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietRel
 `Redis` is CP system, so I don't care about availability of my system...
 
 ### Static sharding
-`SERVER("KEY") = HASH("KEY") % NUM_OF_SHARDS`
+- `SERVER("KEY") = HASH("KEY") % NUM_OF_SHARDS`
+- resharding by x2
+- just do purge
 
 ### Local database
 - I think `HashMap` as store for this particular task kinda sucks.
@@ -65,3 +67,9 @@ Maybe better to provide local socket address for each shard and global accessibl
 ## Yuriy Guides
 - no `log fatal` in library code
 - static sharding = if you decided to live in Moscow, you can't never go anywhere else
+
+## Questions
+- distrubuted index?
+- demo instead of test?
+- global addresses?
+- 
