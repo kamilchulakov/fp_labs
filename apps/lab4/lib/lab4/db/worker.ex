@@ -1,8 +1,13 @@
 defmodule Lab4.DB.Worker do
+  @moduledoc """
+  Module that works with storage: db and db_replica_bucket (for storing updates)
+  """
+
+  require Logger
   use GenServer
 
   def start_link(db: db, shard: shard, readonly: readonly, name: name) do
-    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly}, name: name)
+    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly, name: name}, name: name)
   end
 
   def start_link(
@@ -38,7 +43,11 @@ defmodule Lab4.DB.Worker do
     {:reply, CubDB.put(db_replica_bucket, key, value), state}
   end
 
-  def handle_call(:delete_extra, _from, state = %{db: db, shard: shard}) do
+  def handle_call({:set_update, key, value}, _, %{readonly: true, db: db} = state) do
+    {:reply, CubDB.put(db, key, value), state}
+  end
+
+  def handle_call(:delete_extra, _from, %{db: db, shard: shard} = state) do
     extra_keys =
       CubDB.select(db)
       |> Stream.filter(fn {key, _value} -> !GenServer.call(shard, {:current, key}) end)
@@ -51,12 +60,17 @@ defmodule Lab4.DB.Worker do
     {:reply, CubDB.select(db_replica_bucket) |> Enum.take(1), state}
   end
 
-  def handle_call({:replica_updated, key, value}, _, %{db: db, db_replica_bucket: db_replica_bucket} = state) do
+  def handle_call(
+        {:replica_updated, key, value},
+        _,
+        %{db: db, db_replica_bucket: db_replica_bucket} = state
+      ) do
     current_value = CubDB.get(db, key)
 
     if current_value != value do
       {:reply, :old_value, state}
     else
+      Logger.info("Deleting replicated key #{key} from replica bucket", worker: state.name)
       {:reply, CubDB.delete(db_replica_bucket, key), state}
     end
   end

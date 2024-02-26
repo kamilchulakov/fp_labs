@@ -28,7 +28,8 @@ defmodule Lab4.MixProject do
     [
       {:plug_cowboy, "~> 2.0"},
       {:cubdb, "~> 2.0.2"},
-      {:toml, "~> 0.7"}
+      {:toml, "~> 0.7"},
+      {:finch, "~> 0.18"}
     ]
   end
 

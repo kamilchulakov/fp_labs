@@ -1,4 +1,7 @@
 defmodule Lab4.Config do
+  @moduledoc """
+  Big config.
+  """
   require Logger
 
   alias Lab4.Config
@@ -76,11 +79,17 @@ defmodule Lab4.Config do
 end
 
 defmodule Lab4.Config.Shard do
+  @moduledoc """
+  Shard data struct,
+  """
   @enforce_keys [:name, :index, :address, :replicas]
   defstruct [:name, :index, :address, :replicas]
 end
 
 defmodule Lab4.Config.ShardsInfo do
+  @moduledoc """
+  Struct to store data about all shards.
+  """
   @enforce_keys [:list, :count]
   defstruct [:list, :count, :current]
 
@@ -98,6 +107,9 @@ defmodule Lab4.Config.ShardsInfo do
 end
 
 defmodule Lab4.Config.MapToShard do
+  @moduledoc """
+  Module for transforming maps to shards.
+  """
   use Toml.Transform
 
   def transform(:shards, v) when is_map(v) do
@@ -113,10 +125,15 @@ defmodule Lab4.Config.MapToShard do
 end
 
 defmodule Lab4.Config.ShardListToShardsInfo do
+  @moduledoc """
+  Module to transform list of shards to shard info.
+  """
   use Toml.Transform
 
+  alias Lab4.Config.ShardsInfo
+
   def transform(:shards, v) when is_list(v) do
-    Lab4.Config.ShardsInfo.new(v)
+    ShardsInfo.new(v)
   end
 
   def transform(_k, v), do: v

@@ -34,6 +34,12 @@ defmodule Lab4.Application do
 
     [
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
+      {Finch, name: names[:http_client]},
+      {DB.Replica,
+       http_client: names[:http_client],
+       leader_addr: addresses(config.shards)[shard.index],
+       db_worker: names[:db_worker],
+       name: names[:replica]},
       {Plug.Cowboy,
        scheme: :http,
        plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
@@ -69,13 +75,15 @@ defmodule Lab4.Application do
     ]
   end
 
-  defp names(current_shard) do
+  defp names(shard) do
     %{
-      db: String.to_atom("db-#{current_shard.index}"),
-      db_replica_bucket: String.to_atom("db_replica_bucket-#{current_shard.index}"),
-      db_worker: String.to_atom("db_worker-#{current_shard.index}"),
-      router: String.to_atom("router-#{current_shard.index}"),
-      shard: String.to_atom("shard-#{current_shard.index}")
+      db: String.to_atom("db"),
+      db_replica_bucket: String.to_atom("db_replica_bucket"),
+      db_worker: String.to_atom("db_worker"),
+      router: String.to_atom("router"),
+      shard: String.to_atom("shard-#{shard.index}"),
+      http_client: String.to_atom("http_client"),
+      replica: String.to_atom("replica-#{shard.index}")
     }
   end
 

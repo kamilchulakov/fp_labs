@@ -20,4 +20,4 @@ import Config
 config :logger, :default_formatter,
   level: :info,
   format: "$time [$level] $metadata $message\n",
-  metadata: [:shard]
+  metadata: [:shard, :worker]

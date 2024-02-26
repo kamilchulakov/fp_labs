@@ -1,4 +1,9 @@
-defmodule Lab4.Http.Router do
+defmodule Lab4.Http.Router do\
+  @moduledoc """
+  This module is doing its best in handling http requests.
+  """
+
+  require Logger
   use Plug.Router
 
   plug(:match)
@@ -41,8 +46,12 @@ defmodule Lab4.Http.Router do
 
   match "/next-replica-update" do
     opts = conn.private.opts
-    [{key, value}] = GenServer.call(opts.names.db_worker, :next_replica_update)
-    send_resp(conn, 200, "#{key}=#{value}")
+
+    case GenServer.call(opts.names.db_worker, :next_replica_update) do
+      [] -> send_resp(conn, 200, "")
+      [{key, value}] -> send_resp(conn, 200, "#{key}=#{value}")
+      _ -> Logger.error("Invalid next update value")
+    end
   end
 
   match "/replica-updated/:key/:value" do

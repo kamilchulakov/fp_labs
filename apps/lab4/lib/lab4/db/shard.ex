@@ -1,4 +1,8 @@
 defmodule Lab4.DB.Shard do
+  @moduledoc """
+  Provides shard information.
+  """
+
   use GenServer
 
   def start_link(shards: shards, name: name) do
