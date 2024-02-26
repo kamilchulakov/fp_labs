@@ -2,27 +2,25 @@ defmodule Lab4.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-  @port 8081
-  @shard "Saint-Petersburg"
 
   require Logger
 
+  alias Lab4.Config
+  alias Lab4.DB
+  alias Lab4.Http
+
   use Application
 
-  @impl true
-  def start(_type, _args) do
-    config =
-      Lab4.Config.new(
-        path: "conf/sharding.toml",
-        data_dir: "db/data",
-        port: @port,
-        shard: @shard
-      )
+  def main(args) do
+    {:ok, pid} = start(:normal, args)
 
-    if config.shards.current == nil do
-      Logger.error("Shard with name \"#{@shard}\" not found.")
-      exit(-1)
-    end
+    Process.link(pid)
+    :timer.sleep(:infinity)
+  end
+
+  @impl true
+  def start(_type, args) do
+    config = Config.new(args)
 
     Logger.info("Hello! My name is #{config.shards.current.name}")
 
@@ -30,13 +28,11 @@ defmodule Lab4.Application do
 
     children = [
       {CubDB, [data_dir: config.data_dir, name: names[:db]]},
-      {Plug.Cowboy, scheme: :http, plug: {Lab4.Http.Router, names}, options: [port: config.port]},
-      {Lab4.DB.Worker, db: names[:db], name: names[:db_worker]},
-      {Lab4.DB.Shard, shards: config.shards, name: names[:shard]}
+      {Plug.Cowboy, scheme: :http, plug: {Http.Router, names}, options: [port: config.port]},
+      {DB.Worker, db: names[:db], name: names[:db_worker]},
+      {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Lab4.Supervisor]
     Supervisor.start_link(children, opts)
   end
@@ -46,7 +42,7 @@ defmodule Lab4.Application do
       db: String.to_atom("db-#{current_shard.index}"),
       db_worker: String.to_atom("db_worker-#{current_shard.index}"),
       router: String.to_atom("router-#{current_shard.index}"),
-      shard: String.to_atom("shard-#{current_shard.index}"),
+      shard: String.to_atom("shard-#{current_shard.index}")
     }
   end
 end

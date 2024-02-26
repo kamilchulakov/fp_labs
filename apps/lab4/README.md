@@ -32,7 +32,11 @@ Single endpoint handling json:
 Trust me, `Plug` is trash.
 
 ### CMD
-No ideas yet
+```sh
+mix escript.build
+./lab4 --sharding-file conf/sharding.toml --shard Saint-Petersburg --data-dir db/data --port 8081
+```
+
 
 ### Config
 - [TOML library](https://hex.pm/packages/toml/0.7.0)

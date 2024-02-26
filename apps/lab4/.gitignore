@@ -27,3 +27,6 @@ lab4-*.tar
 
 # Ignore CubDB files
 /db
+
+# Ignore escript build
+./lab4

@@ -11,7 +11,8 @@ defmodule Lab4.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      escript: escript()
     ]
   end
 
@@ -19,7 +20,6 @@ defmodule Lab4.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Lab4.Application, []}
     ]
   end
 
@@ -29,6 +29,12 @@ defmodule Lab4.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:cubdb, "~> 2.0.2"},
       {:toml, "~> 0.7"}
+    ]
+  end
+
+  defp escript do
+    [
+      main_module: Lab4.Application
     ]
   end
 end

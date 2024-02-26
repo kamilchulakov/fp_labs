@@ -3,10 +3,45 @@ defmodule Lab4.Config do
 
   alias Lab4.Config
 
-  @enforce_keys [:shards, :data_dir, :port]
-  defstruct [:shards, :data_dir, :port]
+  defstruct [:shards, :data_dir, port: 8080]
 
-  def new(path: path, data_dir: data_dir, port: port, shard: shard) do
+  def new(args) do
+    strict_args = [port: :integer, sharding_file: :string, shard: :string, data_dir: :string]
+    {parsed_args, _, _} = OptionParser.parse(args, strict: strict_args)
+
+    apply_args(port: parsed_args[:port])
+    |> apply_args(sharding_file: parsed_args[:sharding_file], shard: parsed_args[:shard])
+    |> apply_args(data_dir: parsed_args[:data_dir])
+  end
+
+  defp apply_args(config \\ %__MODULE__{}, args)
+
+  defp apply_args(config, port: nil), do: config
+  defp apply_args(config, port: port) do
+    struct(config, port: port)
+  end
+
+  defp apply_args(config, sharding_file: path, shard: shard) do
+    struct(config, shards: parse_shards(path, shard))
+  end
+
+  defp apply_args(_, data_dir: nil) do
+    raise "--data-dir is required"
+  end
+
+  defp apply_args(config, data_dir: path) do
+    struct(config, data_dir: path)
+  end
+
+  defp parse_shards(path, shard) do
+    if path == nil do
+      raise "--sharding-file is required"
+    end
+
+    if shard == nil do
+      raise "--shard is required"
+    end
+
     transforms = [Config.MapToShard, Config.ShardListToShardsInfo]
 
     shards =
@@ -17,11 +52,7 @@ defmodule Lab4.Config do
     Logger.info("Parsed shards")
     Logger.debug(inspect(shards))
 
-    %__MODULE__{
-      shards: shards,
-      data_dir: data_dir,
-      port: port
-    }
+    shards
   end
 end
 

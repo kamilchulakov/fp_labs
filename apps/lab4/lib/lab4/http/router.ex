@@ -1,8 +1,8 @@
 defmodule Lab4.Http.Router do
   use Plug.Router
 
-  plug :match
-  plug :dispatch
+  plug(:match)
+  plug(:dispatch)
 
   def init(opts), do: opts
 
@@ -18,6 +18,7 @@ defmodule Lab4.Http.Router do
     send_resp(conn, 200, "Set #{key}=#{value}")
   end
 
+  # Ugly workaround to get opts (passed to init/1) in route handlers.
   def call(conn, opts) do
     put_private(conn, :opts, opts)
     |> super(opts)
