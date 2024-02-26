@@ -8,6 +8,7 @@ Implement redis (int, string, list), index (distributed), sharding, replica (in 
 - demo instead of test?
 - do we really need types?
 - how many replicas can be?
+- shards from file = ok?
 
 ## Design
 Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietReliable)][SovietReliable]
