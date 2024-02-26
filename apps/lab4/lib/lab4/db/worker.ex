@@ -7,7 +7,9 @@ defmodule Lab4.DB.Worker do
   use GenServer
 
   def start_link(db: db, shard: shard, readonly: readonly, name: name) do
-    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly, name: name}, name: name)
+    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly, name: name},
+      name: name
+    )
   end
 
   def start_link(

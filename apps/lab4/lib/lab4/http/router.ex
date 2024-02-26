@@ -1,4 +1,4 @@
-defmodule Lab4.Http.Router do\
+defmodule Lab4.Http.Router do
   @moduledoc """
   This module is doing its best in handling http requests.
   """

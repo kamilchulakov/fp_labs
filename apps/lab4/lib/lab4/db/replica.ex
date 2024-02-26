@@ -55,6 +55,7 @@ defmodule Lab4.DB.Replica do
     Logger.error("Failed to fetch update from #{state.leader_addr}: #{inspect(error)}",
       worker: state.name
     )
+
     Process.sleep(@error_sleep_ms)
   end
 end
