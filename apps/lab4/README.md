@@ -4,11 +4,20 @@
 Implement redis (int, string, list), index (distributed), sharding, replica (in user query)
 
 ## Questions
-- distrubuted index?
-- demo instead of test?
-- do we really need types?
-- how many replicas can be?
-- shards from file = ok?
+- distrubuted index? => индекс шардов по листам, можно хранить так ключ=индекс, значение=лист 
+- demo instead of test? => схема с описанием
+- do we really need types? => да
+- how many replicas can be? => ну есть и есть, но фокус на шардах и индексах
+- shards from file = ok? => да
+
+## Review fixes
+- [DONE] GenServer call скрыть в модуле 
+- [DONE] Переименовать index в ключ шардирования  
+- [TODO] Support lists
+
+## Also
+- [TODO] Подумать как хранить индексы и потом собирать (куб не даёт юзать одну базу)
+- [TODO] Может сделать тупо кеш для апдейтов?
 
 ## Design
 Simplicity is reliability (c) [Yuriy Nasretdinov][Yuriy Nasretdinov] [(SovietReliable)][SovietReliable]
