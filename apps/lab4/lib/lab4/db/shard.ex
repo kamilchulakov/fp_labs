@@ -20,7 +20,7 @@ defmodule Lab4.DB.Shard do
   end
 
   def handle_call({:current, key}, _from, state) do
-    {:reply, key_to_shard(key, state.count) == state.current.index, state}
+    {:reply, key_to_shard(key, state.count) == state.current.shard_key, state}
   end
 
   defp key_to_shard(key, count) do

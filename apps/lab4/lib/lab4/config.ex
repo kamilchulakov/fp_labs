@@ -71,7 +71,7 @@ defmodule Lab4.Config do
       |> Map.get(:shards)
       |> Config.ShardsInfo.apply_current(shard)
 
-    Logger.info("Parsed shards", shard: shards.current.index)
+    Logger.info("Parsed shards", shard: shards.current.shard_key)
     Logger.debug(inspect(shards))
 
     shards
@@ -82,8 +82,8 @@ defmodule Lab4.Config.Shard do
   @moduledoc """
   Shard data struct,
   """
-  @enforce_keys [:name, :index, :address, :replicas]
-  defstruct [:name, :index, :address, :replicas]
+  @enforce_keys [:name, :shard_key, :address, :replicas]
+  defstruct [:name, :shard_key, :address, :replicas]
 end
 
 defmodule Lab4.Config.ShardsInfo do
@@ -96,7 +96,7 @@ defmodule Lab4.Config.ShardsInfo do
   def new(shards) do
     %__MODULE__{
       list: shards,
-      count: max(Enum.count(shards), Enum.max_by(shards, & &1.index).index + 1)
+      count: max(Enum.count(shards), Enum.max_by(shards, & &1.shard_key).shard_key + 1)
     }
   end
 
@@ -115,7 +115,7 @@ defmodule Lab4.Config.MapToShard do
   def transform(:shards, v) when is_map(v) do
     %Lab4.Config.Shard{
       name: v[:name],
-      index: v[:index],
+      shard_key: v[:shard_key],
       address: String.to_integer(v[:address]),
       replicas: v[:replicas]
     }

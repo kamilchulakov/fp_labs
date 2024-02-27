@@ -23,7 +23,7 @@ defmodule Lab4.Application do
     config = Config.new(args)
     shard = config.shards.current
 
-    Logger.info("Hello! My name is #{shard.name}", shard: shard.index)
+    Logger.info("Hello! My name is #{shard.name}", shard: shard.shard_key)
 
     opts = [strategy: :one_for_one, name: Lab4.Supervisor]
     Supervisor.start_link(children(config, shard), opts)
@@ -37,7 +37,7 @@ defmodule Lab4.Application do
       {Finch, name: names[:http_client]},
       {DB.Replica,
        http_client: names[:http_client],
-       leader_addr: addresses(config.shards)[shard.index],
+       leader_addr: addresses(config.shards)[shard.shard_key],
        db_worker: names[:db_worker],
        name: names[:replica]},
       {Plug.Cowboy,
@@ -81,14 +81,14 @@ defmodule Lab4.Application do
       db_replica_bucket: String.to_atom("db_replica_bucket"),
       db_worker: String.to_atom("db_worker"),
       router: String.to_atom("router"),
-      shard: String.to_atom("shard-#{shard.index}"),
+      shard: String.to_atom("shard-#{shard.shard_key}"),
       http_client: String.to_atom("http_client"),
-      replica: String.to_atom("replica-#{shard.index}")
+      replica: String.to_atom("replica-#{shard.shard_key}")
     }
   end
 
   defp addresses(shards) do
     shards.list
-    |> Enum.into(Map.new(), &{&1.index, "http://#{&1.address}"})
+    |> Enum.into(Map.new(), &{&1.shard_key, "http://#{&1.address}"})
   end
 end

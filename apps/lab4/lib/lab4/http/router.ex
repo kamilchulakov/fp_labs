@@ -13,22 +13,22 @@ defmodule Lab4.Http.Router do
 
   match "/get/:key" do
     opts = conn.private.opts
-    shard_index = GenServer.call(opts.names.shard, {:key_to_shard, key})
+    shard_key = GenServer.call(opts.names.shard, {:key_to_shard, key})
 
-    if shard_index != opts.shard.index do
-      redirect_to(conn, shard_index)
+    if shard_key != opts.shard.shard_key do
+      redirect_to(conn, shard_key)
     else
       value = GenServer.call(opts.names.db_worker, {:get, key})
-      send_resp(conn, 200, "Get #{key}=#{value} on shard #{shard_index}")
+      send_resp(conn, 200, "Get #{key}=#{value} on shard #{shard_key}")
     end
   end
 
   match "/set/:key/:value" do
     opts = conn.private.opts
-    shard_index = GenServer.call(opts.names.shard, {:key_to_shard, key})
+    shard_key = GenServer.call(opts.names.shard, {:key_to_shard, key})
 
-    if shard_index != opts.shard.index do
-      redirect_to(conn, shard_index)
+    if shard_key != opts.shard.shard_key do
+      redirect_to(conn, shard_key)
     else
       case GenServer.call(opts.names.db_worker, {:set, key, value}) do
         :ok -> send_resp(conn, 200, "Set #{key}=#{value}")
@@ -69,18 +69,18 @@ defmodule Lab4.Http.Router do
     |> super(opts)
   end
 
-  defp redirect_to(conn, shard_index) do
+  defp redirect_to(conn, shard_key) do
     conn
     |> Plug.Conn.resp(:found, "")
-    |> Plug.Conn.put_resp_header("location", "#{replace_endpoint(conn, shard_index)}")
+    |> Plug.Conn.put_resp_header("location", "#{replace_endpoint(conn, shard_key)}")
   end
 
-  defp replace_endpoint(conn, shard_index) do
+  defp replace_endpoint(conn, shard_key) do
     opts = conn.private.opts
     addresses = opts.addresses
 
     conn
     |> Plug.Conn.request_url()
-    |> String.replace(addresses[opts.shard.index], addresses[shard_index])
+    |> String.replace(addresses[opts.shard.shard_key], addresses[shard_key])
   end
 end
