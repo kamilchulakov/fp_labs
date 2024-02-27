@@ -23,13 +23,12 @@ defmodule Lab4.Application do
     config = Config.new(args)
     shard = config.shards.current
 
-    Logger.info("Hello! My name is #{shard.name}", shard: shard.shard_key)
-
     opts = [strategy: :one_for_one, name: Lab4.Supervisor]
     Supervisor.start_link(children(config, shard), opts)
   end
 
   defp children(config, shard) when config.replica == true do
+    Logger.info("Replica starting", shard: shard.shard_key)
     names = names(shard)
 
     [
@@ -42,7 +41,7 @@ defmodule Lab4.Application do
        name: names[:replica]},
       {Plug.Cowboy,
        scheme: :http,
-       plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
+       plug: {Http.Router, %{pids: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: config.port]},
       {DB.Worker,
        db: names[:db], shard: names[:shard], readonly: config.replica, name: names[:db_worker]},
@@ -51,6 +50,7 @@ defmodule Lab4.Application do
   end
 
   defp children(config, shard) when config.replica == false do
+    Logger.info("Hello! My name is #{shard.name}", shard: shard.shard_key)
     names = names(shard)
 
     [
@@ -63,7 +63,7 @@ defmodule Lab4.Application do
       ),
       {Plug.Cowboy,
        scheme: :http,
-       plug: {Http.Router, %{names: names, shard: shard, addresses: addresses(config.shards)}},
+       plug: {Http.Router, %{pids: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: config.port]},
       {DB.Worker,
        db: names[:db],

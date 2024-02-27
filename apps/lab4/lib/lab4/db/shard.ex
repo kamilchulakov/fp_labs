@@ -9,6 +9,14 @@ defmodule Lab4.DB.Shard do
     GenServer.start_link(__MODULE__, shards, name: name)
   end
 
+  def key_to_shard_key(pid, key) do
+    GenServer.call(pid, {:key_to_shard, key})
+  end
+
+  def belongs_to_current?(pid, key) do
+    GenServer.call(pid, {:current, key})
+  end
+
   @impl true
   def init(state) do
     {:ok, state}

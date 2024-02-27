@@ -4,6 +4,7 @@ defmodule Lab4.DB.Worker do
   """
 
   require Logger
+  alias Lab4.DB.Shard
   use GenServer
 
   def start_link(db: db, shard: shard, readonly: readonly, name: name) do
@@ -26,6 +27,30 @@ defmodule Lab4.DB.Worker do
     )
   end
 
+  def get(pid, key) do
+    GenServer.call(pid, {:get, key})
+  end
+
+  def set(pid, key, value) do
+    GenServer.call(pid, {:set, key, value})
+  end
+
+  def purge(pid) do
+    GenServer.call(pid, :delete_extra)
+  end
+
+  def apply_update(pid, key, value) do
+    GenServer.call(pid, {:apply_update, key, value})
+  end
+
+  def next_replica_update(pid) do
+    GenServer.call(pid, :next_replica_update)
+  end
+
+  def replica_updated(pid, key, value) do
+    GenServer.call(pid, {:replica_updated, key, value})
+  end
+
   @impl true
   def init(state) do
     {:ok, state}
@@ -45,14 +70,14 @@ defmodule Lab4.DB.Worker do
     {:reply, CubDB.put(db_replica_bucket, key, value), state}
   end
 
-  def handle_call({:set_update, key, value}, _, %{readonly: true, db: db} = state) do
+  def handle_call({:apply_update, key, value}, _, %{readonly: true, db: db} = state) do
     {:reply, CubDB.put(db, key, value), state}
   end
 
   def handle_call(:delete_extra, _from, %{db: db, shard: shard} = state) do
     extra_keys =
       CubDB.select(db)
-      |> Stream.filter(fn {key, _value} -> !GenServer.call(shard, {:current, key}) end)
+      |> Stream.filter(fn {key, _value} -> Shard.belongs_to_current?(shard, key) end)
       |> Enum.to_list()
 
     {:reply, CubDB.delete_multi(db, extra_keys), state}

@@ -4,6 +4,7 @@ defmodule Lab4.DB.Replica do
   """
 
   require Logger
+  alias Lab4.DB.Worker
   use GenServer
 
   @sleep_ms 1000
@@ -39,13 +40,13 @@ defmodule Lab4.DB.Replica do
   end
 
   defp handle_next_update_response({:ok, response}, state) when response.body == "" do
-    Logger.info("#{state.leader_addr} has no updates", worker: state.name)
+    Logger.info("Shard has no updates", worker: state.name)
   end
 
   defp handle_next_update_response({:ok, response}, state) do
     [key, value] = String.split(response.body, "=")
     Logger.info("Got update", worker: state.name)
-    GenServer.call(state.db_worker, {:set_update, key, value})
+    Worker.apply_update(state.db_worker, key, value)
 
     Finch.build(:post, "#{state.leader_addr}/replica-updated/#{key}/#{value}")
     |> Finch.request(state.http_client)
