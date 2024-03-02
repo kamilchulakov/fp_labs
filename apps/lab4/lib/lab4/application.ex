@@ -5,6 +5,7 @@ defmodule Lab4.Application do
 
   require Logger
 
+  alias Lab4.Commander
   alias Lab4.Config
   alias Lab4.DB
   alias Lab4.Http
@@ -43,8 +44,7 @@ defmodule Lab4.Application do
        scheme: :http,
        plug: {Http.Router, %{pids: names, shard: shard, addresses: addresses(config.shards)}},
        options: [port: config.port]},
-      {DB.Worker,
-       db: names[:db], shard: names[:shard], readonly: config.replica, name: names[:db_worker]},
+      {DB.Worker, db: names[:db], shard: names[:shard], name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
   end
@@ -61,15 +61,23 @@ defmodule Lab4.Application do
         {CubDB, [data_dir: "#{config.data_dir}/replica-bucket", name: names[:db_replica_bucket]]},
         id: names[:db_replica_bucket]
       ),
+      {Commander.Worker,
+       db_worker: names[:db_worker], db_index: names[:db_index], name: names[:commander]},
       {Plug.Cowboy,
        scheme: :http,
-       plug: {Http.Router, %{pids: names, shard: shard, addresses: addresses(config.shards)}},
+       plug:
+         {Http.Router,
+          %{
+            db_worker: names[:db_worker],
+            shard: shard,
+            commander: names[:commander],
+            addresses: addresses(config.shards)
+          }},
        options: [port: config.port]},
       {DB.Worker,
        db: names[:db],
        db_replica_bucket: names[:db_replica_bucket],
        shard: names[:shard],
-       readonly: config.replica,
        name: names[:db_worker]},
       {DB.Shard, shards: config.shards, name: names[:shard]}
     ]
@@ -80,10 +88,12 @@ defmodule Lab4.Application do
       db: String.to_atom("db"),
       db_replica_bucket: String.to_atom("db_replica_bucket"),
       db_worker: String.to_atom("db_worker"),
+      db_index: String.to_atom("db_index"),
       router: String.to_atom("router"),
       shard: String.to_atom("shard-#{shard.shard_key}"),
       http_client: String.to_atom("http_client"),
-      replica: String.to_atom("replica-#{shard.shard_key}")
+      replica: String.to_atom("replica-#{shard.shard_key}"),
+      commander: String.to_atom("commander")
     }
   end
 

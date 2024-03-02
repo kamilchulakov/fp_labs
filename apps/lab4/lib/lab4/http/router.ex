@@ -4,6 +4,7 @@ defmodule Lab4.Http.Router do
   """
 
   require Logger
+  alias Lab4.Commander
   alias Lab4.DB
   use Plug.Router
 
@@ -12,43 +13,24 @@ defmodule Lab4.Http.Router do
 
   def init(opts), do: opts
 
-  match "/get/:key" do
+  match "/" do
     opts = conn.private.opts
-    shard_key = DB.Shard.key_to_shard_key(opts.pids.shard, key)
+    {:ok, command, conn} = Plug.Conn.read_body(conn)
 
-    if shard_key != opts.shard.shard_key do
-      redirect_to(conn, shard_key)
-    else
-      value = DB.Worker.get(opts.pids.db_worker, key)
-      send_resp(conn, 200, "Get #{key}=#{value} on shard #{shard_key}")
+    Logger.debug(command, shard: opts.shard.shard_key)
+
+    case Commander.Worker.execute(opts.commander, command) do
+      {:wrong_shard, shard_key} -> redirect_to(conn, shard_key)
+      :ok -> send_resp(conn, 200, "OK")
+      :bad_args -> send_resp(conn, 403, "Bad request")
+      data -> send_resp(conn, 200, data)
     end
-  end
-
-  match "/set/:key/:value" do
-    opts = conn.private.opts
-    shard_key = DB.Shard.key_to_shard_key(opts.pids.shard, key)
-
-    if shard_key != opts.shard.shard_key do
-      redirect_to(conn, shard_key)
-    else
-      case DB.Worker.set(opts.pids.db_worker, key, value) do
-        :ok -> send_resp(conn, 200, "Set #{key}=#{value}")
-        :readonly -> send_resp(conn, 403, "Forbidden to modify replica data")
-      end
-    end
-  end
-
-  match "/purge" do
-    opts = conn.private.opts
-
-    DB.Worker.purge(opts.pids.db_worker)
-    send_resp(conn, 200, "Purged")
   end
 
   match "/next-replica-update" do
     opts = conn.private.opts
 
-    case DB.Worker.next_replica_update(opts.pids.db_worker) do
+    case DB.Worker.next_replica_update(opts.db_worker) do
       [] -> send_resp(conn, 200, "")
       [{key, value}] -> send_resp(conn, 200, "#{key}=#{value}")
       _ -> Logger.error("Invalid next update value")
@@ -58,7 +40,7 @@ defmodule Lab4.Http.Router do
   match "/replica-updated/:key/:value" do
     opts = conn.private.opts
 
-    case DB.Worker.replica_updated(opts.pids.db_worker, key, value) do
+    case DB.Worker.replica_updated(opts.db_worker, key, value) do
       :old_value -> send_resp(conn, 401, "Old value")
       :ok -> send_resp(conn, 200, "Deleted")
     end
@@ -71,7 +53,7 @@ defmodule Lab4.Http.Router do
   end
 
   defp redirect_to(conn, shard_key) do
-    Logger.info("Redirected to #{shard_key}", shard: conn.private.opts.shard.shard_key)
+    Logger.debug("Redirected to #{shard_key}", shard: conn.private.opts.shard.shard_key)
 
     conn
     |> Plug.Conn.resp(:found, "")

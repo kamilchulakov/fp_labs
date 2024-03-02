@@ -7,8 +7,8 @@ defmodule Lab4.DB.Worker do
   alias Lab4.DB.Shard
   use GenServer
 
-  def start_link(db: db, shard: shard, readonly: readonly, name: name) do
-    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: readonly, name: name},
+  def start_link(db: db, shard: shard, name: name) do
+    GenServer.start_link(__MODULE__, %{db: db, shard: shard, readonly: true, name: name},
       name: name
     )
   end
@@ -17,12 +17,11 @@ defmodule Lab4.DB.Worker do
         db: db,
         db_replica_bucket: db_replica_bucket,
         shard: shard,
-        readonly: readonly,
         name: name
       ) do
     GenServer.start_link(
       __MODULE__,
-      %{db: db, db_replica_bucket: db_replica_bucket, shard: shard, readonly: readonly},
+      %{db: db, db_replica_bucket: db_replica_bucket, shard: shard, readonly: false, name: name},
       name: name
     )
   end
