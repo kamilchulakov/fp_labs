@@ -4,6 +4,7 @@ defmodule Lab4.DB.Worker do
   """
 
   require Logger
+  alias Lab4.DB.Filter
   alias Lab4.DB.Shard
   use GenServer
 
@@ -32,6 +33,10 @@ defmodule Lab4.DB.Worker do
 
   def set(pid, key, value) do
     GenServer.call(pid, {:set, key, value})
+  end
+
+  def filter(pid, filter) do
+    GenServer.call(pid, {:filter, filter})
   end
 
   def purge(pid) do
@@ -69,6 +74,14 @@ defmodule Lab4.DB.Worker do
     {:reply, CubDB.put(db_replica_bucket, key, value), state}
   end
 
+  def handle_call({:filter, filter}, _from, state) do
+    data = CubDB.select(state.db)
+    |> Filter.filter(filter)
+    |> Enum.to_list()
+
+    {:reply, data, state}
+  end
+
   def handle_call({:apply_update, key, value}, _, %{readonly: true, db: db} = state) do
     {:reply, CubDB.put(db, key, value), state}
   end
@@ -79,7 +92,8 @@ defmodule Lab4.DB.Worker do
       |> Stream.filter(fn {key, _value} -> Shard.belongs_to_current?(shard, key) end)
       |> Enum.to_list()
 
-    {:reply, CubDB.delete_multi(db, extra_keys), state}
+    CubDB.delete_multi(db, extra_keys)
+    {:reply, extra_keys, state}
   end
 
   def handle_call(:next_replica_update, _from, %{db_replica_bucket: db_replica_bucket} = state) do

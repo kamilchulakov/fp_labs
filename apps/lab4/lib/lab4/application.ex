@@ -61,6 +61,10 @@ defmodule Lab4.Application do
         {CubDB, [data_dir: "#{config.data_dir}/replica-bucket", name: names[:db_replica_bucket]]},
         id: names[:db_replica_bucket]
       ),
+      Supervisor.child_spec(
+        {CubDB, [data_dir: "#{config.data_dir}/index-bucket", name: names[:db_index_bucket]]},
+        id: names[:db_index_bucket]
+      ),
       {Commander.Worker,
        db_worker: names[:db_worker], db_index: names[:db_index], name: names[:commander]},
       {Plug.Cowboy,
@@ -74,6 +78,7 @@ defmodule Lab4.Application do
             addresses: addresses(config.shards)
           }},
        options: [port: config.port]},
+      {DB.Index, bucket: names[:db_index_bucket],  db_worker: names[:db_worker], name: names[:db_index]},
       {DB.Worker,
        db: names[:db],
        db_replica_bucket: names[:db_replica_bucket],
@@ -89,6 +94,7 @@ defmodule Lab4.Application do
       db_replica_bucket: String.to_atom("db_replica_bucket"),
       db_worker: String.to_atom("db_worker"),
       db_index: String.to_atom("db_index"),
+      db_index_bucket: String.to_atom("db_index_bucket"),
       router: String.to_atom("router"),
       shard: String.to_atom("shard-#{shard.shard_key}"),
       http_client: String.to_atom("http_client"),

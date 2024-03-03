@@ -17,13 +17,15 @@ defmodule Lab4.Http.Router do
     opts = conn.private.opts
     {:ok, command, conn} = Plug.Conn.read_body(conn)
 
-    Logger.debug(command, shard: opts.shard.shard_key)
+    Logger.info(command, shard: opts.shard.shard_key)
 
     case Commander.Worker.execute(opts.commander, command) do
-      {:wrong_shard, shard_key} -> redirect_to(conn, shard_key)
       :ok -> send_resp(conn, 200, "OK")
-      :bad_args -> send_resp(conn, 403, "Bad request")
-      data -> send_resp(conn, 200, data)
+      {:error, {:wrong_shard, shard_key}} -> redirect_to(conn, shard_key)
+      {:error, :bad_args} -> send_resp(conn, 403, "Bad request")
+      {:error, :not_found} -> send_resp(conn, 404, "Not found")
+      {:error, :exists} -> send_resp(conn, 409, "Exists")
+      data -> send_resp(conn, 200, inspect(data))
     end
   end
 

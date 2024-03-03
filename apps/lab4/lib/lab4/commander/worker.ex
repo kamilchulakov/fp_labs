@@ -20,7 +20,7 @@ defmodule Lab4.Commander.Worker do
   @impl true
   def handle_call(command, _from, state) do
     case Parser.parse(command) do
-      :bad_args -> :bad_args |> to_reply(state)
+      :bad_args -> {:error, :bad_args} |> to_reply(state)
       data -> Executor.execute(data, state) |> to_reply(state)
     end
   end

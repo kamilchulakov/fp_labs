@@ -28,6 +28,14 @@ defmodule Lab4.Commander.Parser do
     {:create_index, name, parse_filter(filter)}
   end
 
+  defp parse("DELETE", ["INDEX", name]) do
+    {:delete_index, name}
+  end
+
+  defp parse("FETCH", ["INDEX", name]) do
+    {:fetch_index, name}
+  end
+
   defp parse_filter(["LESS", data]) do
     {:less, data}
   end

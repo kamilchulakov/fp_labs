@@ -28,5 +28,10 @@ lab4-*.tar
 # Ignore CubDB files
 /db
 
+# Ignore CubDB backup
+/backup
+
 # Ignore escript build
 /lab4
+
+/scripts/scratch.sh
