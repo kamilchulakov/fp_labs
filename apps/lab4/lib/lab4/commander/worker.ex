@@ -21,7 +21,12 @@ defmodule Lab4.Commander.Worker do
   def handle_call(command, _from, state) do
     case Parser.parse(command) do
       :bad_args -> {:error, :bad_args} |> to_reply(state)
-      data -> Executor.execute(data, state) |> to_reply(state)
+      data -> try do
+        Executor.execute(data, state) |> to_reply(state)
+      rescue
+        FunctionClauseError ->
+          to_reply({:error, :not_implemented}, state)
+      end
     end
   end
 

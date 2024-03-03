@@ -36,6 +36,10 @@ defmodule Lab4.Commander.Parser do
     {:fetch_index, name}
   end
 
+  defp parse("FETCH", ["LOCAL" | ["INDEX", name]]) do
+    {:fetch_local_index, name}
+  end
+
   defp parse_filter(["LESS", data]) do
     {:less, data}
   end

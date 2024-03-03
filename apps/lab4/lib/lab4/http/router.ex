@@ -25,6 +25,9 @@ defmodule Lab4.Http.Router do
       {:error, :bad_args} -> send_resp(conn, 403, "Bad request")
       {:error, :not_found} -> send_resp(conn, 404, "Not found")
       {:error, :exists} -> send_resp(conn, 409, "Exists")
+      {:error, other} ->
+        Logger.debug("Unhandled error: #{inspect(other)}", shard: opts.shard.shard_key)
+        send_resp(conn, 500, "Internal error")
       data -> send_resp(conn, 200, inspect(data))
     end
   end

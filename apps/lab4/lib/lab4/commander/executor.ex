@@ -33,7 +33,7 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete(state.db_index, name)
   end
 
-  def execute({:fetch_index, name}, state) do
-    DB.Index.fetch(state.db_index, name)
+  def execute({:fetch_local_index, name}, state) do
+    DB.Index.fetch_local(state.db_index, name)
   end
 end

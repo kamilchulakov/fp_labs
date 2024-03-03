@@ -24,8 +24,8 @@ defmodule Lab4.DB.Index do
     GenServer.call(pid, {:update_all, key, value})
   end
 
-  def fetch(pid, name) do
-    GenServer.call(pid, {:fetch, name})
+  def fetch_local(pid, name) do
+    GenServer.call(pid, {:fetch_local, name})
   end
 
   def init(state) do
@@ -52,7 +52,7 @@ defmodule Lab4.DB.Index do
     {:reply, CubDB.delete_multi(state.bucket, names), state}
   end
 
-  def handle_call({:fetch, name}, _from, state) do
+  def handle_call({:fetch_local, name}, _from, state) do
     case CubDB.get(state.bucket, name) do
       {_, data} -> {:reply, data, state}
       nil -> {:reply, {:error, :not_found}, state}
