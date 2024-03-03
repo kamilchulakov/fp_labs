@@ -75,9 +75,10 @@ defmodule Lab4.DB.Worker do
   end
 
   def handle_call({:filter, filter}, _from, state) do
-    data = CubDB.select(state.db)
-    |> Filter.filter(filter)
-    |> Enum.to_list()
+    data =
+      CubDB.select(state.db)
+      |> Filter.filter(filter)
+      |> Enum.to_list()
 
     {:reply, data, state}
   end
