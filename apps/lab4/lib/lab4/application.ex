@@ -78,7 +78,7 @@ defmodule Lab4.Application do
             addresses: addresses(config.shards)
           }},
        options: [port: config.port]},
-      {DB.Index, bucket: names[:db_index_bucket],  db_worker: names[:db_worker], name: names[:db_index]},
+      {DB.Index, bucket: names[:db_index_bucket],  db_worker: names[:db_worker], shard_key: shard.shard_key, name: names[:db_index]},
       {DB.Worker,
        db: names[:db],
        db_replica_bucket: names[:db_replica_bucket],

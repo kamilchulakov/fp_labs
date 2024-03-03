@@ -4,8 +4,8 @@ defmodule Lab4.DB.Index do
   require Logger
   alias Lab4.DB
 
-  def start_link(bucket: bucket, db_worker: db_worker, name: name) do
-    GenServer.start_link(__MODULE__, %{bucket: bucket, db_worker: db_worker}, name: name)
+  def start_link(bucket: bucket, db_worker: db_worker, shard_key: shard_key, name: name) do
+    GenServer.start_link(__MODULE__, %{bucket: bucket, db_worker: db_worker, shard_key: shard_key}, name: name)
   end
 
   def create(pid, name, filter) do
@@ -35,7 +35,7 @@ defmodule Lab4.DB.Index do
       |> Enum.to_list()
       |> Enum.join(", ")
 
-    Logger.debug('Indices: #{indices}')
+    Logger.debug('Indices: #{indices}', shard: state.shard_key)
 
     {:ok, state}
   end
@@ -65,7 +65,7 @@ defmodule Lab4.DB.Index do
       if DB.Filter.matches?({key, value}, filter) do
         update(state, index, {key, value})
       else
-        Logger.debug("Skipped index #{index_key} for update")
+        Logger.debug("Skipped index #{index_key} for update", shard: state.shard_key)
       end
     end)
 
@@ -75,13 +75,13 @@ defmodule Lab4.DB.Index do
   defp new_index(name, filter, state) do
     data = DB.Worker.filter(state.db_worker, filter)
     case CubDB.put_new(state.bucket, name, {filter, data}) do
-      :ok -> Logger.debug("New index #{name} created: #{inspect(filter)}, #{inspect(data)}")
+      :ok -> Logger.debug("New index #{name} created: #{inspect(filter)}, #{inspect(data)}", shard: state.shard_key)
       error -> error
     end
   end
 
   defp update(state, {index_key, index_data}, new_entry) do
-    Logger.debug("Index #{index_key} update: #{inspect(new_entry)}")
+    Logger.debug("Index #{index_key} update: #{inspect(new_entry)}", shard: state.shard_key)
     CubDB.update(state.bucket, index_key, index_data, &update_data(&1, new_entry))
   end
 
