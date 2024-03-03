@@ -2,12 +2,26 @@ defmodule Lab4.DB.Index do
   use GenServer
 
   require Logger
+  require Jason
   alias Lab4.DB
 
-  def start_link(bucket: bucket, db_worker: db_worker, shard_key: shard_key, name: name) do
+  def start_link(
+        bucket: bucket,
+        db_worker: db_worker,
+        shard_key: shard_key,
+        addresses: addresses,
+        http_client: http_client,
+        name: name
+      ) do
     GenServer.start_link(
       __MODULE__,
-      %{bucket: bucket, db_worker: db_worker, shard_key: shard_key},
+      %{
+        bucket: bucket,
+        db_worker: db_worker,
+        shard_key: shard_key,
+        addresses: addresses,
+        http_client: http_client
+      },
       name: name
     )
   end
@@ -26,6 +40,10 @@ defmodule Lab4.DB.Index do
 
   def update_all(pid, key, value) do
     GenServer.call(pid, {:update_all, key, value})
+  end
+
+  def fetch(pid, name) do
+    GenServer.call(pid, {:fetch, name})
   end
 
   def fetch_local(pid, name) do
@@ -56,11 +74,21 @@ defmodule Lab4.DB.Index do
     {:reply, CubDB.delete_multi(state.bucket, names), state}
   end
 
+  def handle_call({:fetch, name}, _from, state) do
+    Logger.debug("Doing fetch index #{name}", shard: state.shard_key)
+
+    data = state.addresses
+    |> Enum.map(&Finch.build(:post, "#{&1}/", [], "FETCH LOCAL INDEX #{name}", []))
+    |> Enum.map(&Finch.request(&1, state.http_client))
+    |> Enum.map(fn {:ok, resp} -> Jason.decode!(resp.body) end)
+    |> List.flatten()
+    |> Enum.concat(get_data(name, state, []))
+
+    {:reply, data, state}
+  end
+
   def handle_call({:fetch_local, name}, _from, state) do
-    case CubDB.get(state.bucket, name) do
-      {_, data} -> {:reply, data, state}
-      nil -> {:reply, {:error, :not_found}, state}
-    end
+    {:reply, get_data(name, state), state}
   end
 
   def handle_call({:update_all, key, value}, _from, state) do
@@ -107,5 +135,22 @@ defmodule Lab4.DB.Index do
       end)
 
     {filter, new_data}
+  end
+
+  defp get_data(name, state) do
+    case CubDB.get(state.bucket, name) do
+      {_, data} -> data
+
+      nil ->
+        Logger.debug("Local index #{name} not found", shard: state.shard_key)
+        {:error, :not_found}
+    end
+  end
+
+  defp get_data(name, state, default) do
+    case get_data(name, state) do
+      {:error, _} -> default
+      data -> data
+    end
   end
 end

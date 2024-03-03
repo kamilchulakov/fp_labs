@@ -66,7 +66,16 @@ defmodule Lab4.Application do
         id: names[:db_index_bucket]
       ),
       {Commander.Worker,
-       db_worker: names[:db_worker], db_index: names[:db_index], name: names[:commander]},
+       db_worker: names[:db_worker],
+       db_index: names[:db_index],
+       shard: names[:shard],
+       shard_key: shard.shard_key,
+       name: names[:commander]},
+      {Finch,
+       name: names[:http_client],
+       pools: %{
+         :default => [size: map_size(config.shards)]
+       }},
       {Plug.Cowboy,
        scheme: :http,
        plug:
@@ -82,6 +91,8 @@ defmodule Lab4.Application do
        bucket: names[:db_index_bucket],
        db_worker: names[:db_worker],
        shard_key: shard.shard_key,
+       addresses: external_addresses(config.shards, shard),
+       http_client: names[:http_client],
        name: names[:db_index]},
       {DB.Worker,
        db: names[:db],
@@ -96,19 +107,25 @@ defmodule Lab4.Application do
     %{
       db: String.to_atom("db"),
       db_replica_bucket: String.to_atom("db_replica_bucket"),
-      db_worker: String.to_atom("db_worker"),
+      db_worker: String.to_atom("db_worker-#{shard.shard_key}"),
       db_index: String.to_atom("db_index"),
       db_index_bucket: String.to_atom("db_index_bucket"),
-      router: String.to_atom("router"),
+      router: String.to_atom("router-#{shard.shard_key}"),
       shard: String.to_atom("shard-#{shard.shard_key}"),
-      http_client: String.to_atom("http_client"),
+      http_client: String.to_atom("http_client-#{shard.shard_key}"),
       replica: String.to_atom("replica-#{shard.shard_key}"),
-      commander: String.to_atom("commander")
+      commander: String.to_atom("commander-#{shard.shard_key}")
     }
   end
 
   defp addresses(shards) do
     shards.list
     |> Enum.into(Map.new(), &{&1.shard_key, "http://#{&1.address}"})
+  end
+
+  defp external_addresses(shards, current) do
+    addresses(shards)
+    |> Map.values()
+    |> Enum.filter(&!String.ends_with?(&1, current.address))
   end
 end

@@ -4,8 +4,18 @@ defmodule Lab4.Commander.Worker do
   alias Lab4.Commander.Executor
   alias Lab4.Commander.Parser
 
-  def start_link(db_worker: db_worker, db_index: db_index, name: name) do
-    GenServer.start_link(__MODULE__, %{db_worker: db_worker, db_index: db_index}, name: name)
+  def start_link(
+        db_worker: db_worker,
+        db_index: db_index,
+        shard: shard,
+        shard_key: shard_key,
+        name: name
+      ) do
+    GenServer.start_link(
+      __MODULE__,
+      %{db_worker: db_worker, db_index: db_index, shard: shard, shard_key: shard_key},
+      name: name
+    )
   end
 
   def execute(pid, command) do
@@ -29,6 +39,8 @@ defmodule Lab4.Commander.Worker do
         rescue
           FunctionClauseError ->
             to_reply({:error, :not_implemented}, state)
+          Jason.DecodeError ->
+            to_reply({:error, :invalid_json}, state)
         end
     end
   end

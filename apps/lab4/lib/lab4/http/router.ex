@@ -40,8 +40,12 @@ defmodule Lab4.Http.Router do
         send_resp(conn, 500, "Internal error")
 
       data ->
-        send_resp(conn, 200, inspect(data))
+        send_resp(conn, 200, Jason.encode!(data))
     end
+  end
+
+  get "/health" do
+    send_resp(conn, 200, "OK")
   end
 
   match "/next-replica-update" do
