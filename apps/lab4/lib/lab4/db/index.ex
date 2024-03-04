@@ -42,6 +42,10 @@ defmodule Lab4.DB.Index do
     GenServer.call(pid, {:delete, name})
   end
 
+  def delete_local(pid, name) do
+    GenServer.call(pid, {:delete_local, name})
+  end
+
   def update_all(pid, key, value) do
     GenServer.call(pid, {:update_all, key, value})
   end
@@ -76,6 +80,11 @@ defmodule Lab4.DB.Index do
   end
 
   def handle_call({:delete, name}, _from, state) do
+    call_shards("DELETE LOCAL INDEX #{name}", state)
+    {:reply, CubDB.delete(state.bucket, name), state}
+  end
+
+  def handle_call({:delete_local, name}, _from, state) do
     {:reply, CubDB.delete(state.bucket, name), state}
   end
 

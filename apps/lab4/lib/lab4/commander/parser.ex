@@ -37,6 +37,10 @@ defmodule Lab4.Commander.Parser do
     {:delete_index, name}
   end
 
+  defp parse("DELETE", ["LOCAL" | ["INDEX", name]]) do
+    {:delete_local_index, name}
+  end
+
   defp parse("FETCH", ["INDEX", name]) do
     {:fetch_index, name}
   end

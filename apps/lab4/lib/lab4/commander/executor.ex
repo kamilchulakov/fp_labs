@@ -37,6 +37,10 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete(state.db_index, name)
   end
 
+  def execute({:delete_local_index, name}, state) do
+    DB.Index.delete_local(state.db_index, name)
+  end
+
   def execute({:fetch_index, name}, state) do
     Logger.debug("Executing index fetch: #{name}", shard: state.shard_key)
     DB.Index.fetch(state.db_index, name)
