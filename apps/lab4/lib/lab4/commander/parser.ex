@@ -26,27 +26,27 @@ defmodule Lab4.Commander.Parser do
   end
 
   defp parse("CREATE", ["INDEX" | [name | filter]]) do
-    {:create_index, name, parse_filter(filter), :local_command}
+    {:create_index, name, parse_filter(filter), :global}
   end
 
   defp parse("CREATE", ["LOCAL" | ["INDEX" | [name | filter]]]) do
-    {:create_local_index, name, parse_filter(filter)}
+    {:create_index, name, parse_filter(filter)}
   end
 
   defp parse("DELETE", ["INDEX", name]) do
-    {:delete_index, name}
+    {:delete_index, name, :global}
   end
 
   defp parse("DELETE", ["LOCAL" | ["INDEX", name]]) do
-    {:delete_local_index, name}
+    {:delete_index, name}
   end
 
   defp parse("FETCH", ["INDEX", name]) do
-    {:fetch_index, name}
+    {:fetch_index, name, :global}
   end
 
   defp parse("FETCH", ["LOCAL" | ["INDEX", name]]) do
-    {:fetch_local_index, name}
+    {:fetch_index, name}
   end
 
   defp parse_filter(["LESS", data]) do
@@ -69,15 +69,14 @@ defmodule Lab4.Commander.Parser do
     command_arg_index =
       parsed_command
       |> Tuple.to_list()
-      |> Enum.find_index(&(&1 == :local_command))
+      |> Enum.find_index(&(&1 == :global))
 
     case command_arg_index do
       nil ->
         parsed_command
 
       _ ->
-        Tuple.delete_at(parsed_command, command_arg_index)
-        |> Tuple.append(to_local(raw_command))
+        Tuple.append(parsed_command, to_local(raw_command))
     end
   end
 

@@ -30,28 +30,28 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete(state.db_index, deleted_keys)
   end
 
-  def execute({:create_index, name, filter, command}, state) do
+  def execute({:create_index, name, filter, :global, command}, state) do
     DB.Index.create(state.db_index, name, filter, command)
   end
 
-  def execute({:create_local_index, name, filter}, state) do
+  def execute({:create_index, name, filter}, state) do
     DB.Index.create_local(state.db_index, name, filter)
   end
 
-  def execute({:delete_index, name}, state) do
+  def execute({:delete_index, name, :global, _command}, state) do
     DB.Index.delete(state.db_index, name)
   end
 
-  def execute({:delete_local_index, name}, state) do
+  def execute({:delete_index, name}, state) do
     DB.Index.delete_local(state.db_index, name)
   end
 
-  def execute({:fetch_index, name}, state) do
+  def execute({:fetch_index, name, :global, _command}, state) do
     Logger.debug("Executing index fetch: #{name}", shard: state.shard_key)
     DB.Index.fetch(state.db_index, name)
   end
 
-  def execute({:fetch_local_index, name}, state) do
+  def execute({:fetch_index, name}, state) do
     Logger.debug("Executing local index fetch: #{name}", shard: state.shard_key)
     DB.Index.fetch_local(state.db_index, name)
   end
