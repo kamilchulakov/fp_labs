@@ -13,10 +13,15 @@ defmodule Lab4.Commander.Executor do
   end
 
   def execute({:set, key, value}, state) do
-    # TODO: check shard key
-    case DB.Worker.set(state.db_worker, key, value) do
-      :ok -> DB.Index.update_all(state.db_index, key, value)
-      other -> other
+    shard_key = DB.Shard.key_to_shard_key(state.shard, key)
+
+    if shard_key == state.shard_key do
+      case DB.Worker.set(state.db_worker, key, value) do
+        :ok -> DB.Index.update_all(state.db_index, key, value)
+        other -> other
+      end
+    else
+      {:error, {:wrong_shard, shard_key}}
     end
   end
 
