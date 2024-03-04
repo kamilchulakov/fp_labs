@@ -6,6 +6,7 @@ defmodule Lab4.Commander.Parser do
 
     try do
       parse(command, args)
+      |> add_command(command)
     rescue
       FunctionClauseError ->
         :bad_args
@@ -25,7 +26,11 @@ defmodule Lab4.Commander.Parser do
   end
 
   defp parse("CREATE", ["INDEX" | [name | filter]]) do
-    {:create_index, name, parse_filter(filter)}
+    {:create_index, name, parse_filter(filter), :local_command}
+  end
+
+  defp parse("CREATE", ["LOCAL" | ["INDEX" | [name | filter]]]) do
+    {:create_local_index, name, parse_filter(filter)}
   end
 
   defp parse("DELETE", ["INDEX", name]) do
@@ -54,5 +59,25 @@ defmodule Lab4.Commander.Parser do
 
   defp parse_filter(["ENDS", ["WITH" | data]]) do
     {:ends_with, data}
+  end
+
+  defp add_command(parsed_command, raw_command) do
+    command_arg_index =
+      parsed_command
+      |> Tuple.to_list()
+      |> Enum.find_index(&(&1 == :local_command))
+
+    case command_arg_index do
+      nil ->
+        parsed_command
+
+      _ ->
+        Tuple.delete_at(parsed_command, command_arg_index)
+        |> Tuple.append(to_local(raw_command))
+    end
+  end
+
+  defp to_local(command) do
+    String.replace(command, "CREATE", "CREATE LOCAL")
   end
 end

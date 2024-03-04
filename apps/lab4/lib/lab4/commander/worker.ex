@@ -1,6 +1,7 @@
 defmodule Lab4.Commander.Worker do
   use GenServer
 
+  require Logger
   alias Lab4.Commander.Executor
   alias Lab4.Commander.Parser
 
@@ -39,6 +40,7 @@ defmodule Lab4.Commander.Worker do
         rescue
           FunctionClauseError ->
             to_reply({:error, :not_implemented}, state)
+
           Jason.DecodeError ->
             to_reply({:error, :invalid_json}, state)
         end

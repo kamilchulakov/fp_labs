@@ -26,8 +26,12 @@ defmodule Lab4.DB.Index do
     )
   end
 
-  def create(pid, name, filter) do
-    GenServer.call(pid, {:create, name, filter})
+  def create(pid, name, filter, command) do
+    GenServer.call(pid, {:create, name, filter, command})
+  end
+
+  def create_local(pid, name, filter) do
+    GenServer.call(pid, {:create_local, name, filter})
   end
 
   def delete(pid, names) when is_list(names) do
@@ -62,7 +66,12 @@ defmodule Lab4.DB.Index do
     {:ok, state}
   end
 
-  def handle_call({:create, name, filter}, _from, state) do
+  def handle_call({:create, name, filter, command}, _from, state) do
+    call_shards(command, state)
+    {:reply, new_index(name, filter, state), state}
+  end
+
+  def handle_call({:create_local, name, filter}, _from, state) do
     {:reply, new_index(name, filter, state), state}
   end
 
@@ -77,10 +86,18 @@ defmodule Lab4.DB.Index do
   def handle_call({:fetch, name}, _from, state) do
     Logger.debug("Doing fetch index #{name}", shard: state.shard_key)
 
-    data = state.addresses
-    |> Enum.map(&Finch.build(:post, "#{&1}/", [], "FETCH LOCAL INDEX #{name}", []))
-    |> Enum.map(&Finch.request(&1, state.http_client))
-    |> Enum.map(fn {:ok, resp} -> Jason.decode!(resp.body) end)
+    data =
+      call_shards("FETCH LOCAL INDEX #{name}", state)
+      |> Enum.map(fn {:ok, resp} ->
+        case Jason.decode(resp.body) do
+          {:ok, fetch_data} ->
+            fetch_data
+
+          {:error, _reason} ->
+            Logger.error("Error on decode: #{inspect(resp)}")
+            []
+        end
+      end)
     |> List.flatten()
     |> Enum.concat(get_data(name, state, []))
 
@@ -139,7 +156,8 @@ defmodule Lab4.DB.Index do
 
   defp get_data(name, state) do
     case CubDB.get(state.bucket, name) do
-      {_, data} -> data
+      {_, data} ->
+        data
 
       nil ->
         Logger.debug("Local index #{name} not found", shard: state.shard_key)
@@ -152,5 +170,11 @@ defmodule Lab4.DB.Index do
       {:error, _} -> default
       data -> data
     end
+  end
+
+  defp call_shards(command, state) do
+    state.addresses
+    |> Enum.map(&Finch.build(:post, "#{&1}/", [], command, []))
+    |> Enum.map(&Finch.request(&1, state.http_client))
   end
 end

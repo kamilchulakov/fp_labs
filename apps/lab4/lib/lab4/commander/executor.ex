@@ -25,8 +25,12 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete(state.db_index, deleted_keys)
   end
 
-  def execute({:create_index, name, filter}, state) do
-    DB.Index.create(state.db_index, name, filter)
+  def execute({:create_index, name, filter, command}, state) do
+    DB.Index.create(state.db_index, name, filter, command)
+  end
+
+  def execute({:create_local_index, name, filter}, state) do
+    DB.Index.create_local(state.db_index, name, filter)
   end
 
   def execute({:delete_index, name}, state) do

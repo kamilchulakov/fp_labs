@@ -126,6 +126,6 @@ defmodule Lab4.Application do
   defp external_addresses(shards, current) do
     addresses(shards)
     |> Map.values()
-    |> Enum.filter(&!String.ends_with?(&1, current.address))
+    |> Enum.filter(&(!String.ends_with?(&1, current.address)))
   end
 end
