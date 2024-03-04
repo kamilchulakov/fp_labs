@@ -10,11 +10,20 @@ defmodule Lab4.Commander.Worker do
         db_index: db_index,
         shard: shard,
         shard_key: shard_key,
+        addresses: addresses,
+        http_client: http_client,
         name: name
       ) do
     GenServer.start_link(
       __MODULE__,
-      %{db_worker: db_worker, db_index: db_index, shard: shard, shard_key: shard_key},
+      %{
+        db_worker: db_worker,
+        db_index: db_index,
+        shard: shard,
+        shard_key: shard_key,
+        addresses: addresses,
+        http_client: http_client
+      },
       name: name
     )
   end
@@ -34,13 +43,11 @@ defmodule Lab4.Commander.Worker do
       :bad_args ->
         {:error, :bad_args} |> to_reply(state)
 
-      data ->
+      parsed_command ->
         try do
-          Executor.execute(data, state) |> to_reply(state)
+          Logger.debug("Parsed: #{inspect(parsed_command)}")
+          Executor.execute(state, parsed_command) |> to_reply(state)
         rescue
-          FunctionClauseError ->
-            to_reply({:error, :not_implemented}, state)
-
           Jason.DecodeError ->
             to_reply({:error, :invalid_json}, state)
         end

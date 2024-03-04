@@ -6,7 +6,7 @@ defmodule Lab4.Commander.Parser do
 
     try do
       parse(command, args)
-      |> add_command(raw_command)
+      |> to_command(raw_command)
     rescue
       FunctionClauseError ->
         :bad_args
@@ -65,22 +65,37 @@ defmodule Lab4.Commander.Parser do
     {:ends_with, data}
   end
 
-  defp add_command(parsed_command, raw_command) do
-    command_arg_index =
+  defp to_command(parsed_command, raw_command) do
+    global_arg_index =
       parsed_command
       |> Tuple.to_list()
       |> Enum.find_index(&(&1 == :global))
 
-    case command_arg_index do
+    case global_arg_index do
       nil ->
         parsed_command
 
       _ ->
-        Tuple.append(parsed_command, to_local(raw_command))
+        [
+          local: Tuple.delete_at(parsed_command, global_arg_index),
+          global: to_local(raw_command),
+          type: global_type(raw_command)
+        ]
     end
   end
 
-  defp to_local(command) do
-    String.replace(command, "CREATE", "CREATE LOCAL")
+  defp to_local(raw_command) do
+    raw_command
+    |> String.replace("CREATE INDEX", "CREATE LOCAL INDEX")
+    |> String.replace("FETCH INDEX", "FETCH LOCAL INDEX")
+    |> String.replace("DELETE INDEX", "DELETE LOCAL INDEX")
+  end
+
+  defp global_type(raw_command) do
+    if String.starts_with?(raw_command, "FETCH") do
+      :concat
+    else
+      :ok
+    end
   end
 end
