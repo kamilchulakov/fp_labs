@@ -6,7 +6,7 @@ defmodule Lab4.Commander.Parser do
 
     try do
       parse(command, args)
-      |> add_command(command)
+      |> add_command(raw_command)
     rescue
       FunctionClauseError ->
         :bad_args
