@@ -17,15 +17,22 @@ defmodule Lab4.Commander.Parser do
   value =
     choice([integer(min: 1), good_string])
 
+  local_marker =
+    ignore(string("LOCAL"))
+    |> ignore(some_space)
+    |> tag(:local)
+
   get =
     ignore(string("GET"))
+    |> tag(:local)
     |> ignore(some_space)
     |> concat(key)
     |> optional(ignore(some_space))
-    |> unwrap_and_tag(:get)
+    |> tag(:get)
 
   set =
     ignore(string("SET"))
+    |> tag(:local)
     |> ignore(some_space)
     |> concat(key)
     |> ignore(some_space)
@@ -35,6 +42,7 @@ defmodule Lab4.Commander.Parser do
 
   purge =
     ignore(string("PURGE"))
+    |> tag(:local)
     |> optional(ignore(some_space))
     |> tag(:purge)
 
@@ -77,6 +85,7 @@ defmodule Lab4.Commander.Parser do
   create_index =
     ignore(string("CREATE"))
     |> ignore(some_space)
+    |> optional(local_marker)
     |> ignore(string("INDEX"))
     |> ignore(some_space)
     |> concat(index_name)
@@ -85,73 +94,38 @@ defmodule Lab4.Commander.Parser do
     |> optional(ignore(some_space))
     |> tag(:create_index)
 
-  create_local_index =
-    ignore(string("CREATE"))
-    |> ignore(some_space)
-    |> ignore(string("LOCAL"))
-    |> ignore(some_space)
-    |> ignore(string("INDEX"))
-    |> ignore(some_space)
-    |> concat(index_name)
-    |> ignore(some_space)
-    |> concat(filter)
-    |> optional(ignore(some_space))
-    |> tag(:create_local_index)
-
   delete_index =
     ignore(string("DELETE"))
     |> ignore(some_space)
+    |> optional(local_marker)
     |> ignore(string("INDEX"))
     |> ignore(some_space)
     |> concat(index_name)
     |> optional(ignore(some_space))
     |> tag(:delete_index)
 
-  delete_local_index =
-    ignore(string("DELETE"))
-    |> ignore(some_space)
-    |> ignore(string("LOCAL"))
-    |> ignore(some_space)
-    |> ignore(string("INDEX"))
-    |> ignore(some_space)
-    |> concat(index_name)
-    |> optional(ignore(some_space))
-    |> tag(:delete_local_index)
-
   fetch_index =
     ignore(string("FETCH"))
     |> ignore(some_space)
+    |> optional(local_marker)
     |> ignore(string("INDEX"))
     |> ignore(some_space)
     |> concat(index_name)
     |> optional(ignore(some_space))
     |> tag(:fetch_index)
 
-  fetch_local_index =
-    ignore(string("FETCH"))
-    |> ignore(some_space)
-    |> ignore(string("LOCAL"))
-    |> ignore(some_space)
-    |> ignore(string("INDEX"))
-    |> ignore(some_space)
-    |> concat(index_name)
-    |> optional(ignore(some_space))
-    |> tag(:fetch_local_index)
-
-  defparsec(
-    :parse,
-    choice([
+  command =
+    optional(local_marker)
+    |> choice([
       get,
       set,
       purge,
       create_index,
-      create_local_index,
       delete_index,
-      delete_local_index,
-      fetch_index,
-      fetch_local_index
+      fetch_index
     ])
-  )
+
+  defparsec(:parse, command)
 
   def parse_and_put_opts(raw_command) do
     case parse(raw_command) do
@@ -161,12 +135,15 @@ defmodule Lab4.Commander.Parser do
       {:ok, [parsed_command], _rest, _context, _line, _column} ->
         parsed_command
         |> put_opts(raw_command)
+
+      {:ok, [{:local, []}, parsed_command], _rest, _context, _line, _column} ->
+        parsed_command
     end
   end
 
   defp put_opts({command, args} = parsed_command, raw_command) do
-    if local?(command) do
-      {drop_local(command), args}
+    if local?(args) do
+      {command, drop_local(args)}
     else
       [
         local: parsed_command,
@@ -176,29 +153,13 @@ defmodule Lab4.Commander.Parser do
     end
   end
 
-  defp local?(command) do
-    cond do
-      command in [:get, :set, :purge] -> true
-      String.contains?(to_string(command), "local") -> true
-      true -> false
-    end
-  end
+  defp local?([{:local, []} | _args]), do: true
+  defp local?(_args), do: false
 
-  defp drop_local(command) do
-    cond do
-      command in [:get, :set, :purge] -> command
-      true ->
-        to_string(command)
-        |> String.replace("_local", "")
-        |> String.to_atom()
-    end
-  end
+  defp drop_local([{:local, []} | args]), do: args
 
   defp to_local_raw(raw_command) do
-    raw_command
-    |> String.replace("CREATE INDEX", "CREATE LOCAL INDEX")
-    |> String.replace("FETCH INDEX", "FETCH LOCAL INDEX")
-    |> String.replace("DELETE INDEX", "DELETE LOCAL INDEX")
+    "LOCAL #{raw_command}"
   end
 
   defp global_type(command) do
