@@ -30,7 +30,8 @@ defmodule Lab4.MixProject do
       {:cubdb, "~> 2.0.2"},
       {:toml, "~> 0.7"},
       {:finch, "~> 0.18"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:nimble_parsec, "~> 1.4.0"}
     ]
   end
 

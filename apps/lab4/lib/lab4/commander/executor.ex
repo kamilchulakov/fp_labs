@@ -12,7 +12,7 @@ defmodule Lab4.Commander.Executor do
     end
   end
 
-  def execute(state, {:set, key, value}) do
+  def execute(state, {:set, [key, value]}) do
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
 
     if shard_key == state.shard_key do
@@ -30,24 +30,25 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete_local(state.db_index, deleted_keys)
   end
 
-  def execute(state, {:delete_index, name}) do
+  def execute(state, {:delete_index, [index_name: name]}) do
     DB.Index.delete_local(state.db_index, name)
   end
 
-  def execute(state, {:create_index, name, filter}) do
+  def execute(state, {:create_index, [{_index_name, name}, filter]}) do
     DB.Index.create_local(state.db_index, name, filter)
   end
 
-  def execute(state, {:fetch_index, name}) do
+  def execute(state, {:fetch_index, [index_name: name]}) do
     Logger.debug("Executing local index fetch: #{name}", shard: state.shard_key)
     DB.Index.fetch_local(state.db_index, name)
   end
 
   def execute(state, local: local_command, global: global_command, type: :ok) do
-    data = execute_global(state, global_command, parse: :ok)
-    |> Enum.concat([execute(state, local_command)])
-    |> List.flatten()
-    |> Enum.uniq()
+    data =
+      execute_global(state, global_command, parse: :ok)
+      |> Enum.concat([execute(state, local_command)])
+      |> List.flatten()
+      |> Enum.uniq()
 
     case data do
       [:ok] -> :ok

@@ -39,13 +39,12 @@ defmodule Lab4.Commander.Worker do
 
   @impl true
   def handle_call(command, _from, state) do
-    case Parser.parse(command) do
-      :bad_args ->
-        {:error, :bad_args} |> to_reply(state)
+    case Parser.parse_and_put_opts(command) do
+      {:error, reason} ->
+        to_reply({:error, reason}, state)
 
       parsed_command ->
         try do
-          Logger.debug("Parsed: #{inspect(parsed_command)}")
           Executor.execute(state, parsed_command) |> to_reply(state)
         rescue
           Jason.DecodeError ->
