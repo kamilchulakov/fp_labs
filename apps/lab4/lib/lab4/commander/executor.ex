@@ -13,7 +13,6 @@ defmodule Lab4.Commander.Executor do
   end
 
   def execute(state, {:set, [key, value]}) do
-    Logger.debug("Set #{inspect(value)}")
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
 
     if shard_key == state.shard_key do
@@ -40,7 +39,6 @@ defmodule Lab4.Commander.Executor do
   end
 
   def execute(state, {:fetch_index, [index_name: name]}) do
-    Logger.debug("Executing local index fetch: #{name}", shard: state.shard_key)
     DB.Index.fetch_local(state.db_index, name)
   end
 

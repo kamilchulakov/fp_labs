@@ -70,6 +70,7 @@ defmodule Lab4.DB.Worker do
   end
 
   def handle_call({:set, key, value}, _, %{db: db, db_replica_bucket: db_replica_bucket} = state) do
+    Logger.debug("SET value: #{inspect(value)}", worker: state.name)
     :ok = CubDB.put(db, key, value)
     {:reply, CubDB.put(db_replica_bucket, key, value), state}
   end
