@@ -7,10 +7,10 @@ defmodule Lab4.Commander.Parser do
     |> label("space")
 
   good_string =
-    utf8_string([not: ?\r, not: ?\n, not: ?,, not: ?\s, not: ?[], min: 1)
-    |> label("good string")
+    utf8_string([not: ?\r, not: ?\n, not: ?,, not: ?\s, not: ?[, not: ?]], min: 1)
 
-  key = good_string
+  key =
+    good_string
     |> label("key")
 
   index_name =
@@ -23,13 +23,16 @@ defmodule Lab4.Commander.Parser do
     |> label("value")
 
   comma_value =
-    ignore(string(", "))
+    optional(ignore(some_space))
+    |> ignore(utf8_char([?,]))
+    |> optional(ignore(some_space))
     |> concat(value)
 
   list_of_values =
     ignore(utf8_char([?[]))
     |> concat(value)
     |> times(comma_value, min: 0)
+    |> optional(ignore(some_space))
     |> ignore(utf8_char([?]]))
     |> wrap()
 
