@@ -3,24 +3,47 @@ defmodule Lab4.Commander.Parser do
   import NimbleParsec
 
   some_space =
-    utf8_string([?\n, ?\r, ?\s, ?\t], min: 0)
+    utf8_string([?\n, ?\r, ?\s, ?\t], min: 1)
+    |> label("space")
 
   good_string =
-    utf8_string([not: ?\r, not: ?\n, not: ?,, not: ?\s], min: 1)
+    utf8_string([not: ?\r, not: ?\n, not: ?,, not: ?\s, not: ?[], min: 1)
+    |> label("good string")
 
   key = good_string
+    |> label("key")
 
   index_name =
     good_string
     |> unwrap_and_tag(:index_name)
+    |> label("index name")
 
   value =
     choice([integer(min: 1), good_string])
+    |> label("value")
+
+  comma_value =
+    ignore(string(", "))
+    |> concat(value)
+
+  list_of_values =
+    ignore(utf8_char([?[]))
+    |> concat(value)
+    |> times(comma_value, min: 0)
+    |> ignore(utf8_char([?]]))
+    |> wrap()
+
+  list_or_value =
+    choice([
+      list_of_values,
+      value
+    ])
 
   local_marker =
     ignore(string("LOCAL"))
     |> ignore(some_space)
     |> tag(:local)
+    |> label("local marker")
 
   get =
     ignore(string("GET"))
@@ -36,7 +59,7 @@ defmodule Lab4.Commander.Parser do
     |> ignore(some_space)
     |> concat(key)
     |> ignore(some_space)
-    |> concat(value)
+    |> concat(list_or_value)
     |> optional(ignore(some_space))
     |> tag(:set)
 
@@ -129,15 +152,20 @@ defmodule Lab4.Commander.Parser do
 
   def parse_and_put_opts(raw_command) do
     case parse(raw_command) do
-      {:error, _reason, _rest, _context, _line, _column} ->
+      {:error, _reason, _rest, _context, _line, _column} = err ->
+        Logger.debug("Failed to parse: #{raw_command}, #{inspect(err)}")
         {:error, :bad_args}
 
-      {:ok, [parsed_command], _rest, _context, _line, _column} ->
+      {:ok, [parsed_command], "", _context, _line, _column} ->
         parsed_command
         |> put_opts(raw_command)
 
-      {:ok, [{:local, []}, parsed_command], _rest, _context, _line, _column} ->
+      {:ok, [{:local, []}, parsed_command], "", _context, _line, _column} ->
         parsed_command
+
+      {:ok, _acc, rest, _context, _line, _column} ->
+        Logger.debug("Not empty rest: #{inspect(rest)}")
+        {:error, :not_empty_rest}
     end
   end
 

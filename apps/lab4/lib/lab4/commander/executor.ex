@@ -13,6 +13,7 @@ defmodule Lab4.Commander.Executor do
   end
 
   def execute(state, {:set, [key, value]}) do
+    Logger.debug("Set #{inspect(value)}")
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
 
     if shard_key == state.shard_key do
