@@ -185,6 +185,7 @@ defmodule Lab4.Commander.Executor do
       case call do
         {:ok, resp} ->
           parse_resp(resp, parse_type)
+
         {:error, error} ->
           Logger.error("Call global error: #{error.reason}", shard: state.shard_key)
           error_default(parse_type)
