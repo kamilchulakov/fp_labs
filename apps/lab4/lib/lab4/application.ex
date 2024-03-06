@@ -86,7 +86,8 @@ defmodule Lab4.Application do
             db_worker: names[:db_worker],
             shard: shard,
             commander: names[:commander],
-            addresses: addresses(config.shards)
+            addresses: addresses(config.shards),
+            http_client: names[:http_client]
           }},
        options: [port: config.port]},
       {DB.Index,

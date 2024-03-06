@@ -2,7 +2,7 @@ defmodule Lab4.Commander.Executor do
   require Logger
   alias Lab4.DB
 
-  def execute(state, {:get, key}) do
+  def execute(state, {:get, [key]}) do
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
 
     if shard_key == state.shard_key do

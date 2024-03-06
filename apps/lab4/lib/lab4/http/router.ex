@@ -24,10 +24,10 @@ defmodule Lab4.Http.Router do
         send_resp(conn, 200, "OK")
 
       {:error, {:wrong_shard, shard_key}} ->
-        redirect_to(conn, shard_key)
+        redirect_to(conn, shard_key, command)
 
       {:error, :bad_args} ->
-        send_resp(conn, 403, "Bad request")
+        send_resp(conn, 400, "Bad command")
 
       {:error, :not_found} ->
         send_resp(conn, 404, "Not found")
@@ -80,12 +80,19 @@ defmodule Lab4.Http.Router do
     |> super(opts)
   end
 
-  defp redirect_to(conn, shard_key) do
+  defp redirect_to(conn, shard_key, command) do
     Logger.debug("Redirected to #{shard_key}", shard: conn.private.opts.shard.shard_key)
 
+    redirect_endpoint =
+      replace_endpoint(conn, shard_key)
+
+    redirect_resp =
+      Finch.build(:post, redirect_endpoint, [], command)
+      |> Finch.request!(conn.private.opts.http_client)
+
     conn
-    |> Plug.Conn.resp(:found, "")
-    |> Plug.Conn.put_resp_header("location", "#{replace_endpoint(conn, shard_key)}")
+    |> Plug.Conn.put_resp_header("location", "#{redirect_endpoint}")
+    |> Plug.Conn.send_resp(redirect_resp.status, redirect_resp.body)
   end
 
   defp replace_endpoint(conn, shard_key) do
