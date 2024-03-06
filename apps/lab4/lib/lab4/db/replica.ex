@@ -44,13 +44,15 @@ defmodule Lab4.DB.Replica do
   end
 
   defp handle_next_update_response({:ok, response}, state) do
-    [key, value] = String.split(response.body, "=")
+    [{key, value}] =
+      Jason.decode!(response.body)
+      |> Enum.map(&(&1))
+
     Logger.info("Got update", worker: state.name)
     Worker.apply_update(state.db_worker, key, value)
 
-    Finch.build(:post, "#{state.leader_addr}/replica-updated/#{key}/#{value}")
+    Finch.build(:post, "#{state.leader_addr}/replica-updated", [], response.body)
     |> Finch.request(state.http_client)
-    |> IO.inspect()
   end
 
   defp handle_next_update_response({:error, error}, state) do

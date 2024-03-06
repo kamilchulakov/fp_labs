@@ -61,18 +61,24 @@ defmodule Lab4.Http.Router do
       [] ->
         send_resp(conn, 200, "")
 
-      [{key, value}] = next_update ->
+      [next_update] ->
         Logger.debug("Next replica update #{inspect(next_update)}", shard: opts.shard.shard_key)
-        send_resp(conn, 200, "#{key}=#{value}")
+        send_resp(conn, 200, Jason.encode!(next_update))
 
       _ ->
         Logger.error("Invalid next update value")
     end
   end
 
-  match "/replica-updated/:key/:value" do
+  match "/replica-updated" do
     opts = conn.private.opts
-    Logger.debug("Replica updated: #{key} #{value}")
+    {:ok, body, conn} = Plug.Conn.read_body(conn)
+
+    [{key, value}] =
+      Jason.decode!(body)
+      |> Enum.map(&(&1))
+
+    Logger.debug("Replica updated")
 
     case DB.Worker.replica_updated(opts.db_worker, key, value) do
       :old_value -> send_resp(conn, 401, "Old value")
