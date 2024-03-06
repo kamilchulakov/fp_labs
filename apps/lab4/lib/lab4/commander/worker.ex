@@ -1,4 +1,8 @@
 defmodule Lab4.Commander.Worker do
+  @moduledoc """
+  Module for parsing and executing commands.
+  """
+
   use GenServer
 
   require Logger

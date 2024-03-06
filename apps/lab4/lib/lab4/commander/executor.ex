@@ -1,4 +1,8 @@
 defmodule Lab4.Commander.Executor do
+  @moduledoc """
+  Module for executing parsed commands.
+  """
+
   require Logger
   alias Lab4.DB
 

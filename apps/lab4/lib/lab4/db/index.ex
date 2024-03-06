@@ -1,4 +1,8 @@
 defmodule Lab4.DB.Index do
+  @moduledoc """
+  Module for storing indices.
+  """
+
   use GenServer
 
   require Logger

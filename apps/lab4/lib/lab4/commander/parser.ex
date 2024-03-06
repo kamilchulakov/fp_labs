@@ -1,4 +1,8 @@
 defmodule Lab4.Commander.Parser do
+  @moduledoc """
+  Module for parsing commands.
+  """
+
   require Logger
   import NimbleParsec
 

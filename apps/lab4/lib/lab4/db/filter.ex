@@ -1,5 +1,10 @@
 defmodule Lab4.DB.Filter do
+  @moduledoc """
+  Filter utils.
+  """
+
   require Logger
+
   def filter(data, filter)
 
   def filter(data, {:more, value}) do
@@ -24,22 +29,21 @@ defmodule Lab4.DB.Filter do
 
   defp entry_filter(:string, value: filter) do
     fn {_, value} ->
-      cond do
-        is_bitstring(value) -> filter.(value)
-        true -> false
+      if is_bitstring(value) do
+        filter.(value)
+      else
+        false
       end
     end
   end
 
   defp entry_filter(:integer, value: filter) do
     fn {_, value} ->
-      cond do
-        is_integer(value) ->
-          filter.(value)
-
-        true ->
-          Logger.debug("Not integer #{value}")
-          false
+      if is_integer(value) do
+        filter.(value)
+      else
+        Logger.debug("Not integer #{value}")
+        false
       end
     end
   end
