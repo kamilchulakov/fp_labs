@@ -79,7 +79,7 @@ defmodule Lab4.Http.Router do
 
     [{key, value}] =
       Jason.decode!(body)
-      |> Enum.map(&(&1))
+      |> Enum.map(& &1)
 
     Logger.debug("Replica updated")
 

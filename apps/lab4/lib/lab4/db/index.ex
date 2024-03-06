@@ -80,7 +80,9 @@ defmodule Lab4.DB.Index do
 
   def handle_call({:update_all, key, value}, _from, state) do
     CubDB.select(state.bucket)
-    |> Stream.each(fn {index_key, {filter, _data}} = index ->
+    |> Enum.each(fn {index_key, {filter, _data}} = index ->
+      Logger.debug("#{inspect(filter)} #{inspect({key, value})}")
+
       if DB.Filter.matches?({key, value}, filter) do
         update(state, index, {key, value})
       else
@@ -92,12 +94,20 @@ defmodule Lab4.DB.Index do
   end
 
   def handle_call({:delete_keys, keys}, _from, state) when is_list(keys) do
+    Logger.debug("Handling deleted keys #{inspect(keys)}")
+
     CubDB.select(state.bucket)
-    |> Stream.each(fn {index_key, {filter, data}} ->
+    |> Enum.each(fn {index_key, {filter, data}} ->
       new_data =
         data
-        |> Enum.filter(fn {key, _value} -> Enum.any?(keys, &(&1 == key)) end)
-      CubDB.put(state.bucket, index_key, {filter, new_data})
+        |> Enum.filter(fn {key, _value} -> Enum.any?(keys, &(&1 != key)) end)
+
+      if new_data == data do
+        Logger.debug("Unchanged: #{inspect(data)}")
+      else
+        Logger.debug("New data: #{inspect(new_data)}")
+        CubDB.put(state.bucket, index_key, {filter, new_data})
+      end
     end)
 
     {:reply, :ok, state}
@@ -125,13 +135,8 @@ defmodule Lab4.DB.Index do
   defp update_data({filter, data}, {key, _value} = new_entry) do
     new_data =
       data
-      |> Enum.map(fn {entry_key, _} = entry ->
-        if entry_key == key do
-          new_entry
-        else
-          entry
-        end
-      end)
+      |> Enum.filter(fn {entry_key, _} -> entry_key != key end)
+      |> Enum.concat([new_entry])
 
     {filter, new_data}
   end

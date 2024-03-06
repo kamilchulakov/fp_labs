@@ -38,7 +38,7 @@ defmodule Lab4.Commander.Executor do
   def execute(state, {:delete_keys, keys}) do
     other_shards =
       keys
-      |> Enum.map(&(DB.Shard.key_to_shard_key(state.shard, &1)))
+      |> Enum.map(&DB.Shard.key_to_shard_key(state.shard, &1))
       |> Enum.filter(&(&1 != state.shard_key))
 
     case other_shards do
@@ -47,6 +47,7 @@ defmodule Lab4.Commander.Executor do
           :ok -> DB.Index.delete_keys(state.db_index, keys)
           other -> other
         end
+
       _ ->
         {:error, :other_shard_keys}
     end

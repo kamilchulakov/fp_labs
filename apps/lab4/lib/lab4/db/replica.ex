@@ -46,7 +46,7 @@ defmodule Lab4.DB.Replica do
   defp handle_next_update_response({:ok, response}, state) do
     [{key, value}] =
       Jason.decode!(response.body)
-      |> Enum.map(&(&1))
+      |> Enum.map(& &1)
 
     Logger.info("Got update", worker: state.name)
     Worker.apply_update(state.db_worker, key, value)

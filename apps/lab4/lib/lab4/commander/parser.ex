@@ -253,9 +253,9 @@ defmodule Lab4.Commander.Parser do
       get,
       set,
       purge,
-      delete_keys,
       create_index,
       delete_index,
+      delete_keys,
       fetch_index,
       list_operation
     ])

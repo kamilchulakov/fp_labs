@@ -22,7 +22,8 @@ defmodule Lab4.Commander.Worker do
         shard: shard,
         shard_key: shard_key,
         addresses: addresses,
-        http_client: http_client
+        http_client: http_client,
+        name: name
       },
       name: name
     )
@@ -44,6 +45,8 @@ defmodule Lab4.Commander.Worker do
         to_reply({:error, reason}, state)
 
       parsed_command ->
+        Logger.debug("Parsed command: #{inspect(parsed_command)}", worker: state.name)
+
         try do
           Executor.execute(state, parsed_command) |> to_reply(state)
         rescue
