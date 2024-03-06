@@ -22,10 +22,6 @@ defmodule Lab4.DB.Index do
     )
   end
 
-  def create(pid, name, filter, command) do
-    GenServer.call(pid, {:create, name, filter, command})
-  end
-
   def create_local(pid, name, filter) do
     GenServer.call(pid, {:create_local, name, filter})
   end
@@ -53,7 +49,7 @@ defmodule Lab4.DB.Index do
       |> Enum.to_list()
       |> Enum.join(", ")
 
-    Logger.debug(~c"Indices: #{indices}", shard: state.shard_key)
+    Logger.debug("Indices: #{indices}", shard: state.shard_key)
 
     {:ok, state}
   end

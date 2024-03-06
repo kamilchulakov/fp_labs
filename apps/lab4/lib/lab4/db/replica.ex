@@ -40,7 +40,7 @@ defmodule Lab4.DB.Replica do
   end
 
   defp handle_next_update_response({:ok, response}, state) when response.body == "" do
-    Logger.info("Shard has no updates", worker: state.name)
+    Logger.debug("Shard has no updates", worker: state.name)
   end
 
   defp handle_next_update_response({:ok, response}, state) do
@@ -50,6 +50,7 @@ defmodule Lab4.DB.Replica do
 
     Finch.build(:post, "#{state.leader_addr}/replica-updated/#{key}/#{value}")
     |> Finch.request(state.http_client)
+    |> IO.inspect()
   end
 
   defp handle_next_update_response({:error, error}, state) do

@@ -193,11 +193,6 @@ defmodule Lab4.Commander.Parser do
     "LOCAL #{raw_command}"
   end
 
-  defp global_type(command) do
-    if command == :fetch_index do
-      :concat
-    else
-      :ok
-    end
-  end
+  defp global_type(:fetch_index), do: :concat
+  defp global_type(_), do: :ok
 end

@@ -52,14 +52,21 @@ defmodule Lab4.Http.Router do
     opts = conn.private.opts
 
     case DB.Worker.next_replica_update(opts.db_worker) do
-      [] -> send_resp(conn, 200, "")
-      [{key, value}] -> send_resp(conn, 200, "#{key}=#{value}")
-      _ -> Logger.error("Invalid next update value")
+      [] ->
+        send_resp(conn, 200, "")
+
+      [{key, value}] = next_update ->
+        Logger.debug("Next replica update #{inspect(next_update)}", shard: opts.shard.shard_key)
+        send_resp(conn, 200, "#{key}=#{value}")
+
+      _ ->
+        Logger.error("Invalid next update value")
     end
   end
 
   match "/replica-updated/:key/:value" do
     opts = conn.private.opts
+    Logger.debug("Replica updated: #{key} #{value}")
 
     case DB.Worker.replica_updated(opts.db_worker, key, value) do
       :old_value -> send_resp(conn, 401, "Old value")
