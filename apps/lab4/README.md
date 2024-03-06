@@ -444,7 +444,6 @@ OK
 Мне понравилось писать красивый парсер и стараться избегать json.
 
 ## Worth to mention
-- [Chordy](https://people.kth.se/~johanmon/dse/chordy.pdf)
 - [Yuriy Nasretdinov][Yuriy Nasretdinov]
 - [His 'distribkv' in Go playlist](https://www.youtube.com/playlist?list=PLWwSgbaBp9XrMkjEhmTIC37WX2JfwZp7I)
 - [Crafting a Database Engine: how DBs do what they do by Luca Ongaro (CubDB) | Ruby User Group Berlin](https://www.youtube.com/watch?v=fSgoeKJ06B4)
