@@ -32,6 +32,9 @@ defmodule Lab4.Http.Router do
       {:error, :not_a_list} ->
         send_resp(conn, 400, "Not a list")
 
+      {:error, :empty_list} ->
+        send_resp(conn, 400, "Empty list")
+
       {:error, :not_found} ->
         send_resp(conn, 404, "Not found")
 

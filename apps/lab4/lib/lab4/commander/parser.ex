@@ -158,6 +158,34 @@ defmodule Lab4.Commander.Parser do
     |> optional(ignore(some_space))
     |> tag(:lpop)
 
+  left_direction =
+    ignore(string("LEFT"))
+    |> tag(:left)
+
+  right_direction =
+    ignore(string("RIGHT"))
+    |> tag(:right)
+
+  direction =
+    choice([
+      left_direction,
+      right_direction
+    ])
+
+  lmove =
+    ignore(string("LMOVE"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> ignore(some_space)
+    |> concat(key)
+    |> ignore(some_space)
+    |> concat(direction)
+    |> ignore(some_space)
+    |> concat(direction)
+    |> optional(ignore(some_space))
+    |> tag(:lmove)
+
   llen =
     ignore(string("LLEN"))
     |> tag(:local)
@@ -199,6 +227,7 @@ defmodule Lab4.Commander.Parser do
     choice([
       lpush,
       lpop,
+      lmove,
       llen,
       ltrim,
       rpush,
@@ -238,22 +267,33 @@ defmodule Lab4.Commander.Parser do
     end
   end
 
-  defp put_opts({command, args} = parsed_command, raw_command) do
-    if local?(args) do
-      {command, drop_local(args)}
+  defp put_opts({command, args}, raw_command) do
+    new_args = drop_flags_values(args)
+
+    if local?(new_args) do
+      {command, drop_local(new_args)}
     else
       [
-        local: parsed_command,
+        local: {command, new_args},
         global: to_local_raw(raw_command),
         type: global_type(command)
       ]
     end
   end
 
-  defp local?([{:local, []} | _args]), do: true
+  defp local?([:local | _args]), do: true
   defp local?(_args), do: false
 
-  defp drop_local([{:local, []} | args]), do: args
+  defp drop_local([:local | args]), do: args
+
+  defp drop_flags_values(args) do
+    Enum.map(args, fn arg ->
+      case arg do
+        {flag, []} -> flag
+        _ -> arg
+      end
+    end)
+  end
 
   defp to_local_raw(raw_command) do
     "LOCAL #{raw_command}"

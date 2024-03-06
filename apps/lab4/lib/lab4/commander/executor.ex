@@ -55,6 +55,26 @@ defmodule Lab4.Commander.Executor do
     end
   end
 
+  def execute(_state, {:lmove, [key, key, direction, direction]}), do: :ok
+
+  def execute(state, {:lmove, [key1, key2, direction1, direction2]}) do
+    list1 = get_list(state, key1)
+    list2 = get_list(state, key2)
+
+    case list1 do
+      {:error, reason} ->
+        {:error, reason}
+
+      [] ->
+        {:error, :empty_list}
+
+      _ ->
+        {new_list1, new_list2} = move(list1, list2, direction1, direction2)
+        DB.Worker.set(state.db_worker, key1, new_list1)
+        DB.Worker.set(state.db_worker, key2, new_list2)
+    end
+  end
+
   def execute(state, {:llen, [key]}) do
     case get_list(state, key) do
       {:error, reason} -> {:error, reason}
@@ -157,26 +177,52 @@ defmodule Lab4.Commander.Executor do
     end
   end
 
-  defp get(state, key) do
+  defp get(state, key, default \\ nil) do
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
 
     if shard_key == state.shard_key do
-      DB.Worker.get(state.db_worker, key)
+      case DB.Worker.get(state.db_worker, key, default) do
+        nil -> {:error, :not_found}
+        value -> value
+      end
     else
       {:error, {:wrong_shard, shard_key}}
     end
   end
 
   defp get_list(state, key) do
-    case get(state, key) do
+    case get(state, key, []) do
       {:error, reason} ->
         {:error, reason}
 
       [_ | _] = list ->
         list
 
+      [] ->
+        []
+
       _ ->
         {:error, :not_a_list}
     end
+  end
+
+  defp move(list1, list2, :left, :left) do
+    {element, new_list1} = List.pop_at(list1, 0)
+    {new_list1, List.insert_at(list2, 0, element)}
+  end
+
+  defp move(list1, list2, :left, :right) do
+    {element, new_list1} = List.pop_at(list1, 0)
+    {new_list1, List.insert_at(list2, -1, element)}
+  end
+
+  defp move(list1, list2, :right, :left) do
+    {element, new_list1} = List.pop_at(list1, -1)
+    {new_list1, List.insert_at(list2, 0, element)}
+  end
+
+  defp move(list1, list2, :right, :right) do
+    {element, new_list1} = List.pop_at(list1, -1)
+    {new_list1, List.insert_at(list2, -1, element)}
   end
 end

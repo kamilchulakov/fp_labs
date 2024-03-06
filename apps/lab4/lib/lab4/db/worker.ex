@@ -27,8 +27,8 @@ defmodule Lab4.DB.Worker do
     )
   end
 
-  def get(pid, key) do
-    GenServer.call(pid, {:get, key})
+  def get(pid, key, default \\ nil) do
+    GenServer.call(pid, {:get, key, default})
   end
 
   def set(pid, key, value) do
@@ -61,8 +61,8 @@ defmodule Lab4.DB.Worker do
   end
 
   @impl true
-  def handle_call({:get, key}, _from, %{db: db} = state) do
-    {:reply, CubDB.get(db, key), state}
+  def handle_call({:get, key, default}, _from, %{db: db} = state) do
+    {:reply, CubDB.get(db, key, default), state}
   end
 
   def handle_call({:set, _key, _value}, _from, %{readonly: true} = state) do
