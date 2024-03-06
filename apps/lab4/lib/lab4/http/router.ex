@@ -26,6 +26,9 @@ defmodule Lab4.Http.Router do
       {:error, {:wrong_shard, shard_key}} ->
         redirect_to(conn, shard_key, command)
 
+      {:error, :other_shard_keys} ->
+        send_resp(conn, 400, "Keyset contains other shard keys")
+
       {:error, :bad_args} ->
         send_resp(conn, 400, "Bad command")
 

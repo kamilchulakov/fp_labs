@@ -43,6 +43,14 @@ defmodule Lab4.DB.Worker do
     GenServer.call(pid, :delete_extra)
   end
 
+  def delete(pid, keys) when is_list(keys) do
+    GenServer.call(pid, {:delete_keys, keys})
+  end
+
+  def delete(pid, key) do
+    GenServer.call(pid, {:delete_keys, [key]})
+  end
+
   def apply_update(pid, key, value) do
     GenServer.call(pid, {:apply_update, key, value})
   end
@@ -96,6 +104,10 @@ defmodule Lab4.DB.Worker do
 
     CubDB.delete_multi(db, extra_keys)
     {:reply, extra_keys, state}
+  end
+
+  def handle_call({:delete_keys, keys}, _from, state) do
+    {:reply, CubDB.delete_multi(state.db, keys), state}
   end
 
   def handle_call(:next_replica_update, _from, %{db_replica_bucket: db_replica_bucket} = state) do

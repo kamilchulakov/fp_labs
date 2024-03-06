@@ -22,6 +22,36 @@ defmodule Lab4.Commander.Executor do
     DB.Index.delete_local(state.db_index, deleted_keys)
   end
 
+  def execute(state, {:delete_keys, [key]}) do
+    shard_key = DB.Shard.key_to_shard_key(state.shard, key)
+
+    if shard_key == state.shard_key do
+      case DB.Worker.delete(state.db_worker, key) do
+        :ok -> DB.Index.delete_keys(state.db_index, key)
+        other -> other
+      end
+    else
+      {:error, {:wrong_shard, shard_key}}
+    end
+  end
+
+  def execute(state, {:delete_keys, keys}) do
+    other_shards =
+      keys
+      |> Enum.map(&(DB.Shard.key_to_shard_key(state.shard, &1)))
+      |> Enum.filter(&(&1 != state.shard_key))
+
+    case other_shards do
+      [] ->
+        case DB.Worker.delete(state.db_worker, keys) do
+          :ok -> DB.Index.delete_keys(state.db_index, keys)
+          other -> other
+        end
+      _ ->
+        {:error, :other_shard_keys}
+    end
+  end
+
   def execute(state, {:delete_index, [index_name: name]}) do
     DB.Index.delete_local(state.db_index, name)
   end

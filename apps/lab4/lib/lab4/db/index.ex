@@ -34,6 +34,14 @@ defmodule Lab4.DB.Index do
     GenServer.call(pid, {:delete_local, name})
   end
 
+  def delete_keys(pid, keys) when is_list(keys) do
+    GenServer.call(pid, {:delete_keys, keys})
+  end
+
+  def delete_keys(pid, key) do
+    GenServer.call(pid, {:delete_keys, [key]})
+  end
+
   def update_all(pid, key, value) do
     GenServer.call(pid, {:update_all, key, value})
   end
@@ -78,6 +86,18 @@ defmodule Lab4.DB.Index do
       else
         Logger.debug("Skipped index #{index_key} for update", shard: state.shard_key)
       end
+    end)
+
+    {:reply, :ok, state}
+  end
+
+  def handle_call({:delete_keys, keys}, _from, state) when is_list(keys) do
+    CubDB.select(state.bucket)
+    |> Stream.each(fn {index_key, {filter, data}} ->
+      new_data =
+        data
+        |> Enum.filter(fn {key, _value} -> Enum.any?(keys, &(&1 == key)) end)
+      CubDB.put(state.bucket, index_key, {filter, new_data})
     end)
 
     {:reply, :ok, state}

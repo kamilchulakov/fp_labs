@@ -72,6 +72,19 @@ defmodule Lab4.Commander.Parser do
     |> optional(ignore(some_space))
     |> tag(:purge)
 
+  space_key =
+    ignore(some_space)
+    |> concat(key)
+
+  delete_keys =
+    ignore(string("DELETE"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> times(space_key, min: 0)
+    |> optional(ignore(some_space))
+    |> tag(:delete_keys)
+
   less_filter =
     ignore(string("LESS"))
     |> ignore(some_space)
@@ -240,6 +253,7 @@ defmodule Lab4.Commander.Parser do
       get,
       set,
       purge,
+      delete_keys,
       create_index,
       delete_index,
       fetch_index,
