@@ -140,6 +140,71 @@ defmodule Lab4.Commander.Parser do
     |> optional(ignore(some_space))
     |> tag(:fetch_index)
 
+  lpush =
+    ignore(string("LPUSH"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> ignore(some_space)
+    |> concat(value)
+    |> optional(ignore(some_space))
+    |> tag(:lpush)
+
+  lpop =
+    ignore(string("LPOP"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> optional(ignore(some_space))
+    |> tag(:lpop)
+
+  llen =
+    ignore(string("LLEN"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> optional(ignore(some_space))
+    |> tag(:llen)
+
+  ltrim =
+    ignore(string("LTRIM"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> ignore(some_space)
+    |> optional(integer(min: 1) |> ignore(some_space))
+    |> integer(min: 1)
+    |> optional(ignore(some_space))
+    |> tag(:ltrim)
+
+  rpush =
+    ignore(string("RPUSH"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> ignore(some_space)
+    |> concat(value)
+    |> optional(ignore(some_space))
+    |> tag(:rpush)
+
+  rpop =
+    ignore(string("RPOP"))
+    |> tag(:local)
+    |> ignore(some_space)
+    |> concat(key)
+    |> optional(ignore(some_space))
+    |> tag(:rpop)
+
+  list_operation =
+    choice([
+      lpush,
+      lpop,
+      llen,
+      ltrim,
+      rpush,
+      rpop
+    ])
+
   command =
     optional(local_marker)
     |> choice([
@@ -148,7 +213,8 @@ defmodule Lab4.Commander.Parser do
       purge,
       create_index,
       delete_index,
-      fetch_index
+      fetch_index,
+      list_operation
     ])
 
   defparsec(:parse, command)
