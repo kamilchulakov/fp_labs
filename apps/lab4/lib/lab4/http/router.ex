@@ -101,13 +101,27 @@ defmodule Lab4.Http.Router do
     redirect_endpoint =
       replace_endpoint(conn, shard_key)
 
-    redirect_resp =
+    redirect_result =
       Finch.build(:post, redirect_endpoint, [], command)
-      |> Finch.request!(conn.private.opts.http_client)
+      |> Finch.request(conn.private.opts.http_client)
 
-    conn
-    |> Plug.Conn.put_resp_header("location", "#{redirect_endpoint}")
-    |> Plug.Conn.send_resp(redirect_resp.status, redirect_resp.body)
+    case redirect_result do
+      {:ok, redirect_resp} ->
+        conn
+        |> Plug.Conn.put_resp_header("location", "#{redirect_endpoint}")
+        |> Plug.Conn.send_resp(redirect_resp.status, redirect_resp.body)
+
+      {:error, error} ->
+        if error.reason == :econnrefused do
+          conn
+          |> Plug.Conn.put_resp_header("location", "#{redirect_endpoint}")
+          |> Plug.Conn.send_resp(503, "Service unavailable")
+        else
+          conn
+          |> Plug.Conn.put_resp_header("location", "#{redirect_endpoint}")
+          |> Plug.Conn.send_resp(500, "Internal server error")
+        end
+    end
   end
 
   defp replace_endpoint(conn, shard_key) do

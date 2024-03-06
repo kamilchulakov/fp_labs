@@ -181,8 +181,14 @@ defmodule Lab4.Commander.Executor do
     Logger.debug("Executing global #{command}", shard: state.shard_key)
 
     call_global(state, command)
-    |> Enum.map(fn {:ok, resp} ->
-      parse_resp(resp, parse_type)
+    |> Enum.map(fn call ->
+      case call do
+        {:ok, resp} ->
+          parse_resp(resp, parse_type)
+        {:error, error} ->
+          Logger.error("Call global error: #{error.reason}", shard: state.shard_key)
+          error_default(parse_type)
+      end
     end)
   end
 
@@ -211,6 +217,9 @@ defmodule Lab4.Commander.Executor do
         []
     end
   end
+
+  defp error_default(:ok), do: :not
+  defp error_default(:json), do: []
 
   defp get(state, key, default \\ nil) do
     shard_key = DB.Shard.key_to_shard_key(state.shard, key)
