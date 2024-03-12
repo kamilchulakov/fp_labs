@@ -1,0 +1,10 @@
+[[shards]]
+name = "Saint-Petersburg"
+shard_key = 0
+address = "localhost:8080"
+replicas = ["localhost:8084"]
+
+[[shards]]
+name = "Moscow"
+shard_key = 1
+address = "localhost:8081"
