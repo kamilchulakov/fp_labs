@@ -26,7 +26,7 @@ defmodule Lab3.Util.Matrix do
     |> Enum.at(col)
   end
 
-  def set_col(matrix = %__MODULE__{rows: rows}, col, fun) do
+  def set_col(%__MODULE__{rows: rows} = matrix, col, fun) do
     %__MODULE__{
       matrix
       | rows:
@@ -36,7 +36,7 @@ defmodule Lab3.Util.Matrix do
     }
   end
 
-  def map(matrix = %__MODULE__{rows: _, n: n, m: m}, fun) do
+  def map(%__MODULE__{rows: _, n: n, m: m} = matrix, fun) do
     Enum.reduce(1..(m - 1), matrix, fn j, j_acc ->
       Enum.reduce(0..(n - 2), j_acc, fn i, i_acc ->
         set(i_acc, i, j, fun.(i_acc, i, j))
